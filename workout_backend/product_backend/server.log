@@ -1,0 +1,6 @@
+Debugger attached.
+[32mGET[39m      /
+[33mPOST[39m     /pokemons
+[32mGET[39m      /pokemons/:name
+[32mGET[39m      /(.*)/*
+Connected to MongoDb
