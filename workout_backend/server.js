@@ -5,7 +5,7 @@ const port = 1339;
 require('dotenv').config();
 
 //Variables used for initialize call
-const model = require("./models/workoutMongoDb");
+const model = require("./workout_user_backend/models/workoutMongoDb");
 const url = process.env.URL_PRE + process.env.MONGODB_PWD + process.env.URL_POST;
 const collectionNames = ["users","products","orders"];
 model.initialize("workout_db",false,url,collectionNames)
