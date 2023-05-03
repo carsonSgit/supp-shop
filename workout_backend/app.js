@@ -12,7 +12,7 @@ const cors = require("cors");
 
 
 //make sure errorController is last or else it will catch all requests
-const controllers = ['homeController','userController','errorController']
+const controllers = ['homeController','userController','productController','ordersController','errorController']
 
 app.use(cors());
 app.use(express.json());

@@ -1,19 +1,14 @@
 //#region Assignment 2
 const app = require("./app.js");
-const http = require('http');
-const {Db} = require('mongodb');
 const port = 1339;
-const dbName = "workout_user_db";
-const {InvalidInputError} = require("./models/InvalidInputError");
-const{DatabaseError} = require("./models/DatabaseError");
-
+``
 require('dotenv').config();
 
 //Variables used for initialize call
 const model = require("./models/workoutMongoDb");
 const url = process.env.URL_PRE + process.env.MONGODB_PWD + process.env.URL_POST;
-
-model.initialize("workout_user_db",false,url)
+const collectionNames = ["users","products","orders"];
+model.initialize("workout_db",false,url,collectionNames)
     .then(
         app.listen(port) // run the server
     );

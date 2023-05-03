@@ -7,9 +7,11 @@ const logger = require("../logger");
 let client;
 
 let usersCollection;
+let productsCollection;
+let ordersCollection;
 
 
- /**
+/**
  * 
  * Connect to the MongoDb cluster based on .env details
  * Use the database with the name stored in dbName and the collection "users"
@@ -18,43 +20,52 @@ let usersCollection;
  * @param {string} dbName Name of the database you want to connect to
  * @param {boolean} resetFlag If set to true, the collection is dropped
  * @param {string} url the url to the database from the .env details
+ * @param {Array.<string>} collectionNames the name of the collection you want to connect
  * @throws {DatabaseError} when there is an error connecting to the mongo db.
  */
-async function initialize(dbName,resetFlag,url){
-    try{
-        logger.info("Attempting to connect to "+dbName);
-        //store connected client for use while the app is running
-        client = new MongoClient(url);
-        await client.connect();
-        logger.info("Connected to MongoDb");
-        db = client.db(dbName);
+async function initialize(dbName,resetFlag,url,collectionNames){
+    collectionNames.forEach(collection => {
+        try{
+            logger.info("Attempting to connect to "+dbName);
+            //store connected client for use while the app is running
+            client = new MongoClient(url);
+            await client.connect();
+            logger.info("Connected to MongoDb");
+            db = client.db(dbName);
 
-        //Check to see if the users collection exists
-        collectionCursor = await db.listCollections([{name:"users"}]);
-        collectionArray = await collectionCursor.toArray();
+            //Check to see if the users collection exists
+            collectionCursor = await db.listCollections([{name:collection}]);
+            collectionArray = await collectionCursor.toArray();
 
-        //if it exists and flag is set to true then drop the collection
-        if(resetFlag && collectionArray.length>0)
-            await db.collection("users").drop();
+            //if it exists and flag is set to true then drop the collection
+            if(resetFlag && collectionArray.length>0)
+                await db.collection(collection).drop();
 
-        if(collectionArray.length==0 || resetFlag){
-            //collation specifying case-insensitive collection
-            const collation ={locale:"en",strength:1};
-            //no match was found so create new collection
-            await db.createCollection("users",{collation:collation});
+            if(collectionArray.length==0 || resetFlag){
+                //collation specifying case-insensitive collection
+                const collation ={locale:"en",strength:1};
+                //no match was found so create new collection
+                await db.createCollection(collection,{collation:collation});
+            }
+            //convenient access to collection
+            if(collection === "users")
+                usersCollection = db.collection(collection);
+            else if(collection ==="products")
+                productsCollection = db.collection(collection);
+            else if (collection ==="orders")
+                ordersCollection = db.collection(collection);
+            
+        }catch(err){
+            logger.error(err.message);
+            throw new DatabaseError("Error accessing MongoDB: "+err.message);
         }
-        //convenient access to collection
-        usersCollection = db.collection("users");
-        
-    }catch(err){
-        logger.error(err.message);
-        throw new DatabaseError("Error accessing MongoDB: "+err.message);
-    }
+    });
 }
 
 
 //#region CRUD Operations
 
+//////////////////////////////////////////////////////// USERS CRUD //////////////////////////////////////////////////////////////////
 /**
  * Adds a new user to the collection, if the passed parameters are valid and if a user with username and email don't already exist
  * @param {String} username 
@@ -237,6 +248,346 @@ async function updateSingleUser(username,newUsername,email,password){
     }
 
 }
+
+
+//////////////////////////////// ORDERS CRUD //////////////////////////////////
+/**
+ * adds a new order to the database
+ * @param {Int32} orderId | id of the order that was placed
+ * @param {Double} price | price of the order  
+ * @returns the order object that will be added
+ * @throws {InvalidInputError} When orderid and/or price are incorrectly formatted
+ * @throws {DatabaseError} When you cannot access the database or 
+ */
+ async function addOrder(orderId, price)
+ {
+     try 
+     {
+         pass = await validateUtils.isValid2(orderId,price);
+         // prevents adding duplicate order IDs
+         const duplicateOrderId = await ordersCollection.findOne( {orderId: orderId});
+         if( pass == true && !duplicateOrderId)
+         {
+             
+             
+ 
+             orderToAdd = { orderId: orderId , price: price};
+             let result = await ordersCollection.insertOne(orderToAdd);
+             if(!result)
+             { 
+                 logger.debug("The order was not added");
+                 throw new InvalidInputError("could not add");
+             }
+            return orderToAdd;
+         }    
+         else
+         {
+             logger.debug("The order id entered was incorrect");
+             throw new InvalidInputError();
+         }
+     }
+      catch (error)
+     {
+         if(error instanceof InvalidInputError)
+         {
+             logger.warn("There was invlid input in adding this order");
+             throw error
+         }
+         else{
+             logger.error(error.message);
+             throw new DatabaseError("could not add order to the database");
+         }
+         
+     }
+ }
+ 
+ /**
+  * function that gets one order from the database using the order's id
+  * @param {Int32} orderId | id of the order to look for 
+  * @returns the order object you are looking for
+  * @throws {InvalidInputError} When orderid is incorrectly formatted or does not exist in the database
+  * @throws {DatabaseError} when you cannot access the database
+  */
+ async function getOneOrder(orderId)
+ {
+    try 
+    {
+     // const db =  client.db(dbName);
+     // ordersCollection = db.collection("orders");
+     if (orderId < 0 )
+     {
+         logger.debug("Invalid order id entered " + orderId)
+         throw new InvalidInputError("The order id you entered was not valid");
+     }
+     let result = await ordersCollection.findOne({ orderId: orderId });
+     
+ 
+     if(!result)
+     {
+         logger.debug("Order does not exist in database");
+         throw new InvalidInputError("could not find the order you asked for in the database");
+     }
+ 
+     return result;
+ 
+ 
+    }
+     catch (error) 
+     {
+         if(error instanceof InvalidInputError)
+         {
+             logger.error(error.message);
+             throw error;
+         }
+         else
+         {
+             logger.error(err.message);
+             throw new DatabaseError;
+         }
+         
+     }
+ }
+ 
+ /**
+  * function that gets all of the orders in the database
+  * @returns an array of all the orders
+  * @throws {DatabaseError} When you cannot access the database
+  */
+ async function GetAllOrders()
+ {
+     
+ 
+     try
+     {
+         allOrdersFound = await ordersCollection.find();
+ 
+         if(!allOrdersFound)
+         {
+             logger.debug("Access to the database was impossible or it may not exist");
+             throw new DatabaseError("could not access the database or it does not exist");
+         }
+ 
+         allOrdersArray = await allOrdersFound.toArray();
+ 
+ 
+ 
+         return allOrdersArray;
+     }
+     catch(err)
+     {
+         if(err instanceof DatabaseError)
+         {
+             logger.error(err.message);
+             throw err;
+         }
+        
+     }
+ 
+ }
+ 
+ /**
+  * function that finds one order and replaces it using the order id
+  * @param {Integer} orderId | original id of the order
+  * @param {Int32} newOrderId | the new order id
+  * @param {Double} newPrice | the new price of the order
+  * @returns the replaced order object
+  * @throws {InvalidInputError} When orderid and/or price are incorrectly formatted
+  * @throws {DatabaseError} When access to the database
+  */
+ async function replaceOrder(orderId,newOrderId,newPrice)
+ {
+     
+     try 
+     {
+         pass = await validateUtils.isValid2(newOrderId,newPrice);
+         
+         if(ordersCollection.find({orderId: orderId}) == false)
+         {
+             logger.debug("The order id that is being looked for does not exist in the database");
+             throw new InvalidInputError("The order Id you want to change from is not in the database");
+         }
+         else
+         {
+             if(pass)
+             {
+                 return await ordersCollection.replaceOne({orderId: orderId }, {orderId: newOrderId, price: newPrice});
+             }
+             else
+             {
+                 logger.debug("The order could not be updated in the database");
+                 throw new InvalidInputError("could not update order in database");
+             } 
+         }
+     
+     } 
+     catch (error) 
+     {
+         if(error instanceof InvalidInputError)
+         {
+             logger.error(error.message);
+             throw error;
+         }
+         else
+         {
+             logger.error(error.message);
+             throw new DatabaseError(error.message);
+         }
+     }
+     
+ }
+ 
+ /**
+  * function that deletes a specific order depending on its id
+  * @param {Int32} orderId | id of the order to delete
+  * @returns the deleted order object
+  * @throws {InvalidInputError} When the order id entered is formatted incorrectly
+  */
+ async function deleteOrder(orderId)
+ {
+    try {
+     if(orderId > 0 && !null)
+     {
+         
+         result = await ordersCollection.deleteOne({orderId: orderId});
+         if(result)
+         {
+             return result;
+ 
+         }
+         else
+         {
+             logger.debug("order id does not exist in database");
+             throw new InvalidInputError("The orderid you entered is inexistant");
+         }
+         
+     }  
+    else
+    {
+         throw new InvalidInputError("the order id you entered was invalid");
+    }
+    }
+     catch (error) 
+    {
+     if(error instanceof InvalidInputError)
+     {
+         logger.error(error.message);
+         throw error;
+     }
+     else
+     {
+         logger.error(error.message);
+         throw new DatabaseError("could not delete order from the database");
+     }
+    }
+ 
+ }
+
+ //////////////////////////////////////////////////////////////// PRODUCTS CRUD //////////////////////////////////////////////////////////////////
+
+
+ async function addProduct(flavour, type, price){
+    let newProduct;   
+    if(await validateUtils.isValid2(flavour,type,price)){
+        newProduct = { flavour: flavour, type: type, price: price};
+    }
+    else{
+        throw new InvalidInputError("Product values invalid");
+    }
+
+    try{
+        await productsCollection.insertOne(newProduct);
+        return newProduct;
+    }catch(err){
+        throw new DatabaseError("Can't insert product to database");
+    }
+}
+
+async function getSingleProduct(flavour){
+    try{
+        if(!flavour){   
+        throw new InvalidInputError("Error: No flavour specified");
+    }
+        let query = {flavour: flavour};
+        let done = productsCollection.findOne(query);
+        return done;
+    }
+    catch(error){
+        throw new 
+            DatabaseError("Error: Execution of findOne() resulted in an error");
+    } 
+}
+
+async function getAllProducts(){
+    try{
+        const cursor = await productsCollection.find({});
+        const allProduct = await cursor.toArray();
+        return allProduct;
+    }
+    catch(err){
+        if(err instanceof DatabaseError){
+            throw new DatabaseError(err.message);
+        }
+        console.log(err.message);
+    }
+}
+/**
+ * Checks validity of an object with the updated price,
+ * if valid, updates the product in the "products" collection
+ * @param {object} update 
+ * @param {price} updateValue 
+ * @returns true if successfully updated the product
+ * @returns false if update failed
+ */
+async function updateOneProduct(update, updateValue){
+    try{
+        let product;
+        if(validateUtils.isValid2(update.flavour,update.type,updateValue.price)){
+            product = await productsCollection.replaceOne({flavour: update.flavour},
+                {flavour: update.flavour, type: update.type, price: updateValue.price});
+        }
+        if(product != undefined && product.modifiedCount > 0){
+            return product;
+        }
+        return false;
+    }
+    catch(err){
+        if(err instanceof DatabaseError){
+            console.log("Error: Database error when executing update");
+        }
+    }
+}
+/**
+ * Attempts to delete a product from the "products" collection according to the given flavour
+ * @param {flavour} deleteProduct 
+ * @returns false if delete failed
+ * @returns true if successfully deleted the product
+ * @error DatabaseError if there is an error deleting the product from the database
+ * @error InvalidInputError if the input was invalid (null or undefined)
+ */
+ async function deleteOneProduct(deleteProduct){
+    let test; 
+    try{
+        test = await productsCollection.deleteOne({flavour:deleteProduct});
+        if(test.deletedCount==0){
+            return false;
+        }
+        return true;
+    }
+    catch(err){
+        console.log("Could not delete product: " + err.message);
+        if(err instanceof DatabaseError){
+            console.log("Could not access the database: " +err.message);
+            throw new DatabaseError("Could not access the database: " +err.message);
+        }
+        if(err instanceof InvalidInputError){
+            console.log("Invalid input: " +err.message);
+            throw new InvalidInputError("Invalid input: " +err.message);
+        }
+        console.log("Unexpected error: " + err.message);
+        throw new Error("Unexpected error: " + err.message);
+    }
+}
+
 //#endregion CRUD Operations
 
 /**
@@ -291,4 +642,6 @@ async function close(){
 }
 //#endregion Helper functions
 
-module.exports = {initialize,addUser,getSingleUser,getAllUsers,close,getCollection,deleteSingleUser,updateSingleUser};
+module.exports = {initialize,addUser,getSingleUser,getAllUsers,close,getCollection,deleteSingleUser,updateSingleUser,addOrder, getOneOrder, GetAllOrders , replaceOrder, deleteOrder,addProduct, 
+    getSingleProduct, getAllProducts, 
+    updateOneProduct, deleteOneProduct};
