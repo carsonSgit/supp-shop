@@ -138,7 +138,7 @@ async function createUser(request,response){
 
     //make call to model
     try{
-     await model.addUser(username,email,password)
+     await model.addUser(username,email,password);
     }catch(err){
         error =err;
     }

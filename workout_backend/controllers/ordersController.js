@@ -22,14 +22,14 @@ async function createOrder(request,response)
         if(newEntry == false)
         {
             logger.warn("Could not create the order: " + "order ID: " + request.body.orderId + " " + +"| Order Price: " + request.body.price);
-            response.status("400");
+            response.status(400);
             response.send("Failed to add order for unknown reason");
 
         }
         else
         {
             logger.info("Successfully added order");
-            response.status("200");
+            response.status(200);
             response.send(newEntry);
             
         }
@@ -40,15 +40,15 @@ async function createOrder(request,response)
             if(err instanceof DatabaseError)
             {
                 logger.error(err.message);
-            response.status("500");
+            response.status(500);
             response.send({ errorMessage: "System error trying to add order" + err.message});
             }else if(err instanceof InvalidInputError){
                 logger.error(err.message);
-            response.status("400");
+            response.status(400);
             response.send({errorMessage: "Validation error trying to add order: " + err.message});
             }else{
                 logger.error(err.message);
-            response.status("500");
+            response.status(500);
             response.send({ errorMessage:"Unexpected error trying to add order: " + err.message});
         }
 
@@ -71,13 +71,13 @@ async function getSingleOrder(request,response)
         if( foundOrder )
         {
             logger.info("Successfully found order");
-            response.status("200");
+            response.status(200);
             response.send(foundOrder);
         }
         else
         {
             logger.warn("Could not find order specified");
-            response.status("400");
+            response.status(400);
             response.send("Could not find order");
         }
    }
@@ -87,15 +87,15 @@ async function getSingleOrder(request,response)
         if(error instanceof DatabaseError)
         {
             logger.error(error.message);
-        response.status("500");
+        response.status(500);
         response.send({ errorMessage: "System error trying to find order" + error.message});
         }else if(error instanceof InvalidInputError){
             logger.error(error.message);
-        response.status("400");
+        response.status(400);
         response.send({errorMessage: "Validation error trying to find order: " + error.message});
         }else{
             logger.error(error.message);
-        response.status("500");
+        response.status(500);
         response.send({ errorMessage:"Unexpected error trying to find order: " + error.message}); 
     }
     }
@@ -121,13 +121,13 @@ async function getAllOrders(request,response)
             printableOrderSheet = JSON.stringify(orderContents);
             logger.info("Listing all orders in a table below");
             console.table(orderContents);     
-            response.status("200");
+            response.status(200);
             response.send(orderContents);
         }
         else
         {
             logger.warn("Could not find orders table");
-            response.status("500");
+            response.status(500);
             response.send("Could not find orders table");
         }
     }
@@ -137,15 +137,15 @@ async function getAllOrders(request,response)
             if(err instanceof DatabaseError)
             {
                 logger.error(err.message);
-            response.status("500");
+            response.status(500);
             response.send({ errorMessage: "System error trying to find orders" + err.message});
             }else if(err instanceof InvalidInputError){
                 logger.error(err.message);
-            response.status("400");
+            response.status(400);
             response.send({errorMessage: "Validation error trying to find order: " + err.message});
             }else{
                 logger.error(err.message);
-            response.status("500");
+            response.status(500);
             response.send({ errorMessage:"Unexpected error trying to find order: " + err.message});
         }
     }
@@ -168,13 +168,13 @@ async function updateOrder(request,response)
     if(replaced == false)
     {        
         logger.warn("Could not update order specified");
-        response.status("400");
+        response.status(400);
         response.send("Could not update order");
     }
     else
     {
         logger.info("Successfully updated order");
-        response.status("200");
+        response.status(200);
         response.send(replaced);
     }
   } 
@@ -184,15 +184,15 @@ async function updateOrder(request,response)
             if(err instanceof DatabaseError)
             {
                 logger.error(err.message);
-            response.status("500");
+            response.status(500);
             response.send({ errorMessage: "System error trying to update order" + err.message});
             }else if(err instanceof InvalidInputError){
                 logger.error(err.message);
-            response.status("400");
+            response.status(400);
             response.send({errorMessage: "Validation error trying to find order: " + err.message});
             }else{
                 logger.error(err.message);
-            response.status("500");
+            response.status(500);
             response.send({ errorMessage:"Unexpected error trying to find order: " + err.message});
         }
     }
@@ -214,13 +214,13 @@ async function deleteOrder(request,response)
         if(orderToDelete == false)
         {
             logger.warn("Could not delete order specified");
-            response.status("400");
+            response.status(400);
             response.send("Could not delete order");
         }
         else
         {
             logger.info("Successfully deleted order");
-            response.status("200");
+            response.status(200);
             response.send(orderToDelete);    
         }
     }
@@ -230,15 +230,15 @@ async function deleteOrder(request,response)
         if(err instanceof DatabaseError)
         {
             logger.error(err.message);
-        response.status("500");
+        response.status(500);
         response.send({ errorMessage: "System error trying to delete order" + err.message});
         }else if(err instanceof InvalidInputError){
             logger.error(err.message);
-        response.status("400");
+        response.status(400);
         response.send({errorMessage: "Validation error trying to find order: " + err.message});
         }else{
             logger.error(err.message);
-        response.status("500");
+        response.status(500);
         response.send({ errorMessage:"Unexpected error trying to find order: " + err.message});
         } 
     }
