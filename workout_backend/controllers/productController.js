@@ -1,10 +1,10 @@
 const express = require('express');
 const { MongoUnexpectedServerResponseError } = require('mongodb');
-const { DatabaseError } = require('../models/DatabaseError');
-const { InvalidInputError } = require('../models/InvalidInputError');
+const { DatabaseError } = require('../product_backend/models/DatabaseError');
+const { InvalidInputError } = require('../product_backend/models/InvalidInputError');
 const router = express.Router();
 const routeRoot = '/products';
-const model = require('../models/productModelMongoDb');
+const model = require('../models/workoutMongoDb');
 const logger = require('../logger');
 
 /**

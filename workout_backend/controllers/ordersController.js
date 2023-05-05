@@ -1,10 +1,10 @@
 const express = require('express');
 const logger = require('../logger');
-const { DatabaseError } = require('../models/DatabaseError');
-const { InvalidInputError } = require('../models/InvalidInputError');
+const { DatabaseError } = require('../orders_backend/models/DatabaseError');
+const { InvalidInputError } = require('../orders_backend/models/InvalidInputError');
 const router = express.Router();
 const routeRoot = '/';
-const model = require('../models/ordersModelMongoDB');
+const model = require('../models/workoutMongoDb.js');
 
 
 router.post('/orders',createOrder);
@@ -83,20 +83,20 @@ async function getSingleOrder(request,response)
    }
    catch(error)
    {
-        logger.error();("Failed to find an order: " + err.message );
-        if(err instanceof DatabaseError)
+        logger.error("Failed to find an order: " + error.message);
+        if(error instanceof DatabaseError)
         {
-            logger.error(err.message);
+            logger.error(error.message);
         response.status("500");
-        response.send({ errorMessage: "System error trying to find order" + err.message});
-        }else if(err instanceof InvalidInputError){
-            logger.error(err.message);
+        response.send({ errorMessage: "System error trying to find order" + error.message});
+        }else if(error instanceof InvalidInputError){
+            logger.error(error.message);
         response.status("400");
-        response.send({errorMessage: "Validation error trying to find order: " + err.message});
+        response.send({errorMessage: "Validation error trying to find order: " + error.message});
         }else{
-            logger.error(err.message);
+            logger.error(error.message);
         response.status("500");
-        response.send({ errorMessage:"Unexpected error trying to find order: " + err.message}); 
+        response.send({ errorMessage:"Unexpected error trying to find order: " + error.message}); 
     }
     }
 }

@@ -24,7 +24,7 @@ let ordersCollection;
  * @throws {DatabaseError} when there is an error connecting to the mongo db.
  */
 async function initialize(dbName,resetFlag,url,collectionNames){
-    collectionNames.forEach(collection => {
+    for(let i = 0; i < collectionNames.length;i++){
         try{
             logger.info("Attempting to connect to "+dbName);
             //store connected client for use while the app is running
@@ -34,32 +34,32 @@ async function initialize(dbName,resetFlag,url,collectionNames){
             db = client.db(dbName);
 
             //Check to see if the users collection exists
-            collectionCursor = await db.listCollections([{name:collection}]);
+            collectionCursor = await db.listCollections({name:collectionNames[i]});
             collectionArray = await collectionCursor.toArray();
 
             //if it exists and flag is set to true then drop the collection
             if(resetFlag && collectionArray.length>0)
-                await db.collection(collection).drop();
+                await db.collection(collectionNames[i]).drop();
 
             if(collectionArray.length==0 || resetFlag){
                 //collation specifying case-insensitive collection
                 const collation ={locale:"en",strength:1};
                 //no match was found so create new collection
-                await db.createCollection(collection,{collation:collation});
+                await db.createCollection(collectionNames[i],{collation:collation});
             }
             //convenient access to collection
-            if(collection === "users")
-                usersCollection = db.collection(collection);
-            else if(collection ==="products")
-                productsCollection = db.collection(collection);
-            else if (collection ==="orders")
-                ordersCollection = db.collection(collection);
-            
+            if(collectionNames[i] === "users")
+                usersCollection = db.collection(collectionNames[i]);
+            else if(collectionNames[i] ==="products")
+                productsCollection = db.collection(collectionNames[i]);
+            else if (collectionNames[i] ==="orders")
+                ordersCollection = db.collection(collectionNames[i]);
+
         }catch(err){
             logger.error(err.message);
             throw new DatabaseError("Error accessing MongoDB: "+err.message);
         }
-    });
+    }
 }
 
 

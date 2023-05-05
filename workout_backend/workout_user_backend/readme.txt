@@ -1,4 +1,4 @@
-npm i mongodb dotenv jest validator mongodb-memory-server unique-username-generator express express-list-endpoints supertest pino pino-http
+npm i mongodb dotenv jest validator mongodb-memory-server unique-username-generator express express-list-endpoints supertest pino pino-http cors
 
 
 MONGODB_PWD = "cWQvCh6D15Gl94wh"
