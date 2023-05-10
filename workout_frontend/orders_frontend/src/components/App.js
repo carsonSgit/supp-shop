@@ -22,11 +22,11 @@ function App() {
             <Route path="about/:employee" element={<About />}/>
             <Route path="contact" element={<Contact />}/>
             <Route path='orders' element={<Orders/>}/>
-             <Route path='addorder' element={<AddOrderPage/>}/> 
-             <Route path='getorder'element={<GetOrderPage/>}/> 
-             <Route path='allorders' element={<GetAllOrders/>}/> 
-             <Route path='update' element={<UpdateOrderPage/>}/> 
-             <Route path='delete' element={<DeleteOrderPage/>}/> 
+            <Route path='addorder' element={<AddOrderPage/>}/> 
+            <Route path='getorder'element={<GetOrderPage/>}/> 
+            <Route path='allorders' element={<GetAllOrders/>}/> 
+            <Route path='update' element={<UpdateOrderPage/>}/> 
+            <Route path='delete' element={<DeleteOrderPage/>}/> 
           </Route>
           <Route path="*" element={<p>Invalid URL</p>} />
       </Routes>
