@@ -24,7 +24,7 @@ function UpdateOrderForm(props)
 
         };
 
-        const response = await fetch("http://localhost:1333/orders/" + oldOrderID, requestOptions);
+        const response = await fetch("http://localhost:1339/orders/" + oldOrderID, requestOptions);
         const result = await response.json();
         props.setUpdated(result);
         

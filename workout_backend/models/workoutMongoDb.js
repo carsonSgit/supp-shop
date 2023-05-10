@@ -263,7 +263,7 @@ async function updateSingleUser(username,newUsername,email,password){
  {
      try 
      {
-         pass = await validateUtils.isValid2(orderId,price);
+         pass = await validateUtils.isValidOrder(orderId,price);
          // prevents adding duplicate order IDs
          const duplicateOrderId = await ordersCollection.findOne( {orderId: orderId});
          if( pass == true && !duplicateOrderId)
@@ -399,7 +399,7 @@ async function updateSingleUser(username,newUsername,email,password){
      
      try 
      {
-         pass = await validateUtils.isValid2(newOrderId,newPrice);
+         pass = await validateUtils.isValidOrder(newOrderId,newPrice);
          
          if(ordersCollection.find({orderId: orderId}) == false)
          {
@@ -487,7 +487,7 @@ async function updateSingleUser(username,newUsername,email,password){
 
  async function addProduct(flavour, type, price){
     let newProduct;   
-    if(await validateUtils.isValid2(flavour,type,price)){
+    if(await validateUtils.isValidProduct(flavour,type,price)){
         newProduct = { flavour: flavour, type: type, price: price};
     }
     else{
@@ -541,7 +541,7 @@ async function getAllProducts(){
 async function updateOneProduct(update, updateValue){
     try{
         let product;
-        if(validateUtils.isValid2(update.flavour,update.type,updateValue.price)){
+        if(validateUtils.isValidProduct(update.flavour,update.type,updateValue.price)){
             product = await productsCollection.replaceOne({flavour: update.flavour},
                 {flavour: update.flavour, type: update.type, price: updateValue.price});
         }

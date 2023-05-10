@@ -18,7 +18,7 @@ function AddOrderForm(props){
             },
         };
 
-        const response = await fetch("http://localhost:1333/orders", requestOptions);
+        const response = await fetch("http://localhost:1339/orders", requestOptions);
 
         const result = await response.json();
         if(response.status === 400){
