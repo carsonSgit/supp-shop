@@ -1,6 +1,11 @@
+
+/*
+https://i.ytimg.com/vi/68EM8gHYCYs/maxresdefault.jpg"
+*/
 .App {
   text-align: center;
-  background-image: url("https://i.ytimg.com/vi/68EM8gHYCYs/maxresdefault.jpg");
+  background-color: #282c34;
+  background-image: url();
   color:aquamarine;
 }
 
