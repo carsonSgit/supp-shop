@@ -9,5 +9,6 @@ function Card({ children, image}){
         </div>
     )
 }
+//comment
 
 export default Card;
