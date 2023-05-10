@@ -1,5 +1,5 @@
-import ErrorBoundary from "components/ErrorBoundary";
-import { SingleOrder } from "components/SingleOrder";
+import ErrorBoundary from "../components/ErrorBoundary";
+import { SingleOrder } from "../components/SingleOrder";
 
 
 function GetOne() {

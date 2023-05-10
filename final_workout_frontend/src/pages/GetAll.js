@@ -1,4 +1,4 @@
-import { AllOrders } from "components/AllOrders";
+import { AllOrders } from "../components/AllOrders";
 
 
 function GetAll() {

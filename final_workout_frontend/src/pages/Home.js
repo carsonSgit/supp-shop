@@ -1,6 +1,5 @@
 import { useLocation, useSearchParams } from "react-router-dom";
-import Alert from "react-bootstrap/Alert";
-import { NameForm } from "components/NameForm";
+import Alert  from "react-bootstrap/Alert";
 import { useCookies } from "react-cookie";
 function Home(){
 
@@ -12,7 +11,6 @@ function Home(){
             <h1>welcome to Home</h1>
             {state && state.errorMessage && <Alert variant="danger">{state.errorMessage}</Alert>}
             <h2>Hello {searchParams.get("name")}</h2>
-            <NameForm/>
         </div>
     );
 }

@@ -1,4 +1,4 @@
-import { DeleteOrder } from "components/DeleteOrder";
+import { DeleteOrder } from "../components/DeleteOrder";
 
 
 function OrderDelete(){

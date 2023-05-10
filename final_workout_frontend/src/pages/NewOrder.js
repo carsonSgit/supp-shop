@@ -1,4 +1,4 @@
-import { AddOrder } from "components/AddOrder";
+import { AddOrder } from "../components/AddOrder";
 
 
 function AddNewOrder(){

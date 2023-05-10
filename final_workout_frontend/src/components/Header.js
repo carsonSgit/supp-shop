@@ -13,6 +13,7 @@ function Header(){
                 <NavButton to="/userdelete" label="Delete User"/>
                 <NavButton label="Shop" />
                 <NavButton label="View Cart"/>
+                <NavButton to="/orders" label="Orders" />
 
 
             </div>

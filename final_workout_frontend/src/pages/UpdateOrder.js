@@ -1,5 +1,5 @@
-import ErrorBoundary from "components/ErrorBoundary";
-import { UpdateOrder } from "components/UpdateOrder";
+import ErrorBoundary from "../components/ErrorBoundary";
+import { UpdateOrder } from "../components/UpdateOrder";
 
 function UpdateOrderPage(){
 
