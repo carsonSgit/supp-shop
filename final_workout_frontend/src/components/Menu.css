@@ -1,0 +1,9 @@
+.div{
+    align-items: center;
+}
+
+.button{
+    align-self: auto;
+    align-items: center;
+    margin-top: 20px;
+}

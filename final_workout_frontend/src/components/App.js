@@ -5,14 +5,14 @@ import About from '../pages/About';
 import Contact from '../pages/Contact';
 import MainLayout from '../layouts/MainLayout';
 import UserList from "../pages/UserList"
-import UserDelete from 'pages/UserDelete';
-import UserCreate from 'pages/UserCreate';
-import AddNewOrder from 'pages/NewOrder';
-import GetAll from 'pages/GetAll';
-import GetOne from 'pages/GetOrder';
-import OrderDelete from 'pages/DeleteOrder';
-import UpdateOrderPage from 'pages/UpdateOrder';
-import Orders from 'pages/Orders';
+import UserDelete from '../pages/UserDelete';
+import UserCreate from '../pages/UserCreate';
+import AddNewOrder from '../pages/NewOrder';
+import GetAll from '../pages/GetAll';
+import GetOne from '../pages/GetOrder';
+import OrderDelete from '../pages/DeleteOrder';
+import UpdateOrderPage from '../pages/UpdateOrder';
+import Orders from '../pages/Orders';
 
 function App() {
   return (

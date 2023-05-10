@@ -1,4 +1,4 @@
-import SystemError from 'pages/SystemError';
+import SystemError from '../pages/SystemError';
 import React, { Component,useState,useEffect } from 'react';
 
 class ErrorBoundary extends Component {
