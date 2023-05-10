@@ -10,6 +10,9 @@ import UpdateOrderPage from 'pages/UpdateOrder';
 import Orders from 'pages/Orders';
 import { Route, Routes } from 'react-router-dom';
 import MainLayout from '../layouts/MainLayout';
+import UserCreate from './UserCreate';
+import UserList from './UserList';
+import UserDelete from './UserDelete';
 
 function App() {
   return (
@@ -25,6 +28,9 @@ function App() {
              <Route path='/getall' element={<GetAll/>}/> 
              <Route path='/update' element={<UpdateOrderPage/>}/> 
              <Route path='/delete' element={<OrderDelete/>}/>
+             <Route path="userlist" element = {<UserList />}/>
+            <Route path="userdelete" element ={<UserDelete />}/>
+            <Route path="usercreate" element ={<UserCreate />}/>
           </Route>
           <Route path="*" element={<p>Invalid URL</p>} />
       </Routes>
