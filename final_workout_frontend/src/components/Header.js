@@ -11,7 +11,7 @@ function Header(){
                 <NavButton to="/userlist" label="List Users"/>
                 <NavButton to="/usercreate" label="Create User"/>
                 <NavButton to="/userdelete" label="Delete User"/>
-                <NavButton label="Shop" />
+                <NavButton to="/products" label="Shop" />
                 <NavButton label="View Cart"/>
                 <NavButton to="/orders" label="Orders" />
 

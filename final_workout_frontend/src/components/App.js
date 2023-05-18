@@ -13,6 +13,9 @@ import GetOne from '../pages/GetOrder';
 import OrderDelete from '../pages/DeleteOrder';
 import UpdateOrderPage from '../pages/UpdateOrder';
 import Orders from '../pages/Orders';
+import Products from '../pages/Products';
+import GetProduct from '../pages/GetProduct';
+import NewProduct from '../pages/NewProduct';
 
 function App() {
   return (
@@ -20,17 +23,20 @@ function App() {
       <Routes>
         <Route path ="/" element ={<MainLayout/>}>
           <Route index element = {<Home />}/>
-          <Route path="about" element = {<About />}/>
-          <Route path="contact" element = {<Contact />}/>
-          <Route path="userlist" element = {<UserList />}/>
-          <Route path="userdelete" element ={<UserDelete />}/>
-          <Route path="usercreate" element ={<UserCreate />}/>
+          <Route path="/about" element = {<About />}/>
+          <Route path="/contact" element = {<Contact />}/>
+          <Route path="/userlist" element = {<UserList />}/>
+          <Route path="/userdelete" element ={<UserDelete />}/>
+          <Route path="/usercreate" element ={<UserCreate />}/>
           <Route path='/orders' element={<Orders/>}/>
           <Route path='/add' element={<AddNewOrder/>}/> 
-          <Route path='/getone'element={<GetOne/>}/> 
+          <Route path='/getone' element={<GetOne/>}/> 
           <Route path='/getall' element={<GetAll/>}/> 
           <Route path='/update' element={<UpdateOrderPage/>}/> 
           <Route path='/delete' element={<OrderDelete/>}/>
+          <Route path="/products" element={<Products/>}/>
+          <Route path="/getProduct" element={<GetProduct/>}/>
+          <Route path="/productsAdd" element={<NewProduct/>}/>
         </Route>
         <Route path ="*" element = {<Navigate to="/" />}/>
         </Routes>

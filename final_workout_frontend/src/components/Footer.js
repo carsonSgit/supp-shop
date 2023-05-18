@@ -1,6 +1,6 @@
 function Footer(){
     return(
-        <h1>NAC Supplements Copyright 2023</h1>
+        <h1 id="footer">© NAC Inc. 2023</h1>
     );
 }
 

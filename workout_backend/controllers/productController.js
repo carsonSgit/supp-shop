@@ -157,7 +157,7 @@ async function updateProduct(request, response){
 
     const oldProduct = {flavour: flavour, type: type, price: price};
     try{
-        let updated = model.updateOneProduct(oldProduct, {price: updatePrice});
+        let updated = await model.updateOneProduct(oldProduct, {price: updatePrice});
         if(updated){
             logger.info("Successfully updated a product");
             response.status(200);
@@ -194,7 +194,7 @@ router.delete('/', deleteProduct);
 async function deleteProduct(request, response){
     const flavour = request.body.flavour;
     try{
-        let updated = model.deleteOneProduct(flavour);
+        let updated = await model.deleteOneProduct(flavour);
         if(updated){
             logger.info("Successfully deleted a product");
             response.status(200);

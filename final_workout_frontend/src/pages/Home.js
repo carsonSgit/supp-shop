@@ -8,7 +8,7 @@ function Home(){
     const [cookies,setCookie] = useCookies(["lang"]);
     return(
         <div lang={cookies.lang}>
-            <h1>welcome to Home</h1>
+            <h1>Welcome to NAC Supplements</h1>
             {state && state.errorMessage && <Alert variant="danger">{state.errorMessage}</Alert>}
             <h2>Hello {searchParams.get("name")}</h2>
         </div>

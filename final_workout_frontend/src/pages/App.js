@@ -21,7 +21,7 @@ function App() {
             <Route path="/contact" element={<Contact />}/>
             <Route path='/orders' element={<Orders/>}/>
              <Route path='/add' element={<AddNewOrder/>}/> 
-             <Route path='/getone'element={<GetOne/>}/> 
+             <Route path='/getone' element={<GetOne/>}/> 
              <Route path='/getall' element={<GetAll/>}/> 
              <Route path='/update' element={<UpdateOrderPage/>}/> 
              <Route path='/delete' element={<OrderDelete/>}/>

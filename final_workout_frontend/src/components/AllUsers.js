@@ -17,8 +17,8 @@ function AllUsers(){
     
     return(
         <>
-            <button onClick={callGetAllUsers}>Get All Users</button>
             <ListUsers users={users}/>
+            <button onClick={callGetAllUsers}>Get All Users</button>
         </>
     );
 }
