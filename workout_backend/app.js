@@ -1,18 +1,20 @@
 const express = require('express');
 const app = express();
+const cookies = require("cookie-parser");
 const logger = require('./logger');
 const pinohttp = require('pino-http');
 const httpLogger = pinohttp({
     logger: logger
 });
 app.use(httpLogger);
+app.use(cookies());
 const listEndpoints = require('express-list-endpoints');
 const bodyParser = require('body-parser');
 const cors = require("cors");
 
 
 //make sure errorController is last or else it will catch all requests
-const controllers = ['homeController','userController','productController','ordersController','errorController']
+const controllers = ['homeController','userController','productController','ordersController','sessionController','errorController']
 
 app.use(cors());
 app.use(express.json());

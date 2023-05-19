@@ -1,7 +1,7 @@
-const model = require('../../models/workoutMongoDb.js');
-const valUtils = require('../../models/validateUtils');
-const { InvalidInputError } = require('../../models/InvalidInputError');
-const { DatabaseError } = require('../../models/DatabaseError');
+const model = require('../models/workoutMongoDb.js');
+const valUtils = require('../models/validateUtils');
+const { InvalidInputError } = require('../models/InvalidInputError');
+const { DatabaseError } = require('../models/DatabaseError');
 const { MongoMemoryServer } = require('mongodb-memory-server');
 const GenerateUsername = require("unique-username-generator");
 const app = require("../app");

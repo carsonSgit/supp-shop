@@ -1,11 +1,11 @@
 require ('dotenv').config();
 const model = require('../models/productModelMongoDb')
-const utils = require('../models/validateUtils.js');
-const { InvalidInputError } = require("../models/InvalidInputError");
+const utils = require('../product_backend/models/validateUtils.js');
+const { InvalidInputError } = require("../product_backend/models/InvalidInputError");
 const db = "unitTestDB";
 jest.setTimeout(5000);
 const { MongoMemoryServer } = require('mongodb-memory-server');
-const { DatabaseError } = require('../models/DatabaseError');
+const { DatabaseError } = require('../product_backend/models/DatabaseError');
 let mongod;
 
 

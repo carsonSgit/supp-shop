@@ -1,9 +1,9 @@
 require ('dotenv').config();
 const model = require('../models/productModelMongoDb.js')
-const utils = require('../models/validateUtils.js')
+const utils = require('../product_backend/models/validateUtils.js')
 const db = "unitTestDB";
 jest.setTimeout(5000);
-const app = require("../app");
+const app = require("../product_backend/app");
 const supertest = require('supertest');
 const { MongoMemoryServer } = require('mongodb-memory-server');
 const testRequest = supertest(app);
