@@ -1,13 +1,14 @@
 import { useState } from "react";
 
-
-function GetSingleOrderForm(props)
-{
-    const [OrderID, setId]= useState(null);
-    
-
-
-
+/**
+ * Component representing the form to get a single order.
+ *
+ * @param {Object} props - Component props.
+ * @param {Function} props.setAdded - Function to set the added order.
+ * @returns {JSX.Element} - Get single order form component.
+ */
+function GetSingleOrderForm(props) {
+    const [orderID, setOrderID] = useState(null);
 
     const handleSubmit = async (event) => {
         event.preventDefault();
@@ -17,28 +18,28 @@ function GetSingleOrderForm(props)
             headers: {
                 "Content-type": "application/json; charset=UTF-8",
             },
-            credentials: "include"
+            credentials: "include",
         };
 
-        const response = await fetch("http://localhost:1339/orders/"+ OrderID, requestOptions);
+        const response = await fetch(
+            "http://localhost:1339/orders/" + orderID,
+            requestOptions
+        );
         const result = await response.json();
         props.setAdded(result);
-        
-    }
-
+    };
 
     return (
         <form onSubmit={handleSubmit}>
-            <label htmlFor="oldOrderID"> Order Id</label>
-            <input type="text" placeholder=" Order Id" onChange={(e) => setId(e.target.value)}/>  
-            {OrderID  && <button type="submit">Get Order</button>}        
+            <label htmlFor="orderID">Order ID</label>
+            <input
+                type="text"
+                placeholder="Order ID"
+                onChange={(e) => setOrderID(e.target.value)}
+            />
+            {orderID && <button type="submit">Get Order</button>}
         </form>
     );
-
-
-
 }
-
-
 
 export { GetSingleOrderForm };

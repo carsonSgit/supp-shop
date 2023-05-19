@@ -1,5 +1,10 @@
 import { useCookies } from "react-cookie";
 
+/**
+ * Component representing the Contact Us page.
+ *
+ * @returns {JSX.Element} - Contact Us component.
+ */
 function Contact(){
     const [cookies,setCookie] = useCookies(["lang"]);
     return(
