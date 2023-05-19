@@ -20,7 +20,7 @@ function GetSingleOrderForm(props)
             credentials: "include"
         };
 
-        const response = await fetch("http://localhost:1339/orders/" + OrderID, requestOptions);
+        const response = await fetch("http://localhost:1339/orders/"+ OrderID, requestOptions);
         const result = await response.json();
         props.setAdded(result);
         

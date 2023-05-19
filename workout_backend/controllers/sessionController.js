@@ -12,19 +12,19 @@ function loginUser(request,response){
     const password = request.body.password;
 
     if(username&&password){
-        if(checkCredentials(username,password)){
+        if(checkCredentials(username,password) ){
             //Create a session object that will expire in 2 minutes
             const sessionId= createSession(username,2);
 
             //Save cookie that will expire.
             response.cookie("sessionId",sessionId,{expires:getSession(sessionId).expiresAt,httpOnly: true});
-        }else{
+        }else {
             console.log("Unsuccessful login: Invalid username,password given for user: " +username);
         }
-    }else{
+    }else {
         console.log("Unsuccessful login: Empty username or password given");
     }
-    response.redirect("/"); //Redirect to main page whether session was set or not
+    response.sendStatus(200) //Redirect to main page whether session was set or not
 }
 
 router.get('/logout',logoutUser);

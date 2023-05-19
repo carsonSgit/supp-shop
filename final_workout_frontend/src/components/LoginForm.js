@@ -29,10 +29,16 @@ function LoginForm(props){
         };
     const response = await fetch("http://localhost:1339/session/login",requestOptions);
     const result = await response.json();
-    if(response.status === 400 || response.status ===500)
+    if(response.status === 401 || response.status ===500)
         navigate("/",{state:{errorMessage: result.errorMessage}});
-    else
-        props.setAdded(result);
+    else 
+        {props.setAdded(result);
+            if(response.status === 200){
+                navigate("/");
+            }
+        }
+    navigate("/");
+        
 };
 
     return(

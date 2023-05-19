@@ -22,7 +22,7 @@ function DeleteOrderForm(props)
 
         const response = await fetch("http://localhost:1339/orders/" + OrderID, requestOptions);
         const result = await response.json();
-        props.setUpdated(result);
+        props.setAdded(result);
         
     }
 
