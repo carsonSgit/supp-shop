@@ -14,7 +14,7 @@ function OrderMenu(){
     };
 
     const handleFindAll = () => {
-        navigate("/all");
+        navigate("/getall");
     };
 
     const handleUpdate = () => {

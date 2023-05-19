@@ -15,8 +15,8 @@ function UpdateOrderForm(props)
         const requestOptions = {
             method: "PUT",
             body: JSON.stringify({
-                oldOrderId: oldOrderID,
-                newPrice: newPrice,
+                orderId: oldOrderID,
+                price: newPrice,
             }),
             headers: {
                 "Content-type": "application/json; charset=UTF-8",

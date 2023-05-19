@@ -1,7 +1,7 @@
 const express = require('express');
 const logger = require('../logger');
-const { DatabaseError } = require('../orders_backend/models/DatabaseError');
-const { InvalidInputError } = require('../orders_backend/models/InvalidInputError');
+const { DatabaseError } = require('../models/DatabaseError');
+const { InvalidInputError } = require('../models/InvalidInputError');
 const router = express.Router();
 const routeRoot = '/';
 const model = require('../models/workoutMongoDb.js');
