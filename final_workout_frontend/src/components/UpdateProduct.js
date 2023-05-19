@@ -1,6 +1,6 @@
 import { useState } from "react";
 import { UpdateProductForm } from "./UpdateProductForm";
-import { DisplayProduct } from "./DisplayProduct";
+import { DisplaySuccess } from "./DisplaySuccess";
 
 /**
  * Simple component that renders displays.
@@ -12,7 +12,7 @@ function UpdateProduct() {
     return (
         <>
             <UpdateProductForm setUpdated={setUpdated} />
-            <DisplayProduct product={updated} heading="The changed product" />
+            <DisplaySuccess product={updated} heading="Update" />
         </>
     );
 }

@@ -1,6 +1,6 @@
 import { useState } from "react";
 import { DeleteProductForm } from "./DeleteProductForm";
-import { DisplayProduct } from "./DisplayProduct";
+import { DisplaySuccess } from "./DisplaySuccess";
 
 
 function DeleteProduct(){
@@ -9,7 +9,7 @@ function DeleteProduct(){
     return(
     <>
         <DeleteProductForm setDeleted={setDeleted}/>
-        <DisplayProduct product={deleted} heading="The deleted product is: "/>
+        <DisplaySuccess product={deleted} heading="Delete"/>
     </>
     )
 }

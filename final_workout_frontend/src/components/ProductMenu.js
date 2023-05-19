@@ -1,17 +1,20 @@
 import { useNavigate } from "react-router-dom";
 import './Menu.css';
+import { useCookies } from "react-cookie";
 
 function ProductMenu(){
 
+    
+    const [cookies,setCookie] = useCookies(["lang"]);
     const navigate = useNavigate();
 
     const handleAdd= () => {
         navigate("/productsAdd");
     };
 
-    const handleFindOne = () => {
+    /*const handleFindOne = () => {
         navigate("/getProduct");
-    };
+    };*/
 
     const handleFindAll = () => {
         navigate("/getProducts");
@@ -25,17 +28,56 @@ function ProductMenu(){
         navigate("/productsDelete");
     };
 
+    /*
+        <br/>
+        <button id="menuButton" onClick={handleFindOne} >Get Single Product</button>    
+    */
+
     return (
         <div>
-            <button id="menuButton" onClick={handleAdd} >Add Product</button>
+            <button id="menuButton" onClick={handleAdd}>
+            {cookies.lang === "EN" ? 
+                <> 
+                    Add Product
+                </>
+            : 
+                <>
+                    Ajouter Produit
+                </>}
+                </button>
             <br/>
-            <button id="menuButton" onClick={handleFindOne} >Get Single Product</button>
+            <button id="menuButton" onClick={handleFindAll}>
+            {cookies.lang === "EN" ? 
+                <> 
+                    Our Products
+                </>
+            : 
+                <>
+                    Nos Produits
+                </>}
+                </button>
             <br/>
-            <button id="menuButton" onClick={handleFindAll} >Show All Products</button>
-            <br/>
-            <button id="menuButton" onClick={handleUpdate} >Update Products</button>
+            <button id="menuButton" onClick={handleUpdate}>
+            {cookies.lang === "EN" ? 
+                <> 
+                    Update Product
+                </>
+            : 
+                <>
+                    Modifier Produit
+                </>}
+                </button>
             <br/>
-            <button id="menuButton" onClick={handleDelete}>Delete Products</button>
+            <button id="menuButton" onClick={handleDelete}>
+            {cookies.lang === "EN" ? 
+                <> 
+                    Delete Product
+                </>
+            : 
+                <>
+                    Supprimer Produit
+                </>}
+                </button>
         </div>
     );
         

@@ -1,7 +1,17 @@
+import { useCookies } from "react-cookie";
+
 function Contact(){
+    const [cookies,setCookie] = useCookies(["lang"]);
     return(
-        <div>
-            <h1>Contact Us</h1>
+        <div>    
+            {cookies.lang === "EN" ? 
+                <> 
+                    <h1>Contact Us</h1>
+                </>
+            : 
+                <>
+                    <h1>Contactez-nous</h1>
+                </>}
             <h2>+1(800) 267-2001</h2>
             <h2>nacsupplements@gmail.com</h2>
         </div>
