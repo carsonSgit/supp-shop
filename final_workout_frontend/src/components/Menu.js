@@ -27,15 +27,15 @@ function OrderMenu(){
 
     return (
             <div>
-                <button onClick={handleAdd} >Add Order</button>
+                <button id="menuButton" onClick={handleAdd} >Add Order</button>
                 <br/>
-                <button onClick={handleFindOne} >Get Single Order</button>
+                <button id="menuButton" onClick={handleFindOne} >Get Single Order</button>
                 <br/>
-                <button onClick={handleFindAll} >Show All Orders</button>
+                <button id="menuButton" onClick={handleFindAll} >Show All Orders</button>
                 <br/>
-                <button onClick={handleUpdate} >Update Order</button>
+                <button id="menuButton" onClick={handleUpdate} >Update Order</button>
                 <br/>
-                <button onClick={handleDelete}>Delete Order</button>
+                <button id="menuButton" onClick={handleDelete}>Delete Order</button>
             </div>
           );
         

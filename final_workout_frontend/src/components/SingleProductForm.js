@@ -22,19 +22,13 @@ function GetSingleProductForm(props)
         
     }
 
-
     return (
         <form onSubmit={handleSubmit}>
-            <label htmlFor="oldProductFlavour"> Product flavour</label>
+            <label htmlFor="getProductFlavour"> Product flavour</label>
             <input type="text" placeholder=" Product flavour" onChange={(e) => setFlavour(e.target.value)}/>  
             {flavour  && <button type="submit">Get Product</button>}        
         </form>
     );
-
-
-
 }
-
-
 
 export { GetSingleProductForm };

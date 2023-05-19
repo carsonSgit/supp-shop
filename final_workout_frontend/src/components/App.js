@@ -14,8 +14,11 @@ import OrderDelete from '../pages/DeleteOrder';
 import UpdateOrderPage from '../pages/UpdateOrder';
 import Orders from '../pages/Orders';
 import Products from '../pages/Products';
-import GetProduct from '../pages/GetProduct';
+import GetProduct from '../pages/GetSingleProduct';
 import NewProduct from '../pages/NewProduct';
+import GetAllProducts from '../pages/GetAllProducts';
+import UpdateProducts from '../pages/UpdateProducts';
+import DeleteProduct from '../pages/DeleteProduct';
 
 function App() {
   return (
@@ -37,6 +40,9 @@ function App() {
           <Route path="/products" element={<Products/>}/>
           <Route path="/getProduct" element={<GetProduct/>}/>
           <Route path="/productsAdd" element={<NewProduct/>}/>
+          <Route path="/getProducts" element={<GetAllProducts/>}/>
+          <Route path="/productsUpdate" element={<UpdateProducts/>}/>
+          <Route path="/productsDelete" element={<DeleteProduct/>}/>
         </Route>
         <Route path ="*" element = {<Navigate to="/" />}/>
         </Routes>

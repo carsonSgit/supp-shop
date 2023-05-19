@@ -26,18 +26,18 @@ function ProductMenu(){
     };
 
     return (
-            <div>
-                <button onClick={handleAdd} >Add Product</button>
-                <br/>
-                <button onClick={handleFindOne} >Get Single Product</button>
-                <br/>
-                <button onClick={handleFindAll} >Show All Products</button>
-                <br/>
-                <button onClick={handleUpdate} >Update Products</button>
-                <br/>
-                <button onClick={handleDelete}>Delete Products</button>
-            </div>
-          );
+        <div>
+            <button id="menuButton" onClick={handleAdd} >Add Product</button>
+            <br/>
+            <button id="menuButton" onClick={handleFindOne} >Get Single Product</button>
+            <br/>
+            <button id="menuButton" onClick={handleFindAll} >Show All Products</button>
+            <br/>
+            <button id="menuButton" onClick={handleUpdate} >Update Products</button>
+            <br/>
+            <button id="menuButton" onClick={handleDelete}>Delete Products</button>
+        </div>
+    );
         
 }
 

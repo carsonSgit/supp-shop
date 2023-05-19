@@ -7,7 +7,7 @@ function GetOne() {
 
 
     return( <div>
-        <h2>type in the order you want to look for</h2>
+        <h1>Type in the order you want to look for</h1>
        
            <ErrorBoundary>
             <SingleOrder/>

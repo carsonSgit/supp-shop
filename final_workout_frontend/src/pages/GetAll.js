@@ -6,7 +6,7 @@ function GetAll() {
 
 
     return( <div>
-        <p>this is the list of all orders placed</p>
+        <p>This is the list of all orders placed</p>
        
             <AllOrders/>
             
