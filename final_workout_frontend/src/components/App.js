@@ -20,6 +20,7 @@ import GetAllProducts from '../pages/GetAllProducts';
 import UpdateProducts from '../pages/UpdateProducts';
 import DeleteProduct from '../pages/DeleteProduct';
 import { Login } from './Login';
+import UserUpdate from '../pages/UserUpdate';
 
 function App() {
   return (
@@ -32,6 +33,7 @@ function App() {
           <Route path="/userlist" element = {<UserList />}/>
           <Route path="/userdelete" element ={<UserDelete />}/>
           <Route path="/usercreate" element ={<UserCreate />}/>
+          <Route path="/userupdate" element ={<UserUpdate />}/>
           <Route path='/orders' element={<Orders/>}/>
           <Route path='/add' element={<AddNewOrder/>}/> 
           <Route path='/getone' element={<GetOne/>}/> 
