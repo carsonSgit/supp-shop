@@ -19,6 +19,7 @@ import NewProduct from '../pages/NewProduct';
 import GetAllProducts from '../pages/GetAllProducts';
 import UpdateProducts from '../pages/UpdateProducts';
 import DeleteProduct from '../pages/DeleteProduct';
+import { Login } from './Login';
 
 function App() {
   return (
@@ -43,6 +44,7 @@ function App() {
           <Route path="/getProducts" element={<GetAllProducts/>}/>
           <Route path="/productsUpdate" element={<UpdateProducts/>}/>
           <Route path="/productsDelete" element={<DeleteProduct/>}/>
+          <Route path='/session/login' element={<Login/>}/> 
         </Route>
         <Route path ="*" element = {<Navigate to="/" />}/>
         </Routes>

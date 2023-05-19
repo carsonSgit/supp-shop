@@ -10,6 +10,7 @@ import UpdateOrderPage from 'pages/UpdateOrder';
 import Orders from 'pages/Orders';
 import { Route, Routes } from 'react-router-dom';
 import MainLayout from '../layouts/MainLayout';
+import Login from '../components/Login';
 
 function App() {
   return (
@@ -25,6 +26,7 @@ function App() {
              <Route path='/getall' element={<GetAll/>}/> 
              <Route path='/update' element={<UpdateOrderPage/>}/> 
              <Route path='/delete' element={<OrderDelete/>}/>
+             <Route path='/session/login' element={<Login/>}/>
           </Route>
           <Route path="*" element={<p>Invalid URL</p>} />
       </Routes>

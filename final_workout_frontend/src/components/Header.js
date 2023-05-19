@@ -14,6 +14,7 @@ function Header(){
                 <NavButton to="/products" label="Shop" />
                 <NavButton label="View Cart"/>
                 <NavButton to="/orders" label="Orders" />
+                <NavButton to="/session/login" label="Login" />
 
 
             </div>
