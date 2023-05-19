@@ -1,5 +1,5 @@
 jest.setTimeout(6000);
-const model = require('../models/ordersModelMongoDB');
+const model = require('../models/workoutMongoDb');
 const { MongoMemoryServer } = require('mongodb-memory-server');
 const app = require("../app");
 const supertest = require("supertest");
