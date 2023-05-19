@@ -5,6 +5,8 @@ const model = require("../models/workoutMongoDb");
 const { InvalidInputError } = require('../models/InvalidInputError');
 const { DatabaseError } = require('../models/DatabaseError');
 const logger = require('../logger');
+const bcrypt=require('bcrypt');
+const saltRounds=10;
 
 
 
@@ -281,7 +283,22 @@ async function updateUser(request,response){
 
 //#endregion
 
+/** Returns true if there is a stored user with the same username and password */
+async function checkCredentials(username,password){
+    let user;
+    try{
+        user = await model.getSingleUser(username);
+    }catch(err){
+        logger.error(err.message);
+        return false;
+    }
+
+    const isSame = await bcrypt.compare(password,user.password);
+    return isSame;
+}
+
 module.exports = {
     router,
-    routeRoot
+    routeRoot,
+    checkCredentials
 }
