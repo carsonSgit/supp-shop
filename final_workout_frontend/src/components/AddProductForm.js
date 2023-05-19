@@ -11,6 +11,7 @@ function AddProductForm(props) {
     const flavourRef = useRef(null);
     const typeRef = useRef(null);
     const priceRef = useRef(null);
+    const descriptionRef = useRef(null);
     const navigate = useNavigate();
 
     const handleSubmit = async (event) => {
@@ -22,6 +23,7 @@ function AddProductForm(props) {
                 flavour: flavourRef.current.value,
                 type: typeRef.current.value,
                 price: priceRef.current.value,
+                description: descriptionRef.current.value
             }),
             headers: {
                 "Content-Type": "application/json; charset=utf-8",
@@ -49,6 +51,9 @@ function AddProductForm(props) {
             
             <label htmlFor="price">Price:</label>
             <input type="text" placeholder="Price..." ref={priceRef} required />
+            
+            <label htmlFor="description">Description:</label>
+            <input type="text" placeholder="Description..." ref={descriptionRef} required />
             
             <button type="submit">Add Product</button>
         </form>

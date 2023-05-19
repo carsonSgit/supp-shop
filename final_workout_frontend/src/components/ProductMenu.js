@@ -9,9 +9,9 @@ function ProductMenu(){
         navigate("/productsAdd");
     };
 
-    const handleFindOne = () => {
+    /*const handleFindOne = () => {
         navigate("/getProduct");
-    };
+    };*/
 
     const handleFindAll = () => {
         navigate("/getProducts");
@@ -25,13 +25,16 @@ function ProductMenu(){
         navigate("/productsDelete");
     };
 
+    /*
+        <br/>
+        <button id="menuButton" onClick={handleFindOne} >Get Single Product</button>    
+    */
+
     return (
         <div>
             <button id="menuButton" onClick={handleAdd} >Add Product</button>
             <br/>
-            <button id="menuButton" onClick={handleFindOne} >Get Single Product</button>
-            <br/>
-            <button id="menuButton" onClick={handleFindAll} >Show All Products</button>
+            <button id="menuButton" onClick={handleFindAll} >Our Products</button>
             <br/>
             <button id="menuButton" onClick={handleUpdate} >Update Products</button>
             <br/>

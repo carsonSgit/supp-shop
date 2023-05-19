@@ -1,4 +1,5 @@
 import NavButton from "./NavButton";
+import LanguageButton from "./LanguageButton";
 
 function Header(){
 
@@ -14,9 +15,8 @@ function Header(){
                 <NavButton to="/products" label="Shop" />
                 <NavButton label="View Cart"/>
                 <NavButton to="/orders" label="Orders" />
-
-
             </div>
+            <LanguageButton />
         </div>
     );
 }

@@ -11,7 +11,10 @@ function ListProducts( {products} ) {
             <ul>
                 {products.map((products) => (
                     <li key={products._id}>
+                        <br/>
                         {products.flavour} of type {products.type} for ${products.price}.
+                        <br/>
+                        Description: {products.description}
                     </li>
                 ))}
             </ul>

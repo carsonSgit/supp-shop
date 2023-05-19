@@ -22,9 +22,10 @@ async function createProduct(request, response){
     const flavour = request.body.flavour;
     const type = request.body.type;
     const price = request.body.price;
+    const description = request.body.description;
     try{
         // async add product to MongoDB database
-        const added = await model.addProduct(flavour, type, price);
+        const added = await model.addProduct(flavour, type, price,description);
 
         if(added){
             logger.info("Successfully added a product");

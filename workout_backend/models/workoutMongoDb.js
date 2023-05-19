@@ -485,10 +485,10 @@ async function updateSingleUser(username,newUsername,email,password){
  //////////////////////////////////////////////////////////////// PRODUCTS CRUD //////////////////////////////////////////////////////////////////
 
 
- async function addProduct(flavour, type, price){
+ async function addProduct(flavour, type, price, description){
     let newProduct;   
     if(await validateUtils.isValidProduct(flavour,type,price)){
-        newProduct = { flavour: flavour, type: type, price: price};
+        newProduct = { flavour: flavour, type: type, price: price, description: description };
     }
     else{
         throw new InvalidInputError("Product values invalid");
@@ -542,8 +542,8 @@ async function updateOneProduct(update, updateValue){
     try{
         let product;
         if(validateUtils.isValidProduct(update.flavour,update.type,updateValue.price)){
-            product = await productsCollection.replaceOne({flavour: update.flavour},
-                {flavour: update.flavour, type: update.type, price: updateValue.price});
+            product = await productsCollection.updateOne({flavour: update.flavour},
+                {$set:{flavour: update.flavour, type: update.type, price: updateValue.price}});
         }
         if(product != undefined && product.modifiedCount > 0){
             return product;
@@ -571,7 +571,7 @@ async function updateOneProduct(update, updateValue){
         if(test.deletedCount==0){
             return false;
         }
-        return true;
+        return product;
     }
     catch(err){
         console.log("Could not delete product: " + err.message);

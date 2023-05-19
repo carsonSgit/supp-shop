@@ -37,7 +37,6 @@ function UpdateProductForm(props) {
             navigate("/",{state:{errorMessage: result.errorMessage}});
         else
         props.setUpdated(result);
-        props.setUpdated(result);
     };
 
     return (
