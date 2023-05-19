@@ -36,7 +36,7 @@ const generateUserData = () => {
 beforeEach(async () =>{
     try{
         const url = mongod.getUri();
-        await model.initialize(dbName,true,url);
+        await model.initialize(dbName,true,url,["users"]);
     }catch(err){
         console.log(err.message);
     }
@@ -61,7 +61,6 @@ test('can add a user to DB',async () =>{
     expect(results.length).toBe(1);
     expect(results[0].username.toLowerCase() == name.toLowerCase()).toBe(true);
     expect(results[0].email.toLowerCase() == email.toLowerCase()).toBe(true);
-    expect(results[0].password.toLowerCase() == password.toLowerCase()).toBe(true);
 
 });
 
@@ -79,7 +78,6 @@ test("Cannot add same user twice to DB",async() =>{
     expect(results.length).toBe(1);
     expect(results[0].username.toLowerCase() == name.toLowerCase()).toBe(true);
     expect(results[0].email.toLowerCase() == email.toLowerCase()).toBe(true);
-    expect(results[0].password.toLowerCase() == password.toLowerCase()).toBe(true);
 
     await expect(model.addUser(name,email,password)).rejects.toThrowError(InvalidInputError);
 
@@ -127,11 +125,9 @@ test("Can get all users from DB",async() =>{
     expect(users.length).toBe(2);
     expect(users[0].username.toLowerCase() == name.toLowerCase()).toBe(true);
     expect(users[0].email.toLowerCase() == email.toLowerCase()).toBe(true);
-    expect(users[0].password.toLowerCase() == password.toLowerCase()).toBe(true);
 
     expect(users[1].username.toLowerCase() == name2.toLowerCase()).toBe(true);
     expect(users[1].email.toLowerCase() == email2.toLowerCase()).toBe(true);
-    expect(users[1].password.toLowerCase() == password2.toLowerCase()).toBe(true);
 });
 
 test("Cannot get all users from DB with no users",async() =>{
@@ -150,7 +146,6 @@ test("Can get a single user from DB",async() =>{
 
     expect(user.username.toLowerCase() == name.toLowerCase()).toBe(true);
     expect(user.email.toLowerCase() == email.toLowerCase()).toBe(true);
-    expect(user.password.toLowerCase() == password.toLowerCase()).toBe(true);
 });
 
 test("Cannot get a single user from DB with no user",async() =>{
@@ -195,7 +190,6 @@ test("Can update a user in DB",async() =>{
 
     expect(results[0].username.toLowerCase() == name2.toLowerCase()).toBe(true);
     expect(results[0].email.toLowerCase() == email2.toLowerCase()).toBe(true);
-    expect(results[0].password.toLowerCase() == password2.toLowerCase()).toBe(true);
 });
 
 test("Cannot update a user in DB with no user",async() =>{

@@ -156,7 +156,7 @@ router.put('/orders/:orderId',updateOrder);
 /**
  * Controller function that updates the order specified in the url parameter
  * @param {URLSearchParams} request: expects an order id in the url parameters and an order id and price to serve as replacements in the body of the request, format: PUT https://localhost1333/orders/7
- * @param {import('express').Response} response: Sends a 400 response if the user input is incorrect, an error 500 if the database was not connected to and a level 200 if successfully found
+ * @param {*} response: Sends a 400 response if the user input is incorrect, an error 500 if the database was not connected to and a level 200 if successfully found
  * @returns A level 200 response and the new order id and the new price of that order id
  */
 async function updateOrder(request,response)
