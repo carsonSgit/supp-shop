@@ -3,6 +3,8 @@ const { InvalidInputError } = require("./InvalidInputError");
 const { DatabaseError } = require("./DatabaseError");
 const validateUtils=require("./validateUtils");
 const logger = require("../logger");
+const bcrypt=require('bcrypt');
+const saltRounds=10;
 
 let client;
 
@@ -111,7 +113,8 @@ async function addUser(username,email,password){
         throw new InvalidInputError(responseMessage);
     }
     //insert the new user into the collection
-    newUser = {username:username,email:email,password:password};
+    const hashedPassword= await bcrypt.hash(password,saltRounds);
+    newUser = {username:username,email:email,password:hashedPassword};
     try{
         //try to insert the user
         await usersCollection.insertOne(newUser);

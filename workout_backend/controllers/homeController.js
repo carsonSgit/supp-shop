@@ -1,6 +1,6 @@
 const express = require('express');
 const router = express.Router();
-const {authenticateUser} = require("./sessionController");
+const {authenticateUser,refreshSession} = require("./sessionController");
 const routeRoot='/';
 
 //Controller specified endpoints
@@ -19,6 +19,8 @@ function showHome(request,response){
     }
     console.log("User "+authenticatedSession.userSession.username+" is authorized for home page");
     response.status(200);
+
+    refreshSession(request,response);
     response.send("Welcome to the home page of the workout website!");
 }
 module.exports = {
