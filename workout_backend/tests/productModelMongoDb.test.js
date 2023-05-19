@@ -1,11 +1,11 @@
 require ('dotenv').config();
-const model = require('../models/productModelMongoDb')
-const utils = require('../product_backend/models/validateUtils.js');
-const { InvalidInputError } = require("../product_backend/models/InvalidInputError");
+const model = require('../models/workoutMongoDb')
+const utils = require('../models/validateUtils.js');
+const { InvalidInputError } = require("../models/InvalidInputError");
 const db = "unitTestDB";
 jest.setTimeout(5000);
 const { MongoMemoryServer } = require('mongodb-memory-server');
-const { DatabaseError } = require('../product_backend/models/DatabaseError');
+const { DatabaseError } = require('../models/DatabaseError');
 let mongod;
 
 
@@ -31,7 +31,7 @@ const productData = [
   beforeEach(async () => {
     try{
         const url = mongod.getUri();
-        await model.initialize(url,db,true);
+        await model.initialize(url,db,true,["products"]);
     }
     catch(err){
         console.log(err.message);

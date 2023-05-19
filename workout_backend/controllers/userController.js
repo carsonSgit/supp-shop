@@ -286,12 +286,16 @@ async function updateUser(request,response){
 /** Returns true if there is a stored user with the same username and password */
 async function checkCredentials(username,password){
     let user;
+    let error;
     try{
         user = await model.getSingleUser(username);
     }catch(err){
         logger.error(err.message);
-        return false;
+        error =err;
     }
+
+    if(error != null )
+        return false;
 
     const isSame = await bcrypt.compare(password,user.password);
     return isSame;
