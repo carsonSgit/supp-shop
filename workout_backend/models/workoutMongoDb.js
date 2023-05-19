@@ -410,7 +410,8 @@ async function updateSingleUser(username,newUsername,email,password){
          {
              if(pass)
              {
-                 return await ordersCollection.replaceOne({orderId: orderId }, {orderId: newOrderId, price: newPrice});
+                const result = await ordersCollection.findOneAndReplace({ orderId: orderId}, {orderId: newOrderId, price: newPrice}, {returnDocument: "after"});
+                 return result.value;
              }
              else
              {

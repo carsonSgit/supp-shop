@@ -6,7 +6,7 @@ function AllOrders(){
     const [orders,setOrders] = useState([]);
 
     const callgetAllOrders = async () => {
-        const response = await fetch("http://localhost:1339/orders/getall", { method: "GET"});
+        const response = await fetch("http://localhost:1339/orders", { method: "GET"});
         const result = await response.json();
         setOrders(result);
     };
