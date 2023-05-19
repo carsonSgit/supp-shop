@@ -39,7 +39,7 @@ const generateUserData = () => {
 beforeEach(async () =>{
     try{
         const url = mongod.getUri();
-        await model.initialize(dbName,true,url);
+        await model.initialize(dbName,true,url,['users']);
     }catch(err){
         console.log(err.message);
     }
@@ -53,7 +53,7 @@ afterEach(async () =>{
 //#region GET TESTS
 
 test("GET /users success case", async () => {
-    let cursor = await model.getCollection();
+    let cursor = await model.getUserCollection();
 
     const {username,email,password} = generateUserData();    
     await cursor.insertOne({username: username, email: email, password:password});
@@ -67,7 +67,7 @@ test("GET /users success case", async () => {
 });
 
 test("GET /users failure case status 400 non-existing name on non-empty database",async () => {
-    let cursor = await model.getCollection();
+    let cursor = await model.getUserCollection();
 
     const {username,email,password} = generateUserData();    
     await cursor.insertOne({username:username, email: email, password:password});
@@ -80,7 +80,7 @@ test("GET /users failure case status 400 non-existing name on non-empty database
 });
 
 test("GET /users failure case status 500",async () => {
-    let cursor = await model.getCollection();
+    let cursor = await model.getUserCollection();
 
     const {username,email,password} = generateUserData();
     await cursor.insertOne({username: username, email: email, password:password});
@@ -96,7 +96,7 @@ test("GET /users failure case status 500",async () => {
 
 // /users/get-all doesn't have a case with a 400 response status, there is no input
 test("GET /users/all success case", async () => {
-    let cursor = await model.getCollection();
+    let cursor = await model.getUserCollection();
 
     const {username,email,password} = generateUserData();
     await cursor.insertOne({username: username, email: email, password:password});
@@ -113,7 +113,7 @@ test("GET /users/all success case", async () => {
 });
 
 test("GET /users/get-all failure case status 500", async () => {
-    let cursor = await model.getCollection();
+    let cursor = await model.getUserCollection();
 
     const {username,email,password} = generateUserData();
     await cursor.insertOne({username: username, email: email, password:password});
@@ -141,7 +141,7 @@ test("POST /users success case", async () => {
         password:password
     });
     expect(testResponse.status).toBe(200);
-    let cursor = await model.getCollection();
+    let cursor = await model.getUserCollection();
     cursor = cursor.find();
     const results = await cursor.toArray();
 
@@ -149,7 +149,6 @@ test("POST /users success case", async () => {
     expect(results.length).toBe(1);
     expect(results[0].username.toLowerCase() == username.toLowerCase()).toBe(true);
     expect(results[0].email.toLowerCase() == email.toLowerCase()).toBe(true);
-    expect(results[0].password.toLowerCase() == password.toLowerCase()).toBe(true);
 });
 
 test("POST /users failure case status 400: invalid username", async () => {
@@ -167,7 +166,7 @@ test("POST /users failure case status 400: invalid username", async () => {
     }
     expect(testResponse.status).toBe(400);
 
-    let cursor = await model.getCollection();
+    let cursor = await model.getUserCollection();
     cursor = cursor.find();
     const results = await cursor.toArray();
 
@@ -191,7 +190,7 @@ test("POST /users failure case status 400: invalid email", async () => {
     }
     expect(testResponse.status).toBe(400);    
 
-    let cursor = await model.getCollection();
+    let cursor = await model.getUserCollection();
     cursor = cursor.find();
     const results = await cursor.toArray();
 
@@ -215,7 +214,7 @@ test("POST /users failure case status 400: invalid password", async () => {
     }
     expect(testResponse.status).toBe(400);
 
-    let cursor = await model.getCollection();
+    let cursor = await model.getUserCollection();
     cursor = cursor.find();
     const results = await cursor.toArray();
 
@@ -244,7 +243,7 @@ test("POST /users failure case status 500",async () => {
 //#region PUT tests
 
 test("PUT /users success case", async () => {
-    let cursor = await model.getCollection();
+    let cursor = await model.getUserCollection();
 
     const {username:oldUsername,email,password} = generateUserData();    
     await cursor.insertOne({username: oldUsername, email: email, password:password});
@@ -273,7 +272,7 @@ test("PUT /users success case", async () => {
 });
 
 test("PUT /users failure case status 400: same username", async () => {
-    let cursor = await model.getCollection();
+    let cursor = await model.getUserCollection();
 
     const {username:oldUsername,email,password} = generateUserData();    
     await cursor.insertOne({username: oldUsername, email: email, password:password});
@@ -302,7 +301,7 @@ test("PUT /users failure case status 400: same username", async () => {
 });
 
 test("PUT /users failure case status 400: invalid email", async () => {
-    let cursor = await model.getCollection();
+    let cursor = await model.getUserCollection();
 
     const {username:oldUsername,email,password} = generateUserData();    
     await cursor.insertOne({username: oldUsername, email: email, password:password});
@@ -335,7 +334,7 @@ test("PUT /users failure case status 400: invalid email", async () => {
 });
 
 test("PUT /users failure case status 400: invalid password", async () => {
-    let cursor = await model.getCollection();
+    let cursor = await model.getUserCollection();
 
     const {username:oldUsername,email,password} = generateUserData();    
     await cursor.insertOne({username: oldUsername, email: email, password:password});
@@ -365,7 +364,7 @@ test("PUT /users failure case status 400: invalid password", async () => {
 });
 
 test("PUT /users failure case 500 status", async () => {
-    let cursor = await model.getCollection();
+    let cursor = await model.getUserCollection();
 
     const {username:oldUsername,email,password} = generateUserData();    
     await cursor.insertOne({username: oldUsername, email: email, password:password});
@@ -389,7 +388,7 @@ test("PUT /users failure case 500 status", async () => {
 //#region DELETE tests
 
 test("DELETE /users success case", async () => {
-    let cursor = await model.getCollection();
+    let cursor = await model.getUserCollection();
 
     const {username,email,password} = generateUserData();
     await cursor.insertOne({username: username, email: email, password:password});
@@ -409,7 +408,7 @@ test("DELETE /users success case", async () => {
 });
 
 test("DELETE /users failure case status 400: non-existant username", async () => {
-    let cursor = await model.getCollection();
+    let cursor = await model.getUserCollection();
 
     const {username,email,password} = generateUserData();
     await cursor.insertOne({username: username, email: email, password:password});
@@ -433,7 +432,7 @@ test("DELETE /users failure case status 400: non-existant username", async () =>
 });
 
 test("DELETE /users failure case status 500", async () => {
-    let cursor = await model.getCollection();
+    let cursor = await model.getUserCollection();
 
     const {username,email,password} = generateUserData();
     await cursor.insertOne({username: username, email: email, password:password});

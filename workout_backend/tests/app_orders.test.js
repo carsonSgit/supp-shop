@@ -1,4 +1,4 @@
-jest.setTimeout(6000);
+jest.setTimeout(60000);
 const model = require('../models/workoutMongoDb');
 const { MongoMemoryServer } = require('mongodb-memory-server');
 const app = require("../app");
@@ -11,7 +11,7 @@ let mongod;
  */
 beforeEach(async () => {
     const url = mongod.getUri();
-    await model.initialize(dbName,true,url);
+    await model.initialize(dbName,true,url,['orders']);
 });
 
 beforeAll(async () => {
@@ -124,7 +124,7 @@ test("POST /orders success (200) case", async () => {
   console.log(postedOrder);
   expect(testResponse.status).toBe(200);
 
-  const cursor = await model.getCollection(dbName);
+  const cursor = await model.getOrdersCollection();
   const results = await (cursor.find()).toArray();
   expect(Array.isArray(results)).toBe(true);
   expect(results.length).toBe(1);

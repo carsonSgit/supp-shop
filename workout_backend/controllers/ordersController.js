@@ -36,20 +36,20 @@ async function createOrder(request,response)
     }
     catch(error)
     {
-            logger.error();("Failed to find an order: " + err.message );
-            if(err instanceof DatabaseError)
+            logger.error("Failed to find an order: " + error.message );
+            if(error instanceof DatabaseError)
             {
-                logger.error(err.message);
+                logger.error(error.message);
             response.status(500);
-            response.send({ errorMessage: "System error trying to add order" + err.message});
-            }else if(err instanceof InvalidInputError){
-                logger.error(err.message);
+            response.send({ errorMessage: "System error trying to add order" + error.message});
+            }else if(error instanceof InvalidInputError){
+                logger.error(error.message);
             response.status(400);
-            response.send({errorMessage: "Validation error trying to add order: " + err.message});
+            response.send({errorMessage: "Validation error trying to add order: " + error.message});
             }else{
-                logger.error(err.message);
+                logger.error(error.message);
             response.status(500);
-            response.send({ errorMessage:"Unexpected error trying to add order: " + err.message});
+            response.send({ errorMessage:"Unexpected error trying to add order: " + error.message});
         }
 
     }

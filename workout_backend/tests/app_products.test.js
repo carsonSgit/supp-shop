@@ -1,9 +1,9 @@
 require ('dotenv').config();
-const model = require('../models/productModelMongoDb.js')
-const utils = require('../product_backend/models/validateUtils.js')
+const model = require('../models/workoutMongoDb')
+const utils = require('../models/validateUtils.js')
 const db = "unitTestDB";
 jest.setTimeout(5000);
-const app = require("../product_backend/app");
+const app = require("../app");
 const supertest = require('supertest');
 const { MongoMemoryServer } = require('mongodb-memory-server');
 const testRequest = supertest(app);
@@ -31,7 +31,7 @@ const productData = [
 beforeEach(async () => {
     try{
         const url = mongod.getUri();
-        await model.initialize(url,db,true);
+        await model.initialize(url,db,true,['products']);
     }
     catch(err){
         console.log(err.message);
@@ -82,7 +82,7 @@ test("GET /products/all success case", async() =>{
     const testResponse = await testRequest.get("/products/all");
     expect(testResponse.status).toBe(200);
 
-    let cursor = await model.getCollection();
+    let cursor = await model.getProductsCollection();
     cursor = cursor.find();
     const results = await cursor.toArray();
 
@@ -102,7 +102,7 @@ test("POST /products success case", async() =>{
         price,
     });
     expect(testResponse.status).toBe(200);
-    let cursor = await model.getCollection();
+    let cursor = await model.getProductsCollection();
     cursor = cursor.find();
     const results = await cursor.toArray();
 
@@ -134,7 +134,7 @@ test("PUT /products success case", async() => {
         updatePrice
     });
     expect(testResponse.status).toBe(200);
-    let cursor = await model.getCollection();
+    let cursor = await model.getProductsCollection();
     cursor = cursor.find();
     const results = await cursor.toArray();
 
@@ -152,7 +152,7 @@ test("DELETE /products success case", async() => {
         flavour,
     });
     expect(testResponse.status).toBe(200);
-    let cursor = await model.getCollection();
+    let cursor = await model.getProductsCollection();
     cursor = cursor.find();
     const results = await cursor.toArray();
 

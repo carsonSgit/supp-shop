@@ -598,10 +598,29 @@ async function updateOneProduct(update, updateValue){
  * Returns the users collection
  * @returns the users collection if not null
  */
-async function getCollection(){
+async function getUserCollection(){
     if(usersCollection!=null)
         return usersCollection;
 }
+
+/**
+ * Returns the products collection
+ * @returns the products collection if not null
+ */
+async function getProductsCollection(){
+    if(productsCollection!=null)
+        return productsCollection;
+}
+
+/**
+ * Returns the orders collection
+ * @returns the orders collection if not null
+ */
+async function getOrdersCollection(){
+    if(ordersCollection!=null)
+        return ordersCollection;
+}
+
 
 //#region Helper functions  
 
@@ -646,6 +665,6 @@ async function close(){
 }
 //#endregion Helper functions
 
-module.exports = {initialize,addUser,getSingleUser,getAllUsers,close,getCollection,deleteSingleUser,updateSingleUser,addOrder, getOneOrder, GetAllOrders , replaceOrder, deleteOrder,addProduct, 
+module.exports = {initialize,addUser,getOrdersCollection,getProductsCollection,getSingleUser,getAllUsers,close,getUserCollection,deleteSingleUser,updateSingleUser,addOrder, getOneOrder, GetAllOrders , replaceOrder, deleteOrder,addProduct, 
     getSingleProduct, getAllProducts, 
     updateOneProduct, deleteOneProduct};

@@ -52,7 +52,7 @@ test('can add a user to DB',async () =>{
     const {name,email,password} = generateUserData();
     await model.addUser(name,email,password);
 
-    let cursor = await model.getCollection();
+    let cursor = await model.getUserCollection();
     cursor = cursor.find();
 
     const results = await cursor.toArray();
@@ -69,7 +69,7 @@ test("Cannot add same user twice to DB",async() =>{
     const {name,email,password} = generateUserData();
     await model.addUser(name,email,password);
 
-    let cursor = await model.getCollection();
+    let cursor = await model.getUserCollection();
     cursor = cursor.find();
 
     const results = await cursor.toArray();
@@ -111,7 +111,7 @@ test("Cannot add user with empty name",async() =>{
 
 //#region Getting Tests
 test("Can get all users from DB",async() =>{
-    let cursor = await model.getCollection();
+    let cursor = await model.getUserCollection();
 
     const {name,email,password} = generateUserData();    
     await cursor.insertOne({username: name, email: email, password:password});
@@ -137,7 +137,7 @@ test("Cannot get all users from DB with no users",async() =>{
 });
 
 test("Can get a single user from DB",async() =>{
-    let cursor = await model.getCollection();
+    let cursor = await model.getUserCollection();
 
     const {name,email,password} = generateUserData();
     cursor.insertOne({username: name, email: email, password: password});
@@ -156,7 +156,7 @@ test("Cannot get a single user from DB with no user",async() =>{
 
 //#region Delete tests
 test("Can delete a user from DB",async() =>{
-    let cursor = await model.getCollection();
+    let cursor = await model.getUserCollection();
 
     const {name,email,password} = generateUserData();
     await cursor.insertOne({username: name, email: email, password: password});
@@ -178,7 +178,7 @@ test("Cannot delete a user from DB with no user",async() =>{
 
 //#region Update tests
 test("Can update a user in DB",async() =>{
-    let cursor = await model.getCollection();
+    let cursor = await model.getUserCollection();
     const {name,email,password} = generateUserData();
     await cursor.insertOne({username: name, email:email, password:password});
 
