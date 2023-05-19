@@ -8,6 +8,8 @@ function About(){
             <h2>Our Temporary unpaid interns</h2>
             {employee === "Noah"} <p>=---------------------=</p> <p>Noah is a great coder who loves the gym</p>
             {employee === "Carson"} <p>=---------------------=</p> <p>Carson is the resident scribe</p>
+            {employee === "Alejandro"} <p>=---------------------=</p> <p></p>
+
         </div>
     );
 
