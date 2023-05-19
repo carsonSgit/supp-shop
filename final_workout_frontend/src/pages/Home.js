@@ -5,9 +5,9 @@ function Home(){
 
     const [searchParams, setSearchParams] = useSearchParams();
     const {state} = useLocation();
-    const [cookies,setCookie] = useCookies(["lang"]);
+   
     return(
-        <div lang={cookies.lang}>
+        <div>
             <h1>Welcome to NAC Supplements</h1>
             {state && state.errorMessage && <Alert variant="danger">{state.errorMessage}</Alert>}
             <h2>Hello {searchParams.get("name")}</h2>
