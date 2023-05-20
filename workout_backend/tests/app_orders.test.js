@@ -11,7 +11,11 @@ let mongod;
  */
 beforeEach(async () => {
     const url = mongod.getUri();
+<<<<<<< Updated upstream
     await model.initialize(dbName,true,url,['orders']);
+=======
+    await model.initialize(dbName,true,url,['products']);
+>>>>>>> Stashed changes
 });
 
 beforeAll(async () => {
