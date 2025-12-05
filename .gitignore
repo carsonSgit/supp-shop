@@ -33,6 +33,9 @@ apps/backend/dist/
 apps/frontend/build/
 apps/frontend/.next/
 
+# TypeScript build info
+*.tsbuildinfo
+
 # IDE
 .vscode/
 .idea/
