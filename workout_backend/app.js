@@ -1,20 +1,26 @@
-const express = require('express');
+const express = require("express");
 const app = express();
 const cookies = require("cookie-parser");
-const logger = require('./logger');
-const pinohttp = require('pino-http');
+const logger = require("./logger");
+const pinohttp = require("pino-http");
 const httpLogger = pinohttp({
-    logger: logger
+	logger: logger,
 });
 app.use(httpLogger);
 app.use(cookies());
-const listEndpoints = require('express-list-endpoints');
-const bodyParser = require('body-parser');
+const listEndpoints = require("express-list-endpoints");
+const bodyParser = require("body-parser");
 const cors = require("cors");
 
-
 //make sure errorController is last or else it will catch all requests
-const controllers = ['homeController','userController','productController','ordersController','sessionController','errorController']
+const controllers = [
+	"homeController",
+	"userController",
+	"productController",
+	"ordersController",
+	"sessionController",
+	"errorController",
+];
 
 app.use(cors());
 app.use(express.json());
@@ -23,22 +29,20 @@ app.use(bodyParser.urlencoded({ extended: false }));
 app.use(bodyParser.json());
 
 //Register routes from all controllers
-//(Assumes a flat directory structure and common 
+//(Assumes a flat directory structure and common
 // 'routeRoot' / 'router' export)
-controllers.forEach((controllerName)=>{
-    try{
-        //requires the current controllerName file and uses it's const variables routeRoot and router in app.use calls
-        const controllerRoutes = require('./controllers/'+controllerName);
-        app.use(controllerRoutes.routeRoot,controllerRoutes.router);
-
-    }catch(error){
-        //We could fail gracefully, but this would hide bugs later on.
-        logger.error(`Error loading controller: ${controllerName}`);
-        logger.error(error);
-        throw error;
-    
-    }
-})
+controllers.forEach((controllerName) => {
+	try {
+		//requires the current controllerName file and uses it's const variables routeRoot and router in app.use calls
+		const controllerRoutes = require("./controllers/" + controllerName);
+		app.use(controllerRoutes.routeRoot, controllerRoutes.router);
+	} catch (error) {
+		//We could fail gracefully, but this would hide bugs later on.
+		logger.error(`Error loading controller: ${controllerName}`);
+		logger.error(error);
+		throw error;
+	}
+});
 
 console.log(listEndpoints(app));
 module.exports = app;

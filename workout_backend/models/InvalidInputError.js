@@ -1,5 +1,4 @@
 //Error incase of bad input
-class InvalidInputError extends Error{
-}
+class InvalidInputError extends Error {}
 
-module.exports={InvalidInputError};
+module.exports = { InvalidInputError };
