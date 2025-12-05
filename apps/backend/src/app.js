@@ -12,6 +12,12 @@ const listEndpoints = require("express-list-endpoints");
 const bodyParser = require("body-parser");
 const cors = require("cors");
 
+// Debug middleware to log all requests
+app.use((req, res, next) => {
+	logger.info(`Incoming ${req.method} request to ${req.path}`);
+	next();
+});
+
 //make sure errorController is last or else it will catch all requests
 const controllers = [
 	"homeController",
@@ -22,7 +28,10 @@ const controllers = [
 	"errorController",
 ];
 
-app.use(cors());
+app.use(cors({
+	origin: true, // Allow all origins (or specify 'http://localhost:3000')
+	credentials: true,
+}));
 app.use(express.json());
 //Configuring body parser middleware
 app.use(bodyParser.urlencoded({ extended: false }));

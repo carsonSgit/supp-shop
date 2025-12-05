@@ -1,4 +1,6 @@
 import { useState } from "react";
+import { useNavigate } from "@tanstack/react-router";
+import { useDeleteOrder } from "../features/orders/hooks/useOrders";
 
 /**
  * Component representing the form for deleting an order.
@@ -10,6 +12,9 @@ import { useState } from "react";
 function DeleteOrderForm(props) {
 	const [OrderID, setId] = useState(null);
 
+	const navigate = useNavigate();
+	const deleteOrder = useDeleteOrder();
+
 	/**
 	 * Handler method that makes the delete request based on the form values.
 	 * @param {Object} event - The event object.
@@ -17,19 +22,16 @@ function DeleteOrderForm(props) {
 	const handleSubmit = async (event) => {
 		event.preventDefault();
 
-		const requestOptions = {
-			method: "DELETE",
-			headers: {
-				"Content-type": "application/json; charset=UTF-8",
-			},
-		};
-
-		const response = await fetch(
-			"http://localhost:1339/orders/" + OrderID,
-			requestOptions,
-		);
-		const result = await response.json();
-		props.setAdded(result);
+		try {
+			await deleteOrder.mutateAsync(OrderID);
+			props.setAdded({ orderID: OrderID });
+		} catch (error) {
+			const errorMessage = error.errorMessage || error.message || "Failed to delete order";
+			navigate({ 
+				to: "/", 
+				search: { errorMessage } 
+			});
+		}
 	};
 
 	return (

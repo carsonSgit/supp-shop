@@ -57,14 +57,38 @@ export async function apiClient<T>(
 			credentials: 'include', // Include cookies for session management
 		});
 
-		const data = await response.json();
-
+		// Check if response is ok before trying to parse JSON
 		if (!response.ok) {
+			let errorData;
+			try {
+				errorData = await response.json();
+			} catch {
+				// If response is not JSON, use status text
+				errorData = { errorMessage: response.statusText };
+			}
 			throw new ApiClientError(
-				data.errorMessage || `API Error: ${response.statusText}`,
+				errorData.errorMessage || `API Error: ${response.statusText}`,
 				response.status,
-				data.errorMessage
+				errorData.errorMessage
 			);
+		}
+
+		// Try to parse JSON, but handle cases where response might be empty
+		let data;
+		const contentType = response.headers.get('content-type');
+		if (contentType && contentType.includes('application/json')) {
+			try {
+				const text = await response.text();
+				data = text ? JSON.parse(text) : null;
+			} catch (parseError) {
+				throw new ApiClientError(
+					'Invalid JSON response from server',
+					response.status
+				);
+			}
+		} else {
+			// If not JSON, return empty object or text
+			data = {};
 		}
 
 		return data as T;
@@ -73,11 +97,22 @@ export async function apiClient<T>(
 			throw error;
 		}
 		
-		// Network or other errors
-		throw new ApiClientError(
-			error instanceof Error ? error.message : 'Network error occurred',
-			0
-		);
+		// Network or other errors (CORS, connection refused, etc.)
+		const errorMessage = error instanceof Error 
+			? error.message 
+			: 'Network error occurred';
+		
+		// Check for common network error messages
+		if (errorMessage.includes('Failed to fetch') || 
+			errorMessage.includes('NetworkError') ||
+			errorMessage.includes('Network request failed')) {
+			throw new ApiClientError(
+				'Unable to connect to server. Please check if the backend is running.',
+				0
+			);
+		}
+		
+		throw new ApiClientError(errorMessage, 0);
 	}
 }
 

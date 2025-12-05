@@ -13,7 +13,15 @@ function AllUsers() {
 	};
 
 	if (error) {
-		return <div>Error loading users: {error.message}</div>;
+		const errorMessage = error instanceof Error 
+			? error.message 
+			: 'Unknown error occurred';
+		return (
+			<div style={{ color: 'red', padding: '10px' }}>
+				<p>Error loading users: {errorMessage}</p>
+				<button onClick={() => refetch()}>Retry</button>
+			</div>
+		);
 	}
 
 	return (

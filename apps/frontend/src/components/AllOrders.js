@@ -17,7 +17,15 @@ function AllOrders() {
 	};
 
 	if (error) {
-		return <div>Error loading orders: {error.message}</div>;
+		const errorMessage = error instanceof Error 
+			? error.message 
+			: 'Unknown error occurred';
+		return (
+			<div style={{ color: 'red', padding: '10px' }}>
+				<p>Error loading orders: {errorMessage}</p>
+				<button onClick={() => refetch()}>Retry</button>
+			</div>
+		);
 	}
 
 	return (

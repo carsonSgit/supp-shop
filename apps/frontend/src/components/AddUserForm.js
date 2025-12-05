@@ -1,6 +1,6 @@
 import { useState } from "react";
 import { useNavigate } from "@tanstack/react-router";
-import { usersApi } from "../api/users";
+import { useCreateUser } from "../features/users/hooks/useUsers";
 
 /**
  * Component that lets the user enter in the name, email and password of a new user
@@ -14,13 +14,14 @@ function AddUserForm(props) {
 	const [password, setPassword] = useState(null);
 
 	const navigate = useNavigate();
+	const createUser = useCreateUser();
 
 	/** Handler method that makes the fetch request based on the form values */
 	const handleSubmit = async (event) => {
 		event.preventDefault();
 
 		try {
-			const result = await usersApi.create({ username, email, password });
+			const result = await createUser.mutateAsync({ username, email, password });
 			props.setAdded(result);
 		} catch (error) {
 			const errorMessage = error.errorMessage || error.message || "Failed to add user";

@@ -1,6 +1,14 @@
 //pino logger
 const pino = require("pino");
+const path = require("path");
+const fs = require("fs");
 const minimum_log_level = "debug";
+
+// Ensure logs directory exists
+const logsDir = path.join(__dirname, "..", "logs");
+if (!fs.existsSync(logsDir)) {
+	fs.mkdirSync(logsDir, { recursive: true });
+}
 
 const streams = [
 	{
@@ -9,7 +17,7 @@ const streams = [
 	},
 	{
 		level: "trace", //support logging of all levels to this location
-		stream: pino.destination("logs/server-log"), //log to this file
+		stream: pino.destination(path.join(logsDir, "server-log")), //log to this file
 	},
 ];
 const logger =

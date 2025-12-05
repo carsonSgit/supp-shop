@@ -1,4 +1,5 @@
-import { useState } from "react";
+import { useState, useEffect } from "react";
+import { useProduct } from "../features/products/hooks/useProducts";
 
 /**
  * Component representing the form to get a single product.
@@ -8,25 +9,21 @@ import { useState } from "react";
  * @returns {JSX.Element} - Get single product form component.
  */
 function GetSingleProductForm(props) {
-	const [flavour, setFlavour] = useState(null);
+	const [flavour, setFlavour] = useState("");
+	const [submittedFlavour, setSubmittedFlavour] = useState("");
+	const { data, isLoading, error } = useProduct(submittedFlavour);
+
+	useEffect(() => {
+		if (data) {
+			props.setAdded(data);
+		}
+	}, [data, props]);
 
 	const handleSubmit = async (event) => {
 		event.preventDefault();
-
-		const requestOptions = {
-			method: "GET",
-			headers: {
-				"Content-type": "application/json; charset=UTF-8",
-			},
-			credentials: "include",
-		};
-
-		const response = await fetch(
-			"http://localhost:1339/products/" + flavour,
-			requestOptions,
-		);
-		const result = await response.json();
-		props.setAdded(result);
+		if (flavour) {
+			setSubmittedFlavour(flavour);
+		}
 	};
 
 	return (
@@ -35,9 +32,15 @@ function GetSingleProductForm(props) {
 			<input
 				type="text"
 				placeholder="Product Flavour"
+				value={flavour}
 				onChange={(e) => setFlavour(e.target.value)}
 			/>
-			{flavour && <button type="submit">Get Product</button>}
+			{flavour && (
+				<button type="submit" disabled={isLoading}>
+					{isLoading ? "Loading..." : "Get Product"}
+				</button>
+			)}
+			{error && <div style={{ color: "red" }}>Error: {error.message}</div>}
 		</form>
 	);
 }

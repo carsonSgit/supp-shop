@@ -201,6 +201,18 @@ const queryClient = new QueryClient({
 		queries: {
 			staleTime: 1000 * 60 * 5, // 5 minutes
 			refetchOnWindowFocus: false,
+			retry: (failureCount, error) => {
+				// Don't retry on 4xx errors (client errors)
+				if (error && typeof error === 'object' && 'status' in error) {
+					const status = (error as { status: number }).status;
+					if (status >= 400 && status < 500) {
+						return false;
+					}
+				}
+				// Retry up to 2 times for network errors
+				return failureCount < 2;
+			},
+			retryDelay: (attemptIndex) => Math.min(1000 * 2 ** attemptIndex, 30000),
 		},
 	},
 });

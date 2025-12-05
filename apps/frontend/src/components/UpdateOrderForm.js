@@ -1,4 +1,6 @@
 import { useState } from "react";
+import { useNavigate } from "@tanstack/react-router";
+import { useUpdateOrder } from "../features/orders/hooks/useOrders";
 
 /**
  * Component representing the update order form.
@@ -11,26 +13,25 @@ function UpdateOrderForm(props) {
 	const [oldOrderID, setOldId] = useState(null);
 	const [newPrice, setNewPrice] = useState(null);
 
+	const navigate = useNavigate();
+	const updateOrder = useUpdateOrder();
+
 	const handleSubmit = async (event) => {
 		event.preventDefault();
 
-		const requestOptions = {
-			method: "PUT",
-			body: JSON.stringify({
-				orderId: oldOrderID,
-				price: newPrice,
-			}),
-			headers: {
-				"Content-type": "application/json; charset=UTF-8",
-			},
-		};
-
-		const response = await fetch(
-			"http://localhost:1339/orders/" + oldOrderID,
-			requestOptions,
-		);
-		const result = await response.json();
-		props.setUpdated(result);
+		try {
+			const result = await updateOrder.mutateAsync({
+				orderID: oldOrderID,
+				order: { price: newPrice },
+			});
+			props.setUpdated(result);
+		} catch (error) {
+			const errorMessage = error.errorMessage || error.message || "Failed to update order";
+			navigate({ 
+				to: "/", 
+				search: { errorMessage } 
+			});
+		}
 	};
 
 	return (

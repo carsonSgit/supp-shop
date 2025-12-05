@@ -1,17 +1,31 @@
 //#region Assignment 2
+const path = require("path");
+require("dotenv").config({ path: path.join(__dirname, "..", ".env") });
 const app = require("./app.js");
 const port = 1339;
-``;
-require("dotenv").config();
 
 //Variables used for initialize call
 const model = require("./models/workoutMongoDb");
 const url =
 	process.env.URL_PRE + process.env.MONGODB_PWD + process.env.URL_POST;
+
+// Validate that environment variables are loaded
+if (!process.env.URL_PRE || !process.env.MONGODB_PWD || !process.env.URL_POST) {
+	console.error("Error: Missing required environment variables. Please check your .env file.");
+	process.exit(1);
+}
+
 const collectionNames = ["users", "products", "orders"];
-model.initialize("workout_db", false, url, collectionNames).then(
-	app.listen(port), // run the server
-);
+model.initialize("workout_db", false, url, collectionNames)
+	.then(() => {
+		app.listen(port, () => {
+			console.log(`Server is running on http://localhost:${port}`);
+		});
+	})
+	.catch((error) => {
+		console.error("Failed to initialize database:", error);
+		process.exit(1);
+	});
 
 //#endregion
 

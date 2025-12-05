@@ -1,5 +1,6 @@
 import { useState } from "react";
 import { useNavigate } from "@tanstack/react-router";
+import { useUpdateUser } from "../features/users/hooks/useUsers";
 
 /**
  * Component that lets the user enter in the old and new username and email and password
@@ -15,31 +16,29 @@ function UpdateUserForm(props) {
 	const [password, setPassword] = useState(null);
 
 	const navigate = useNavigate();
+	const updateUser = useUpdateUser();
 
 	/** Handler method that makes the fetch request based on the form values. */
 	const handleSubmit = async (event) => {
 		event.preventDefault();
 
-		/** Options that indicate a post request passing in JSON body */
-		const requestOptions = {
-			method: "PUT",
-			body: JSON.stringify({
-				username: newUsername,
-				email: email,
-				password: password,
-			}),
-			headers: {
-				"Content-Type": "application/json; charset=UTF-8",
-			},
-		};
-		const response = await fetch(
-			`http://localhost:1339/users/${oldUsername}`,
-			requestOptions,
-		);
-		const result = await response.json();
-		if (response.status === 400 || response.status === 500)
-			navigate({ to: "/", search: { errorMessage: result.errorMessage } });
-		else props.setUpdated(result);
+		try {
+			const result = await updateUser.mutateAsync({
+				username: oldUsername,
+				user: {
+					username: newUsername,
+					email: email,
+					password: password,
+				},
+			});
+			props.setUpdated(result);
+		} catch (error) {
+			const errorMessage = error.errorMessage || error.message || "Failed to update user";
+			navigate({ 
+				to: "/", 
+				search: { errorMessage } 
+			});
+		}
 	};
 
 	return (

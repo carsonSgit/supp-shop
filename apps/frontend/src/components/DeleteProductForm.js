@@ -1,5 +1,6 @@
 import { useState } from "react";
 import { useNavigate } from "@tanstack/react-router";
+import { useDeleteProduct } from "../features/products/hooks/useProducts";
 
 /**
  * Functionality for deleting a product according to given parameters.
@@ -7,32 +8,27 @@ import { useNavigate } from "@tanstack/react-router";
  * @param {Object} props: the parameter of the product to be deleting.
  * @returns user-input field that holds a value for the product.
  */
-// doesn't work
 function DeleteProductForm(props) {
 	const [oldFlavour, setOldFlavour] = useState(null);
 
 	const navigate = useNavigate();
+	const deleteProduct = useDeleteProduct();
 
 	const handleSubmit = async (event) => {
 		event.preventDefault();
 
-		const requestOptions = {
-			method: "DELETE",
-			body: JSON.stringify({
+		try {
+			await deleteProduct.mutateAsync({
 				flavour: oldFlavour,
-			}),
-			headers: {
-				"Content-type": "application/json; charset=UTF-8",
-			},
-		};
-		const response = await fetch(
-			"http://localhost:1339/products",
-			requestOptions,
-		);
-		const result = await response.json();
-		if (response.status === 400 || response.status === 500)
-			navigate({ to: "/", search: { errorMessage: result.errorMessage } });
-		else props.setDeleted(result);
+			});
+			props.setDeleted({ flavour: oldFlavour });
+		} catch (error) {
+			const errorMessage = error.errorMessage || error.message || "Failed to delete product";
+			navigate({ 
+				to: "/", 
+				search: { errorMessage } 
+			});
+		}
 	};
 	return (
 		<form onSubmit={handleSubmit}>

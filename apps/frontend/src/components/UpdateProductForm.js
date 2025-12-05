@@ -1,5 +1,6 @@
 import { useState } from "react";
 import { useNavigate } from "@tanstack/react-router";
+import { useUpdateProduct } from "../features/products/hooks/useProducts";
 
 /**
  * Functionality for updating a product according to given parameters.
@@ -14,31 +15,26 @@ function UpdateProductForm(props) {
 	const [newPrice, setNewPrice] = useState(null);
 
 	const navigate = useNavigate();
+	const updateProduct = useUpdateProduct();
 
 	const handleSubmit = async (event) => {
 		event.preventDefault();
 
-		const requestOptions = {
-			method: "PUT",
-			body: JSON.stringify({
+		try {
+			const result = await updateProduct.mutateAsync({
 				flavour: oldFlavour,
 				type: oldType,
 				price: oldPrice,
 				updatePrice: newPrice,
-			}),
-			headers: {
-				"Content-type": "application/json; charset=UTF-8",
-			},
-		};
-
-		const response = await fetch(
-			"http://localhost:1339/products",
-			requestOptions,
-		);
-		const result = await response.json();
-		if (response.status === 400 || response.status === 500)
-			navigate({ to: "/", search: { errorMessage: result.errorMessage } });
-		else props.setUpdated(result);
+			});
+			props.setUpdated(result);
+		} catch (error) {
+			const errorMessage = error.errorMessage || error.message || "Failed to update product";
+			navigate({ 
+				to: "/", 
+				search: { errorMessage } 
+			});
+		}
 	};
 
 	return (

@@ -1,4 +1,5 @@
-import { useState } from "react";
+import { useState, useEffect } from "react";
+import { useOrder } from "../features/orders/hooks/useOrders";
 
 /**
  * Component representing the form to get a single order.
@@ -8,25 +9,21 @@ import { useState } from "react";
  * @returns {JSX.Element} - Get single order form component.
  */
 function GetSingleOrderForm(props) {
-	const [orderID, setOrderID] = useState(null);
+	const [orderID, setOrderID] = useState("");
+	const [submittedOrderID, setSubmittedOrderID] = useState("");
+	const { data, isLoading, error } = useOrder(submittedOrderID);
+
+	useEffect(() => {
+		if (data) {
+			props.setAdded(data);
+		}
+	}, [data, props]);
 
 	const handleSubmit = async (event) => {
 		event.preventDefault();
-
-		const requestOptions = {
-			method: "GET",
-			headers: {
-				"Content-type": "application/json; charset=UTF-8",
-			},
-			credentials: "include",
-		};
-
-		const response = await fetch(
-			"http://localhost:1339/orders/" + orderID,
-			requestOptions,
-		);
-		const result = await response.json();
-		props.setAdded(result);
+		if (orderID) {
+			setSubmittedOrderID(orderID);
+		}
 	};
 
 	return (
@@ -35,9 +32,15 @@ function GetSingleOrderForm(props) {
 			<input
 				type="text"
 				placeholder="Order ID"
+				value={orderID}
 				onChange={(e) => setOrderID(e.target.value)}
 			/>
-			{orderID && <button type="submit">Get Order</button>}
+			{orderID && (
+				<button type="submit" disabled={isLoading}>
+					{isLoading ? "Loading..." : "Get Order"}
+				</button>
+			)}
+			{error && <div style={{ color: "red" }}>Error: {error.message}</div>}
 		</form>
 	);
 }
