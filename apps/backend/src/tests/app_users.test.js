@@ -1,4 +1,4 @@
-const model = require("../models/workoutMongoDb.js");
+const model = require("../models/workoutMongoDb");
 const valUtils = require("../models/validateUtils");
 const { InvalidInputError } = require("../models/InvalidInputError");
 const { DatabaseError } = require("../models/DatabaseError");

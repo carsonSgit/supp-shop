@@ -1,6 +1,6 @@
 require("dotenv").config();
 const model = require("../models/workoutMongoDb");
-const utils = require("../models/validateUtils.js");
+const utils = require("../models/validateUtils");
 const { InvalidInputError } = require("../models/InvalidInputError");
 const db = "unitTestDB";
 jest.setTimeout(5000);
