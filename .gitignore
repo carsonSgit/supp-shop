@@ -1,10 +1,36 @@
-
-backend/logs/server-log
-
+# Dependencies
 backend/node_modules
-
 frontend/node_modules
 
+# Environment variables
 .env
 backend/.env
 frontend/.env
+
+# Logs
+backend/logs/
+*.log
+
+# Generated documentation (can be regenerated)
+backend/out/
+frontend/out/
+
+# Build outputs
+backend/dist/
+frontend/build/
+frontend/.next/
+
+# IDE
+.vscode/
+.idea/
+*.swp
+*.swo
+*~
+
+# OS
+.DS_Store
+Thumbs.db
+
+# Lock files (choose one package manager)
+# If using npm, keep package-lock.json and remove pnpm-lock.yaml
+# If using pnpm, keep pnpm-lock.yaml and remove package-lock.json
