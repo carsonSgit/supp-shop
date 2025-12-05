@@ -11,7 +11,9 @@ export interface User {
 
 export interface Product {
 	flavour: string;
-	price: number;
+	type?: string;
+	price: number | string;
+	description?: string;
 	quantity?: number;
 	[key: string]: unknown;
 }
