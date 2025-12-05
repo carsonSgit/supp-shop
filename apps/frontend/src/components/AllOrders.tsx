@@ -5,6 +5,7 @@ import { Button } from "./ui/button";
 import { Alert, AlertDescription, AlertTitle } from "./ui/alert";
 import { AlertCircle, RefreshCw } from "lucide-react";
 import { Card, CardContent, CardHeader, CardTitle } from "./ui/card";
+import { useTranslation } from "../shared/hooks/useTranslation";
 
 /**
  * Component that fetches and displays all orders.
@@ -13,6 +14,7 @@ import { Card, CardContent, CardHeader, CardTitle } from "./ui/card";
  */
 function AllOrders(): React.JSX.Element {
 	const { data: orders = [], refetch, isLoading, error } = useOrders();
+	const t = useTranslation();
 
 	/**
 	 * Function that makes the fetch request to get all orders.
@@ -27,17 +29,17 @@ function AllOrders(): React.JSX.Element {
 		return (
 			<Card className="max-w-2xl mx-auto">
 				<CardHeader>
-					<CardTitle>Error Loading Orders</CardTitle>
+					<CardTitle>{t.messages.errorLoadingOrders}</CardTitle>
 				</CardHeader>
 				<CardContent className="space-y-4">
 					<Alert variant="destructive">
 						<AlertCircle className="h-4 w-4" />
-						<AlertTitle>Error</AlertTitle>
+						<AlertTitle>{t.common.error}</AlertTitle>
 						<AlertDescription>{errorMessage}</AlertDescription>
 					</Alert>
 					<Button onClick={() => refetch()} variant="outline">
 						<RefreshCw className="mr-2 h-4 w-4" />
-						Retry
+						{t.pages.orders.retry}
 					</Button>
 				</CardContent>
 			</Card>
@@ -49,12 +51,12 @@ function AllOrders(): React.JSX.Element {
 			<Card>
 				<CardHeader>
 					<div className="flex items-center justify-between">
-						<CardTitle>Orders</CardTitle>
+						<CardTitle>{t.pages.orders.title}</CardTitle>
 						<Button onClick={callgetAllOrders} disabled={isLoading}>
 							<RefreshCw
 								className={`mr-2 h-4 w-4 ${isLoading ? "animate-spin" : ""}`}
 							/>
-							{isLoading ? "Loading..." : "Refresh Orders"}
+							{isLoading ? t.common.loading : t.pages.orders.refreshOrders}
 						</Button>
 					</div>
 				</CardHeader>

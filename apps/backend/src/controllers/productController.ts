@@ -5,6 +5,7 @@ const router = express.Router();
 const routeRoot = "/products";
 import * as model from "../models/workoutMongoDb";
 import logger from "../logger";
+import { requireAdmin } from "../middleware/adminAuth";
 
 /**
  * Function that adds a product to the database through POST
@@ -14,7 +15,8 @@ import logger from "../logger";
  */
 
 // If content type is post call createProduct
-router.post("/", createProduct);
+// Protect CREATE route with admin auth
+router.post("/", requireAdmin, createProduct);
 
 async function createProduct(request: Request, response: Response): Promise<void> {
 	// Assign values to those given in the POST request
@@ -144,7 +146,8 @@ async function getOneProduct(request: Request, response: Response): Promise<void
  * @param response
  */
 // If content type is get put getOneProduct
-router.put("/", updateProduct);
+// Protect UPDATE route with admin auth
+router.put("/", requireAdmin, updateProduct);
 async function updateProduct(request: Request, response: Response): Promise<void> {
 	const flavour = request.body.flavour;
 	const type = request.body.type;
@@ -186,7 +189,8 @@ async function updateProduct(request: Request, response: Response): Promise<void
  * @param response
  */
 // If content type is delete call getOneProduct
-router.delete("/", deleteProduct);
+// Protect DELETE route with admin auth
+router.delete("/", requireAdmin, deleteProduct);
 async function deleteProduct(request: Request, response: Response): Promise<void> {
 	const flavour = request.body.flavour;
 	try {

@@ -18,6 +18,8 @@ import {
 	SheetTitle,
 	SheetTrigger,
 } from "./ui/sheet";
+import { useAuth } from "../features/auth/context/AuthContext";
+import { useTranslation } from "../shared/hooks/useTranslation";
 
 /**
  * Component representing the header section of the website.
@@ -27,17 +29,40 @@ import {
 function Header(): React.JSX.Element {
 	const router = useRouterState();
 	const currentPath = router.location.pathname;
+	const { isAuthenticated, isAdmin, logout } = useAuth();
+	const t = useTranslation();
 
+	// Public navigation items
+	const publicNavItems = [
+		{ to: "/", label: t.nav.home },
+		{ to: "/about", label: t.nav.aboutUs },
+		{ to: "/contact", label: t.nav.contact },
+		{ to: "/products", label: t.nav.shop },
+	];
+
+	// Admin-only navigation items
+	const adminNavItems = [
+		{ to: "/userlist", label: t.nav.listUsers },
+		{ to: "/usercreate", label: t.nav.createUser },
+		{ to: "/userdelete", label: t.nav.deleteUser },
+		{ to: "/userupdate", label: t.nav.updateUser },
+		{ to: "/productsAdd", label: t.nav.addProduct },
+		{ to: "/productsUpdate", label: t.nav.updateProduct },
+		{ to: "/productsDelete", label: t.nav.deleteProduct },
+		{ to: "/orders", label: t.nav.orders },
+		{ to: "/add", label: t.nav.newOrder },
+		{ to: "/update", label: t.nav.updateOrder },
+		{ to: "/delete", label: t.nav.deleteOrder },
+	];
+
+	// Combine nav items based on auth status
 	const navItems = [
-		{ to: "/", label: "Home" },
-		{ to: "/about", label: "About Us" },
-		{ to: "/contact", label: "Contact" },
-		{ to: "/userlist", label: "List Users" },
-		{ to: "/usercreate", label: "Create User" },
-		{ to: "/userdelete", label: "Delete User" },
-		{ to: "/products", label: "Shop" },
-		{ to: "/orders", label: "Orders" },
-		{ to: "/session/login", label: "Login" },
+		...publicNavItems,
+		...(isAdmin ? adminNavItems : []),
+		...(isAuthenticated 
+			? [{ to: "#", label: t.nav.logout, onClick: logout }]
+			: [{ to: "/session/login", label: t.nav.login }]
+		),
 	];
 
 	return (
@@ -53,6 +78,21 @@ function Header(): React.JSX.Element {
 					<NavigationMenuList className="flex items-center space-x-1">
 						{navItems.map((item) => {
 							const isActive = currentPath === item.to;
+							if (item.to === "#" && (item as { onClick?: () => void }).onClick) {
+								return (
+									<NavigationMenuItem key={item.label}>
+										<Button
+											variant="ghost"
+											onClick={(item as { onClick?: () => void }).onClick}
+											className={cn(
+												"h-10 px-4 text-sm font-medium",
+											)}
+										>
+											{item.label}
+										</Button>
+									</NavigationMenuItem>
+								);
+							}
 							return (
 								<NavigationMenuItem key={item.to}>
 									<Link to={item.to}>
@@ -94,14 +134,26 @@ function Header(): React.JSX.Element {
 						</SheetTrigger>
 						<SheetContent side="right" className="w-[300px] sm:w-[400px]">
 							<SheetHeader>
-								<SheetTitle>Menu</SheetTitle>
+								<SheetTitle>{t.menu.title}</SheetTitle>
 								<SheetDescription>
-									Navigate to different sections of the site
+									{t.menu.subtitle}
 								</SheetDescription>
 							</SheetHeader>
 							<nav className="mt-6 flex flex-col space-y-2">
 								{navItems.map((item) => {
 									const isActive = currentPath === item.to;
+									if (item.to === "#" && (item as { onClick?: () => void }).onClick) {
+										return (
+											<Button
+												key={item.label}
+												variant={isActive ? "secondary" : "ghost"}
+												className="w-full justify-start"
+												onClick={(item as { onClick?: () => void }).onClick}
+											>
+												{item.label}
+											</Button>
+										);
+									}
 									return (
 										<Link key={item.to} to={item.to}>
 											<Button

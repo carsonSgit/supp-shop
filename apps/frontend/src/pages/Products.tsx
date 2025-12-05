@@ -1,15 +1,18 @@
 import React from "react";
 import ProductMenu from "../components/ProductMenu";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "../components/ui/card";
+import { useTranslation } from "../shared/hooks/useTranslation";
 
 function Products(): React.JSX.Element {
+	const t = useTranslation();
+	
 	return (
 		<div className="container mx-auto px-4 py-8">
 			<Card>
 				<CardHeader>
-					<CardTitle className="text-3xl">Shop Menu</CardTitle>
+					<CardTitle className="text-3xl">{t.pages.products.title}</CardTitle>
 					<CardDescription>
-						Browse our selection of premium supplements
+						{t.pages.products.subtitle}
 					</CardDescription>
 				</CardHeader>
 				<CardContent>

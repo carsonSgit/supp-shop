@@ -10,18 +10,21 @@ import {
 } from "./ui/table";
 import { Badge } from "./ui/badge";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "./ui/card";
+import { useTranslation } from "../shared/hooks/useTranslation";
 
 interface ListOrdersProps {
 	orders?: Order[];
 }
 
 function ListOrders({ orders }: ListOrdersProps): React.JSX.Element {
+	const t = useTranslation();
+	
 	if (!orders || orders.length === 0) {
 		return (
 			<Card>
 				<CardHeader>
-					<CardTitle>All Orders</CardTitle>
-					<CardDescription>No orders found</CardDescription>
+					<CardTitle>{t.pages.orders.allOrders}</CardTitle>
+					<CardDescription>{t.pages.orders.noOrders}</CardDescription>
 				</CardHeader>
 			</Card>
 		);
@@ -30,18 +33,18 @@ function ListOrders({ orders }: ListOrdersProps): React.JSX.Element {
 	return (
 		<Card>
 			<CardHeader>
-				<CardTitle>All Orders</CardTitle>
+				<CardTitle>{t.pages.orders.allOrders}</CardTitle>
 				<CardDescription>
-					View and manage all orders in the system
+					{t.pages.orders.listSubtitle}
 				</CardDescription>
 			</CardHeader>
 			<CardContent>
 				<Table>
 					<TableHeader>
 						<TableRow>
-							<TableHead>Order ID</TableHead>
-							<TableHead>Price</TableHead>
-							<TableHead>Status</TableHead>
+							<TableHead>{t.pages.orders.orderId}</TableHead>
+							<TableHead>{t.pages.orders.price}</TableHead>
+							<TableHead>{t.pages.orders.status}</TableHead>
 						</TableRow>
 					</TableHeader>
 					<TableBody>
@@ -56,7 +59,7 @@ function ListOrders({ orders }: ListOrdersProps): React.JSX.Element {
 										{price ? `$${price}` : "N/A"}
 									</TableCell>
 									<TableCell>
-										<Badge variant="outline">Active</Badge>
+										<Badge variant="outline">{t.pages.orders.active}</Badge>
 									</TableCell>
 								</TableRow>
 							);

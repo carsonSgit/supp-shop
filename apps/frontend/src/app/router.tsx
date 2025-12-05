@@ -7,6 +7,9 @@ import { QueryClient, QueryClientProvider } from '@tanstack/react-query';
 import { CookiesProvider } from 'react-cookie';
 import React from 'react';
 import { Toaster } from '../components/ui/toaster';
+import { LanguageProvider } from '../shared/contexts/LanguageContext';
+import { AuthProvider } from '../features/auth/context/AuthContext';
+import { ProtectedRoute } from '../components/ProtectedRoute';
 
 // Import layouts
 import MainLayout from '../layouts/MainLayout';
@@ -222,10 +225,14 @@ const queryClient = new QueryClient({
 export function AppRouter() {
 	return (
 		<CookiesProvider>
-			<QueryClientProvider client={queryClient}>
-				<RouterProvider router={router} />
-				<Toaster />
-			</QueryClientProvider>
+			<LanguageProvider>
+				<AuthProvider>
+					<QueryClientProvider client={queryClient}>
+						<RouterProvider router={router} />
+						<Toaster />
+					</QueryClientProvider>
+				</AuthProvider>
+			</LanguageProvider>
 		</CookiesProvider>
 	);
 }

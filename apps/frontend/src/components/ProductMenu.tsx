@@ -1,6 +1,6 @@
 import React from "react";
 import { useNavigate } from "@tanstack/react-router";
-import { useCookies } from "react-cookie";
+import { useTranslation } from "../shared/hooks/useTranslation";
 import { Button } from "./ui/button";
 import { Plus, Package, Edit, Trash2 } from "lucide-react";
 
@@ -10,7 +10,7 @@ import { Plus, Package, Edit, Trash2 } from "lucide-react";
  * @returns {JSX.Element} - Product menu component.
  */
 function ProductMenu(): React.JSX.Element {
-	const [cookies] = useCookies(["lang"]);
+	const t = useTranslation();
 	const navigate = useNavigate();
 
 	const handleAdd = (): void => {
@@ -29,25 +29,23 @@ function ProductMenu(): React.JSX.Element {
 		navigate({ to: "/productsDelete" });
 	};
 
-	const isEnglish = cookies.lang === "EN" || !cookies.lang;
-
 	return (
 		<div className="flex flex-col sm:flex-row gap-4 flex-wrap">
 			<Button onClick={handleAdd} variant="default" className="flex-1 min-w-[200px]">
 				<Plus className="mr-2 h-4 w-4" />
-				{isEnglish ? "Add Product" : "Ajouter Produit"}
+				{t.pages.products.addProduct}
 			</Button>
 			<Button onClick={handleFindAll} variant="outline" className="flex-1 min-w-[200px]">
 				<Package className="mr-2 h-4 w-4" />
-				{isEnglish ? "Our Products" : "Nos Produits"}
+				{t.pages.products.ourProducts}
 			</Button>
 			<Button onClick={handleUpdate} variant="outline" className="flex-1 min-w-[200px]">
 				<Edit className="mr-2 h-4 w-4" />
-				{isEnglish ? "Update Product" : "Modifier Produit"}
+				{t.pages.products.updateProduct}
 			</Button>
 			<Button onClick={handleDelete} variant="destructive" className="flex-1 min-w-[200px]">
 				<Trash2 className="mr-2 h-4 w-4" />
-				{isEnglish ? "Delete Product" : "Supprimer Produit"}
+				{t.pages.products.deleteProduct}
 			</Button>
 		</div>
 	);

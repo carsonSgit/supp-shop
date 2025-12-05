@@ -3,8 +3,8 @@ import { useNavigate } from "@tanstack/react-router";
 import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import * as z from "zod";
-import { authApi } from "../api/auth";
-import { LoginResponse } from "../api/types";
+import { useAuth } from "../features/auth/context/AuthContext";
+import { useTranslation } from "../shared/hooks/useTranslation";
 import { Button } from "./ui/button";
 import {
 	Form,
@@ -18,7 +18,7 @@ import { Input } from "./ui/input";
 import { useToast } from "./ui/use-toast";
 
 interface LoginFormProps {
-	setAdded: (result: LoginResponse) => void;
+	setAdded?: (result: { username: string }) => void;
 }
 
 const loginFormSchema = z.object({
@@ -38,6 +38,8 @@ type LoginFormValues = z.infer<typeof loginFormSchema>;
 function LoginForm(props: LoginFormProps): React.JSX.Element {
 	const navigate = useNavigate();
 	const { toast } = useToast();
+	const { login } = useAuth();
+	const t = useTranslation();
 	const [isLoading, setIsLoading] = React.useState(false);
 
 	const form = useForm<LoginFormValues>({
@@ -52,23 +54,22 @@ function LoginForm(props: LoginFormProps): React.JSX.Element {
 	const handleSubmit = async (values: LoginFormValues): Promise<void> => {
 		setIsLoading(true);
 		try {
-			const result = await authApi.login({
-				username: values.username,
-				password: values.password,
-			});
-			props.setAdded(result);
+			await login(values.username, values.password);
+			if (props.setAdded) {
+				props.setAdded({ username: values.username });
+			}
 			toast({
-				title: "Login successful",
-				description: "Welcome back!",
+				title: t.pages.login.loginSuccessful,
+				description: t.pages.login.welcomeBack,
 			});
 			navigate({ to: "/" });
 		} catch (error: unknown) {
 			const errorMessage =
 				(error as { errorMessage?: string; message?: string }).errorMessage ||
 				(error as { errorMessage?: string; message?: string }).message ||
-				"Login failed";
+				t.pages.login.loginFailed;
 			toast({
-				title: "Login failed",
+				title: t.pages.login.loginFailed,
 				description: errorMessage,
 				variant: "destructive",
 			});
@@ -88,9 +89,9 @@ function LoginForm(props: LoginFormProps): React.JSX.Element {
 					name="username"
 					render={({ field }) => (
 						<FormItem>
-							<FormLabel>Username</FormLabel>
+							<FormLabel>{t.forms.username}</FormLabel>
 							<FormControl>
-								<Input placeholder="Username..." {...field} />
+								<Input placeholder={`${t.forms.username}...`} {...field} />
 							</FormControl>
 							<FormMessage />
 						</FormItem>
@@ -102,9 +103,9 @@ function LoginForm(props: LoginFormProps): React.JSX.Element {
 					name="password"
 					render={({ field }) => (
 						<FormItem>
-							<FormLabel>Password</FormLabel>
+							<FormLabel>{t.forms.password}</FormLabel>
 							<FormControl>
-								<Input type="password" placeholder="Password..." {...field} />
+								<Input type="password" placeholder={`${t.forms.password}...`} {...field} />
 							</FormControl>
 							<FormMessage />
 						</FormItem>
@@ -112,7 +113,7 @@ function LoginForm(props: LoginFormProps): React.JSX.Element {
 				/>
 
 				<Button type="submit" className="w-full" disabled={isLoading}>
-					{isLoading ? "Logging in..." : "Login"}
+					{isLoading ? t.pages.login.loggingIn : t.nav.login}
 				</Button>
 			</form>
 		</Form>

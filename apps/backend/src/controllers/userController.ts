@@ -6,6 +6,10 @@ import { InvalidInputError } from "../models/InvalidInputError";
 import { DatabaseError } from "../models/DatabaseError";
 import logger from "../logger";
 import bcrypt from "bcrypt";
+import { requireAdmin } from "../middleware/adminAuth";
+
+// Apply admin authentication to all user routes
+router.use(requireAdmin);
 
 //#region ---------------------------- Controller Methods ----------------------------------------------------------------
 

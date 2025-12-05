@@ -1,6 +1,7 @@
 import React from "react";
 import { useSearch } from "@tanstack/react-router";
-import { useCookies } from "react-cookie";
+import { useLanguage } from "../shared/hooks/useLanguage";
+import { useTranslation } from "../shared/hooks/useTranslation";
 import {
 	Card,
 	CardContent,
@@ -24,9 +25,10 @@ interface AboutSearchParams {
 function About(): React.JSX.Element {
 	const search = useSearch({ strict: false }) as AboutSearchParams;
 	const employee = search?.employee;
-	const [cookies] = useCookies(["lang"]);
+	const { language } = useLanguage();
+	const t = useTranslation();
 
-	const isEnglish = cookies.lang === "EN" || !cookies.lang;
+	const isEnglish = language === "EN";
 
 	const employees = [
 		{
@@ -54,12 +56,10 @@ function About(): React.JSX.Element {
 			<Card className="max-w-4xl mx-auto">
 				<CardHeader>
 					<CardTitle className="text-3xl">
-						{isEnglish ? "About Us" : "À propos de nous"}
+						{t.pages.about.title}
 					</CardTitle>
 					<CardDescription className="text-lg">
-						{isEnglish
-							? "Our Temporary unpaid interns"
-							: "Nos stagiaires temporaires non rémunérés"}
+						{t.pages.about.subtitle}
 					</CardDescription>
 				</CardHeader>
 				<CardContent className="space-y-6">
@@ -78,7 +78,7 @@ function About(): React.JSX.Element {
 									<div className="flex items-center justify-between">
 										<CardTitle>{emp.name}</CardTitle>
 										{employee === emp.name && (
-											<Badge variant="default">Selected</Badge>
+											<Badge variant="default">{t.common.selected}</Badge>
 										)}
 									</div>
 								</CardHeader>

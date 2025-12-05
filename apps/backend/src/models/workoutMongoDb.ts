@@ -132,7 +132,12 @@ export async function addUser(
 	}
 	//insert the new user into the collection
 	const hashedPassword = await bcrypt.hash(password, saltRounds);
-	newUser = { username: username, email: email, password: hashedPassword };
+	newUser = { 
+		username: username, 
+		email: email, 
+		password: hashedPassword,
+		role: "user" // Default role for new users
+	};
 	try {
 		//try to insert the user
 		await usersCollection.insertOne(newUser);

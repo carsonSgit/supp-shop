@@ -8,6 +8,7 @@ import {
 	CardHeader,
 	CardTitle,
 } from "./ui/card";
+import { useTranslation } from "../shared/hooks/useTranslation";
 
 /**
  * Component representing the footer section of the website.
@@ -15,6 +16,8 @@ import {
  * @returns {JSX.Element} - Footer component.
  */
 function Footer(): React.JSX.Element {
+	const t = useTranslation();
+	
 	return (
 		<footer className="border-t bg-background">
 			<div className="container mx-auto px-4 py-12">
@@ -22,9 +25,9 @@ function Footer(): React.JSX.Element {
 					{/* Company Info */}
 					<Card className="border-0 shadow-none">
 						<CardHeader>
-							<CardTitle>Supplement Shop</CardTitle>
+							<CardTitle>{t.footer.supplementShop}</CardTitle>
 							<CardDescription>
-								Your trusted source for quality supplements
+								{t.footer.tagline}
 							</CardDescription>
 						</CardHeader>
 					</Card>
@@ -32,32 +35,32 @@ function Footer(): React.JSX.Element {
 					{/* Quick Links */}
 					<Card className="border-0 shadow-none">
 						<CardHeader>
-							<CardTitle>Quick Links</CardTitle>
+							<CardTitle>{t.footer.quickLinks}</CardTitle>
 						</CardHeader>
 						<CardContent className="flex flex-col space-y-2">
 							<Link
 								to="/"
 								className="text-sm text-muted-foreground hover:text-foreground transition-colors"
 							>
-								Home
+								{t.nav.home}
 							</Link>
 							<Link
 								to="/about"
 								className="text-sm text-muted-foreground hover:text-foreground transition-colors"
 							>
-								About Us
+								{t.nav.aboutUs}
 							</Link>
 							<Link
 								to="/contact"
 								className="text-sm text-muted-foreground hover:text-foreground transition-colors"
 							>
-								Contact
+								{t.nav.contact}
 							</Link>
 							<Link
 								to="/products"
 								className="text-sm text-muted-foreground hover:text-foreground transition-colors"
 							>
-								Shop
+								{t.nav.shop}
 							</Link>
 						</CardContent>
 					</Card>
@@ -65,20 +68,20 @@ function Footer(): React.JSX.Element {
 					{/* Customer Service */}
 					<Card className="border-0 shadow-none">
 						<CardHeader>
-							<CardTitle>Customer Service</CardTitle>
+							<CardTitle>{t.footer.customerService}</CardTitle>
 						</CardHeader>
 						<CardContent className="flex flex-col space-y-2">
 							<Link
 								to="/orders"
 								className="text-sm text-muted-foreground hover:text-foreground transition-colors"
 							>
-								Orders
+								{t.nav.orders}
 							</Link>
 							<Link
 								to="/contact"
 								className="text-sm text-muted-foreground hover:text-foreground transition-colors"
 							>
-								Support
+								{t.footer.support}
 							</Link>
 						</CardContent>
 					</Card>
@@ -86,14 +89,14 @@ function Footer(): React.JSX.Element {
 					{/* Contact Info */}
 					<Card className="border-0 shadow-none">
 						<CardHeader>
-							<CardTitle>Contact</CardTitle>
+							<CardTitle>{t.footer.contact}</CardTitle>
 						</CardHeader>
 						<CardContent className="flex flex-col space-y-2">
 							<p className="text-sm text-muted-foreground">
-								Email: support@supplementshop.com
+								{t.footer.email}: {t.footer.emailValue}
 							</p>
 							<p className="text-sm text-muted-foreground">
-								Phone: 1-800-SUPPLEMENTS
+								{t.footer.phone}: {t.footer.phoneValue}
 							</p>
 						</CardContent>
 					</Card>
@@ -103,7 +106,7 @@ function Footer(): React.JSX.Element {
 
 				<div className="flex flex-col items-center justify-between space-y-4 md:flex-row md:space-y-0">
 					<p className="text-sm text-muted-foreground">
-						© NAC Inc. {new Date().getFullYear()}. All rights reserved.
+						{t.footer.copyright} {new Date().getFullYear()}. {t.footer.allRightsReserved}
 					</p>
 				</div>
 			</div>

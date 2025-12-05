@@ -1,5 +1,5 @@
 import React from "react";
-import { useCookies } from "react-cookie";
+import { useTranslation } from "../shared/hooks/useTranslation";
 import {
 	Card,
 	CardContent,
@@ -16,20 +16,17 @@ import { Mail, Phone } from "lucide-react";
  * @returns {JSX.Element} - Contact Us component.
  */
 function Contact(): React.JSX.Element {
-	const [cookies] = useCookies(["lang"]);
-	const isEnglish = cookies.lang === "EN" || !cookies.lang;
+	const t = useTranslation();
 
 	return (
 		<div className="container mx-auto px-4 py-8">
 			<Card className="max-w-2xl mx-auto">
 				<CardHeader>
 					<CardTitle className="text-3xl">
-						{isEnglish ? "Contact Us" : "Contactez-nous"}
+						{t.pages.contact.title}
 					</CardTitle>
 					<CardDescription>
-						{isEnglish
-							? "Get in touch with our team"
-							: "Contactez notre équipe"}
+						{t.pages.contact.subtitle}
 					</CardDescription>
 				</CardHeader>
 				<CardContent className="space-y-6">
@@ -39,7 +36,7 @@ function Contact(): React.JSX.Element {
 							<Phone className="h-5 w-5 text-muted-foreground" />
 							<div>
 								<p className="text-sm font-medium text-muted-foreground">
-									{isEnglish ? "Phone" : "Téléphone"}
+									{t.pages.contact.phone}
 								</p>
 								<p className="text-lg font-semibold">+1(800) 267-2001</p>
 							</div>
@@ -49,7 +46,7 @@ function Contact(): React.JSX.Element {
 							<Mail className="h-5 w-5 text-muted-foreground" />
 							<div>
 								<p className="text-sm font-medium text-muted-foreground">
-									{isEnglish ? "Email" : "Courriel"}
+									{t.pages.contact.email}
 								</p>
 								<p className="text-lg font-semibold">
 									nacsupplements@gmail.com

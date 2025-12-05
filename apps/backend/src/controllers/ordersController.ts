@@ -5,6 +5,10 @@ import { InvalidInputError } from "../models/InvalidInputError";
 const router = express.Router();
 const routeRoot = "/";
 import * as model from "../models/workoutMongoDb";
+import { requireAdmin } from "../middleware/adminAuth";
+
+// Apply admin authentication to all order routes
+router.use("/orders", requireAdmin);
 
 router.post("/orders", createOrder);
 /**
