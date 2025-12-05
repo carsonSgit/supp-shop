@@ -4,13 +4,10 @@ import { UpdateOrder } from "../components/UpdateOrder";
 
 function UpdateOrderPage(): React.JSX.Element {
 	return (
-		<div>
-			<ErrorBoundary>
-				<UpdateOrder />
-			</ErrorBoundary>
-		</div>
+		<ErrorBoundary>
+			<UpdateOrder />
+		</ErrorBoundary>
 	);
 }
 
 export default UpdateOrderPage;
-

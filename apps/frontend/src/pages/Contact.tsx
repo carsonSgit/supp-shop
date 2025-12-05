@@ -1,5 +1,14 @@
 import React from "react";
 import { useCookies } from "react-cookie";
+import {
+	Card,
+	CardContent,
+	CardDescription,
+	CardHeader,
+	CardTitle,
+} from "../components/ui/card";
+import { Separator } from "../components/ui/separator";
+import { Mail, Phone } from "lucide-react";
 
 /**
  * Component representing the Contact Us page.
@@ -8,22 +17,50 @@ import { useCookies } from "react-cookie";
  */
 function Contact(): React.JSX.Element {
 	const [cookies] = useCookies(["lang"]);
+	const isEnglish = cookies.lang === "EN" || !cookies.lang;
+
 	return (
-		<div>
-			{cookies.lang === "EN" ? (
-				<>
-					<h1>Contact Us</h1>
-				</>
-			) : (
-				<>
-					<h1>Contactez-nous</h1>
-				</>
-			)}
-			<h2>+1(800) 267-2001</h2>
-			<h2>nacsupplements@gmail.com</h2>
+		<div className="container mx-auto px-4 py-8">
+			<Card className="max-w-2xl mx-auto">
+				<CardHeader>
+					<CardTitle className="text-3xl">
+						{isEnglish ? "Contact Us" : "Contactez-nous"}
+					</CardTitle>
+					<CardDescription>
+						{isEnglish
+							? "Get in touch with our team"
+							: "Contactez notre équipe"}
+					</CardDescription>
+				</CardHeader>
+				<CardContent className="space-y-6">
+					<Separator />
+					<div className="space-y-4">
+						<div className="flex items-center space-x-4">
+							<Phone className="h-5 w-5 text-muted-foreground" />
+							<div>
+								<p className="text-sm font-medium text-muted-foreground">
+									{isEnglish ? "Phone" : "Téléphone"}
+								</p>
+								<p className="text-lg font-semibold">+1(800) 267-2001</p>
+							</div>
+						</div>
+						<Separator />
+						<div className="flex items-center space-x-4">
+							<Mail className="h-5 w-5 text-muted-foreground" />
+							<div>
+								<p className="text-sm font-medium text-muted-foreground">
+									{isEnglish ? "Email" : "Courriel"}
+								</p>
+								<p className="text-lg font-semibold">
+									nacsupplements@gmail.com
+								</p>
+							</div>
+						</div>
+					</div>
+				</CardContent>
+			</Card>
 		</div>
 	);
 }
 
 export default Contact;
-

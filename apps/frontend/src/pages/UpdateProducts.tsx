@@ -4,13 +4,10 @@ import { UpdateProduct } from "../components/UpdateProduct";
 
 function UpdateProducts(): React.JSX.Element {
 	return (
-		<div>
-			<ErrorBoundary>
-				<UpdateProduct />
-			</ErrorBoundary>
-		</div>
+		<ErrorBoundary>
+			<UpdateProduct />
+		</ErrorBoundary>
 	);
 }
 
 export default UpdateProducts;
-

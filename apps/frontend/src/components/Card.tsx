@@ -1,5 +1,5 @@
 import React from "react";
-import "./Card.css";
+import { Card as ShadcnCard } from "./ui/card";
 import { CardProps } from "../shared/types/components.types";
 
 /**
@@ -9,8 +9,7 @@ import { CardProps } from "../shared/types/components.types";
  * @returns {JSX.Element} - Card component.
  */
 function Card({ children }: CardProps): React.JSX.Element {
-	return <div className="card">{children}</div>;
+	return <ShadcnCard>{children}</ShadcnCard>;
 }
 
 export default Card;
-

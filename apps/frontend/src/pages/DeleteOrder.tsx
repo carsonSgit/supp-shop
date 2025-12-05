@@ -2,12 +2,7 @@ import React from "react";
 import { DeleteOrder } from "../components/DeleteOrder";
 
 function OrderDelete(): React.JSX.Element {
-	return (
-		<div>
-			<DeleteOrder />
-		</div>
-	);
+	return <DeleteOrder />;
 }
 
 export default OrderDelete;
-

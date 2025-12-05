@@ -1,6 +1,8 @@
 import React from "react";
 import { Link, useRouterState } from "@tanstack/react-router";
+import { Button } from "./ui/button";
 import { NavButtonProps } from "../shared/types/components.types";
+import { cn } from "../lib/utils";
 
 /**
  * Component that provides a button that navigates to the given url when clicked,
@@ -14,42 +16,19 @@ function NavButton(props: NavButtonProps): React.JSX.Element {
 	const currentPath = router.location.pathname;
 	const isActive = currentPath === props.to;
 
-	const buttonStyle: React.CSSProperties = {
-		backgroundColor: "#282c34",
-		border: "none",
-		color: "#ffffff",
-		padding: "5px 20px", // Reduced vertical padding
-		textAlign: "center",
-		textDecoration: "none",
-		display: "inline-block",
-		fontSize: "16px",
-		cursor: "pointer",
-		borderRadius: "4px",
-		transition: "all 0.3s ease",
-	};
-
-	const activeButtonStyle: React.CSSProperties = {
-		...buttonStyle,
-		backgroundColor: "#007BFF",
-		color: "white",
-	};
-
 	return (
 		<Link to={props.to}>
-			<button
-				style={isActive ? activeButtonStyle : buttonStyle}
-				onMouseEnter={(e) =>
-					!isActive && (e.currentTarget.style.backgroundColor = "#E0E0E0")
-				}
-				onMouseLeave={(e) =>
-					!isActive && (e.currentTarget.style.backgroundColor = "transparent")
-				}
+			<Button
+				variant={isActive ? "secondary" : "ghost"}
+				className={cn(
+					"transition-colors",
+					isActive && "bg-accent text-accent-foreground",
+				)}
 			>
-				<span>{props.label}</span> {/* Changed p tag to span */}
-			</button>
+				{props.label}
+			</Button>
 		</Link>
 	);
 }
 
 export default NavButton;
-

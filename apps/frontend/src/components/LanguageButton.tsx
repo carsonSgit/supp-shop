@@ -1,6 +1,6 @@
 import React, { useEffect } from "react";
 import { useCookies } from "react-cookie";
-import { Button } from "react-bootstrap";
+import { Button } from "./ui/button";
 
 /**
  * Component representing the language toggle button.
@@ -22,11 +22,10 @@ function LanguageButton(): React.JSX.Element {
 	};
 
 	return (
-		<Button variant="outline-primary" size="sm" onClick={toggleLanguage}>
+		<Button variant="outline" size="sm" onClick={toggleLanguage}>
 			{cookies.lang || "EN"}
 		</Button>
 	);
 }
 
 export default LanguageButton;
-

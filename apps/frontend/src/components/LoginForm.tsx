@@ -1,12 +1,32 @@
 import React from "react";
-import { useState } from "react";
 import { useNavigate } from "@tanstack/react-router";
+import { useForm } from "react-hook-form";
+import { zodResolver } from "@hookform/resolvers/zod";
+import * as z from "zod";
 import { authApi } from "../api/auth";
 import { LoginResponse } from "../api/types";
+import { Button } from "./ui/button";
+import {
+	Form,
+	FormControl,
+	FormField,
+	FormItem,
+	FormLabel,
+	FormMessage,
+} from "./ui/form";
+import { Input } from "./ui/input";
+import { useToast } from "./ui/use-toast";
 
 interface LoginFormProps {
 	setAdded: (result: LoginResponse) => void;
 }
+
+const loginFormSchema = z.object({
+	username: z.string().min(1, "Username is required"),
+	password: z.string().min(1, "Password is required"),
+});
+
+type LoginFormValues = z.infer<typeof loginFormSchema>;
 
 /**
  * Component representing the login form.
@@ -16,52 +36,87 @@ interface LoginFormProps {
  * @returns {JSX.Element} - Login form component.
  */
 function LoginForm(props: LoginFormProps): React.JSX.Element {
-	const [username, setUsername] = useState<string>("");
-	const [password, setPassword] = useState<string>("");
-
 	const navigate = useNavigate();
+	const { toast } = useToast();
+	const [isLoading, setIsLoading] = React.useState(false);
+
+	const form = useForm<LoginFormValues>({
+		resolver: zodResolver(loginFormSchema),
+		defaultValues: {
+			username: "",
+			password: "",
+		},
+	});
 
 	/** Handler method that makes the fetch request based on the form values */
-	const handleSubmit = async (event: React.FormEvent<HTMLFormElement>): Promise<void> => {
-		event.preventDefault();
-
-		if (!username || !password) return;
-
+	const handleSubmit = async (values: LoginFormValues): Promise<void> => {
+		setIsLoading(true);
 		try {
-			const result = await authApi.login({ username, password });
+			const result = await authApi.login({
+				username: values.username,
+				password: values.password,
+			});
 			props.setAdded(result);
+			toast({
+				title: "Login successful",
+				description: "Welcome back!",
+			});
 			navigate({ to: "/" });
 		} catch (error: unknown) {
-			const errorMessage = (error as { errorMessage?: string; message?: string }).errorMessage || 
-				(error as { errorMessage?: string; message?: string }).message || 
+			const errorMessage =
+				(error as { errorMessage?: string; message?: string }).errorMessage ||
+				(error as { errorMessage?: string; message?: string }).message ||
 				"Login failed";
-			navigate({ 
-				to: "/", 
-				search: { errorMessage } 
+			toast({
+				title: "Login failed",
+				description: errorMessage,
+				variant: "destructive",
 			});
+		} finally {
+			setIsLoading(false);
 		}
 	};
 
 	return (
-		<form onSubmit={handleSubmit}>
-			<label htmlFor="username">Username</label>
-			<input
-				type="text"
-				placeholder="Username..."
-				onChange={(e) => setUsername(e.target.value)}
-			/>
+		<Form {...form}>
+			<form
+				onSubmit={form.handleSubmit(handleSubmit)}
+				className="space-y-6 w-full max-w-md mx-auto"
+			>
+				<FormField
+					control={form.control}
+					name="username"
+					render={({ field }) => (
+						<FormItem>
+							<FormLabel>Username</FormLabel>
+							<FormControl>
+								<Input placeholder="Username..." {...field} />
+							</FormControl>
+							<FormMessage />
+						</FormItem>
+					)}
+				/>
 
-			<label htmlFor="password">Password</label>
-			<input
-				type="password"
-				placeholder="Password..."
-				onChange={(e) => setPassword(e.target.value)}
-			/>
+				<FormField
+					control={form.control}
+					name="password"
+					render={({ field }) => (
+						<FormItem>
+							<FormLabel>Password</FormLabel>
+							<FormControl>
+								<Input type="password" placeholder="Password..." {...field} />
+							</FormControl>
+							<FormMessage />
+						</FormItem>
+					)}
+				/>
 
-			{username && password && <button type="submit">Login</button>}
-		</form>
+				<Button type="submit" className="w-full" disabled={isLoading}>
+					{isLoading ? "Logging in..." : "Login"}
+				</Button>
+			</form>
+		</Form>
 	);
 }
 
 export { LoginForm };
-

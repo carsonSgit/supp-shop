@@ -6,6 +6,7 @@ import { createRootRoute, createRoute, createRouter, RouterProvider, Outlet } fr
 import { QueryClient, QueryClientProvider } from '@tanstack/react-query';
 import { CookiesProvider } from 'react-cookie';
 import React from 'react';
+import { Toaster } from '../components/ui/toaster';
 
 // Import layouts
 import MainLayout from '../layouts/MainLayout';
@@ -223,6 +224,7 @@ export function AppRouter() {
 		<CookiesProvider>
 			<QueryClientProvider client={queryClient}>
 				<RouterProvider router={router} />
+				<Toaster />
 			</QueryClientProvider>
 		</CookiesProvider>
 	);

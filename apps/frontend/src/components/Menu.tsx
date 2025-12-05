@@ -1,6 +1,7 @@
 import React from "react";
 import { useNavigate } from "@tanstack/react-router";
-import "./Menu.css";
+import { Button } from "./ui/button";
+import { Plus, Search, List, Edit, Trash2 } from "lucide-react";
 
 function OrderMenu(): React.JSX.Element {
 	const navigate = useNavigate();
@@ -26,30 +27,29 @@ function OrderMenu(): React.JSX.Element {
 	};
 
 	return (
-		<div>
-			<button id="menuButton" onClick={handleAdd}>
+		<div className="flex flex-col sm:flex-row gap-4 flex-wrap">
+			<Button onClick={handleAdd} variant="default" className="flex-1 min-w-[200px]">
+				<Plus className="mr-2 h-4 w-4" />
 				Add Order
-			</button>
-			<br />     {" "}
-			<button id="menuButton" onClick={handleFindOne}>
+			</Button>
+			<Button onClick={handleFindOne} variant="outline" className="flex-1 min-w-[200px]">
+				<Search className="mr-2 h-4 w-4" />
 				Get Single Order
-			</button>
-			      <br />     {" "}
-			<button id="menuButton" onClick={handleFindAll}>
+			</Button>
+			<Button onClick={handleFindAll} variant="outline" className="flex-1 min-w-[200px]">
+				<List className="mr-2 h-4 w-4" />
 				Show All Orders
-			</button>
-			      <br />     {" "}
-			<button id="menuButton" onClick={handleUpdate}>
+			</Button>
+			<Button onClick={handleUpdate} variant="outline" className="flex-1 min-w-[200px]">
+				<Edit className="mr-2 h-4 w-4" />
 				Update Order
-			</button>
-			<br />
-			<button id="menuButton" onClick={handleDelete}>
+			</Button>
+			<Button onClick={handleDelete} variant="destructive" className="flex-1 min-w-[200px]">
+				<Trash2 className="mr-2 h-4 w-4" />
 				Delete Order
-			</button>
-		   {" "}
+			</Button>
 		</div>
 	);
 }
 
 export default OrderMenu;
-

@@ -1,20 +1,26 @@
 import React from "react";
 import { useSearch } from "@tanstack/react-router";
-import Alert from "react-bootstrap/Alert";
 import { AllUsers } from "../components/AllUsers";
 import { RouteSearchParams } from "../shared/types/routes.types";
+import { Alert, AlertDescription, AlertTitle } from "../components/ui/alert";
+import { AlertCircle } from "lucide-react";
 
 function UserList(): React.JSX.Element {
 	const search = useSearch({ strict: false }) as RouteSearchParams;
 	return (
-		<>
+		<div className="space-y-4">
 			{search?.errorMessage && (
-				<Alert variant="danger">{search.errorMessage}</Alert>
+				<div className="container mx-auto px-4 pt-8">
+					<Alert variant="destructive">
+						<AlertCircle className="h-4 w-4" />
+						<AlertTitle>Error</AlertTitle>
+						<AlertDescription>{search.errorMessage}</AlertDescription>
+					</Alert>
+				</div>
 			)}
 			<AllUsers />
-		</>
+		</div>
 	);
 }
 
 export default UserList;
-

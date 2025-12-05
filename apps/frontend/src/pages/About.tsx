@@ -1,6 +1,15 @@
 import React from "react";
 import { useSearch } from "@tanstack/react-router";
 import { useCookies } from "react-cookie";
+import {
+	Card,
+	CardContent,
+	CardDescription,
+	CardHeader,
+	CardTitle,
+} from "../components/ui/card";
+import { Separator } from "../components/ui/separator";
+import { Badge } from "../components/ui/badge";
 
 interface AboutSearchParams {
 	employee?: string;
@@ -17,58 +26,74 @@ function About(): React.JSX.Element {
 	const employee = search?.employee;
 	const [cookies] = useCookies(["lang"]);
 
+	const isEnglish = cookies.lang === "EN" || !cookies.lang;
+
+	const employees = [
+		{
+			name: "Noah",
+			description: isEnglish
+				? "Noah is a great coder who loves the gym"
+				: "Noah est un excellent codeur qui aime la gym",
+		},
+		{
+			name: "Carson",
+			description: isEnglish
+				? "Carson is the resident scribe"
+				: "Carson est le scribe résident",
+		},
+		{
+			name: "Alejandro",
+			description: isEnglish
+				? "Alejandro is talking to the voices"
+				: "Alejandro parle aux voix dans sa tete",
+		},
+	];
+
 	return (
-		<div>
-			{cookies.lang === "EN" ? (
-				<>
-					<h1>About Us</h1>
-					<h2>Our Temporary unpaid interns</h2>
-					{employee === "Noah" && (
-						<>
-							<p>=---------------------=</p>
-							<p>Noah is a great coder who loves the gym</p>
-						</>
-					)}
-					{employee === "Carson" && (
-						<>
-							<p>=---------------------=</p>
-							<p>Carson is the resident scribe</p>
-						</>
-					)}
-					{employee === "Alejandro" && (
-						<>
-							<p>=---------------------=</p>
-							<p>Alejandro is talking to the voices</p>
-						</>
-					)}
-				</>
-			) : (
-				<>
-					<h1>À propos de nous</h1>
-					<h2>Nos stagiaires temporaires non rémunérés</h2>
-					{employee === "Noah" && (
-						<>
-							<p>=---------------------=</p>
-							<p>Noah est un excellent codeur qui aime la gym</p>
-						</>
-					)}
-					{employee === "Carson" && (
-						<>
-							<p>=---------------------=</p>
-							<p>Carson est le scribe résident</p>
-						</>
-					)}
-					{employee === "Alejandro" && (
-						<>
-							<p>=---------------------=</p>
-							<p>Alejandro parle aux voix dans sa tete</p>
-						</>
-					)}
-				</>
-			)}
+		<div className="container mx-auto px-4 py-8">
+			<Card className="max-w-4xl mx-auto">
+				<CardHeader>
+					<CardTitle className="text-3xl">
+						{isEnglish ? "About Us" : "À propos de nous"}
+					</CardTitle>
+					<CardDescription className="text-lg">
+						{isEnglish
+							? "Our Temporary unpaid interns"
+							: "Nos stagiaires temporaires non rémunérés"}
+					</CardDescription>
+				</CardHeader>
+				<CardContent className="space-y-6">
+					<Separator />
+					<div className="grid gap-4 md:grid-cols-3">
+						{employees.map((emp) => (
+							<Card
+								key={emp.name}
+								className={
+									employee === emp.name
+										? "border-primary border-2"
+										: ""
+								}
+							>
+								<CardHeader>
+									<div className="flex items-center justify-between">
+										<CardTitle>{emp.name}</CardTitle>
+										{employee === emp.name && (
+											<Badge variant="default">Selected</Badge>
+										)}
+									</div>
+								</CardHeader>
+								<CardContent>
+									<p className="text-sm text-muted-foreground">
+										{emp.description}
+									</p>
+								</CardContent>
+							</Card>
+						))}
+					</div>
+				</CardContent>
+			</Card>
 		</div>
 	);
 }
 
 export default About;
-

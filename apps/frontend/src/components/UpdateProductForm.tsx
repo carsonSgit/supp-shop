@@ -1,9 +1,31 @@
 import React from "react";
-import { useState } from "react";
 import { useNavigate } from "@tanstack/react-router";
+import { useForm } from "react-hook-form";
+import { zodResolver } from "@hookform/resolvers/zod";
+import * as z from "zod";
 import { useUpdateProduct } from "../features/products/hooks/useProducts";
 import { FormWithSetUpdatedProps } from "../shared/types/components.types";
 import { Product } from "../api/types";
+import { Button } from "./ui/button";
+import {
+	Form,
+	FormControl,
+	FormField,
+	FormItem,
+	FormLabel,
+	FormMessage,
+} from "./ui/form";
+import { Input } from "./ui/input";
+import { useToast } from "./ui/use-toast";
+
+const updateProductFormSchema = z.object({
+	oldFlavour: z.string().min(1, "Current flavour is required"),
+	oldType: z.string().optional(),
+	oldPrice: z.string().optional(),
+	newPrice: z.string().min(1, "New price is required"),
+});
+
+type UpdateProductFormValues = z.infer<typeof updateProductFormSchema>;
 
 /**
  * Functionality for updating a product according to given parameters.
@@ -12,70 +34,117 @@ import { Product } from "../api/types";
  * @returns user-input fields that hold values for the product.
  */
 function UpdateProductForm(props: FormWithSetUpdatedProps<Product>): React.JSX.Element {
-	const [oldFlavour, setOldFlavour] = useState<string>("");
-	const [oldType, setOldType] = useState<string>("");
-	const [oldPrice, setOldPrice] = useState<string>("");
-	const [newPrice, setNewPrice] = useState<string>("");
-
 	const navigate = useNavigate();
 	const updateProduct = useUpdateProduct();
+	const { toast } = useToast();
 
-	const handleSubmit = async (event: React.FormEvent<HTMLFormElement>): Promise<void> => {
-		event.preventDefault();
+	const form = useForm<UpdateProductFormValues>({
+		resolver: zodResolver(updateProductFormSchema),
+		defaultValues: {
+			oldFlavour: "",
+			oldType: "",
+			oldPrice: "",
+			newPrice: "",
+		},
+	});
 
-		if (!oldFlavour || !newPrice) return;
-
+	const handleSubmit = async (values: UpdateProductFormValues): Promise<void> => {
 		try {
-			const priceValue = oldPrice ? (isNaN(Number(oldPrice)) ? oldPrice : Number(oldPrice)) : 0;
+			const priceValue = values.oldPrice
+				? isNaN(Number(values.oldPrice))
+					? values.oldPrice
+					: Number(values.oldPrice)
+				: 0;
 			const result = await updateProduct.mutateAsync({
-				flavour: oldFlavour,
-				type: oldType || undefined,
+				flavour: values.oldFlavour,
+				type: values.oldType || undefined,
 				price: priceValue,
-				updatePrice: newPrice,
+				updatePrice: values.newPrice,
 			});
 			props.setUpdated(result);
+			form.reset();
+			toast({
+				title: "Success",
+				description: "Product updated successfully",
+			});
 		} catch (error: unknown) {
-			const errorMessage = (error as { errorMessage?: string; message?: string }).errorMessage || 
-				(error as { errorMessage?: string; message?: string }).message || 
+			const errorMessage =
+				(error as { errorMessage?: string; message?: string }).errorMessage ||
+				(error as { errorMessage?: string; message?: string }).message ||
 				"Failed to update product";
-			navigate({ 
-				to: "/", 
-				search: { errorMessage } 
+			toast({
+				title: "Error",
+				description: errorMessage,
+				variant: "destructive",
 			});
 		}
 	};
 
 	return (
-		<form onSubmit={handleSubmit}>
-			<label htmlFor="oldFlavour">Current flavour:</label>
-			<input
-				type="text"
-				placeholder="Current Flavour..."
-				onChange={(e) => setOldFlavour(e.target.value)}
-			/>
-			<label htmlFor="oldType">Current type:</label>
-			<input
-				type="text"
-				placeholder="Current Type..."
-				onChange={(e) => setOldType(e.target.value)}
-			/>
-			<label htmlFor="oldPrice">Current price:</label>
-			<input
-				type="text"
-				placeholder="Current Price..."
-				onChange={(e) => setOldPrice(e.target.value)}
-			/>
+		<Form {...form}>
+			<form onSubmit={form.handleSubmit(handleSubmit)} className="space-y-6">
+				<FormField
+					control={form.control}
+					name="oldFlavour"
+					render={({ field }) => (
+						<FormItem>
+							<FormLabel>Current Flavour</FormLabel>
+							<FormControl>
+								<Input placeholder="Current Flavour..." {...field} />
+							</FormControl>
+							<FormMessage />
+						</FormItem>
+					)}
+				/>
 
-			<label htmlFor="newPrice">New price:</label>
-			<input
-				type="text"
-				placeholder="New Price..."
-				onChange={(e) => setNewPrice(e.target.value)}
-			/>
-			{oldFlavour && newPrice && <button type="submit">Update Product</button>}
-		</form>
+				<FormField
+					control={form.control}
+					name="oldType"
+					render={({ field }) => (
+						<FormItem>
+							<FormLabel>Current Type (Optional)</FormLabel>
+							<FormControl>
+								<Input placeholder="Current Type..." {...field} />
+							</FormControl>
+							<FormMessage />
+						</FormItem>
+					)}
+				/>
+
+				<FormField
+					control={form.control}
+					name="oldPrice"
+					render={({ field }) => (
+						<FormItem>
+							<FormLabel>Current Price (Optional)</FormLabel>
+							<FormControl>
+								<Input placeholder="Current Price..." {...field} />
+							</FormControl>
+							<FormMessage />
+						</FormItem>
+					)}
+				/>
+
+				<FormField
+					control={form.control}
+					name="newPrice"
+					render={({ field }) => (
+						<FormItem>
+							<FormLabel>New Price</FormLabel>
+							<FormControl>
+								<Input placeholder="New Price..." {...field} />
+							</FormControl>
+							<FormMessage />
+						</FormItem>
+					)}
+				/>
+
+				<Button type="submit" disabled={updateProduct.isPending}>
+					{updateProduct.isPending ? "Updating..." : "Update Product"}
+				</Button>
+			</form>
+		</Form>
 	);
 }
 
 export { UpdateProductForm };
-

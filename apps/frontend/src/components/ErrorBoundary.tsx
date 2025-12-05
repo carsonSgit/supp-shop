@@ -21,7 +21,7 @@ class ErrorBoundary extends Component<ErrorBoundaryProps, ErrorBoundaryState> {
 		if (this.state.hasError) {
 			// Render fallback UI
 			return (
-				<div>
+				<div className="container mx-auto px-4 py-8">
 					<SystemError errorMessage="Something went wrong." />
 				</div>
 			);
@@ -33,4 +33,3 @@ class ErrorBoundary extends Component<ErrorBoundaryProps, ErrorBoundaryState> {
 }
 
 export default ErrorBoundary;
-
