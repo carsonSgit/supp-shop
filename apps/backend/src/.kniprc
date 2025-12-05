@@ -1,0 +1,5 @@
+{
+  "ignore": ["out/**"],
+  "ignoreDependencies": ["uuid"],
+  "ignoreDevDependencies": ["jsdoc"]
+}

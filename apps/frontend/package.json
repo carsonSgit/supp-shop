@@ -1,0 +1,65 @@
+{
+	"name": "frontend",
+	"version": "0.1.0",
+	"private": true,
+	"dependencies": {
+		"@tanstack/react-query": "^5.90.12",
+		"@tanstack/react-router": "^1.139.14",
+		"@tanstack/react-router-devtools": "^1.139.14",
+		"react": "^19.2.1",
+		"react-bootstrap": "^2.10.10",
+		"react-cookie": "^8.0.1",
+		"react-dom": "^19.2.1",
+		"react-router-dom": "^7.10.1",
+		"react-scripts": "5.0.1",
+		"web-vitals": "^5.1.0"
+	},
+	"scripts": {
+		"start": "react-scripts start",
+		"build": "react-scripts build",
+		"test": "react-scripts test",
+		"eject": "react-scripts eject"
+	},
+	"eslintConfig": {
+		"extends": [
+			"react-app",
+			"react-app/jest"
+		]
+	},
+	"browserslist": {
+		"production": [
+			">0.2%",
+			"not dead",
+			"not op_mini all"
+		],
+		"development": [
+			"last 1 chrome version",
+			"last 1 firefox version",
+			"last 1 safari version"
+		]
+	},
+	"description": "This project was bootstrapped with [Create React App](https://github.com/facebook/create-react-app).",
+	"author": "",
+	"license": "ISC",
+	"devDependencies": {
+		"@biomejs/biome": "2.3.8",
+		"@types/node": "^24.10.1",
+		"@types/react": "^19.2.7",
+		"@types/react-dom": "^19.2.3",
+		"knip": "^5.71.0",
+		"typescript": "^5.9.3"
+	},
+	"pnpm": {
+		"overrides": {
+			"ajv": "^7.2.4",
+			"ajv-keywords": "^3.5.2",
+			"schema-utils>ajv": "^7.2.4",
+			"schema-utils>ajv-keywords": "^3.5.2"
+		},
+		"peerDependencyRules": {
+			"ignoreMissing": [
+				"typescript"
+			]
+		}
+	}
+}
