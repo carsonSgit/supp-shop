@@ -7,16 +7,15 @@ import Card from "./Card";
  * @returns a display object holding the product information
  */
 function DisplaySuccess(props) {
-    return (
-        <>
-            <Card>
-                {/* Display the product */}
-                <h1>{props.heading}</h1>
-                <p/>
-            </Card>
-        </>
-    );
-    
+	return (
+		<>
+			<Card>
+				{/* Display the product */}
+				<h1>{props.heading}</h1>
+				<p />
+			</Card>
+		</>
+	);
 }
 
 export { DisplaySuccess };

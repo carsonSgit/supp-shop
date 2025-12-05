@@ -8,14 +8,14 @@ import { DisplaySuccess } from "./DisplaySuccess";
  * @returns {JSX.Element} - Update product component.
  */
 function UpdateProduct() {
-    const [updated, setUpdated] = useState({});
+	const [updated, setUpdated] = useState({});
 
-    return (
-        <>
-            <UpdateProductForm setUpdated={setUpdated} />
-            <DisplaySuccess product={updated} heading="Update" />
-        </>
-    );
+	return (
+		<>
+			<UpdateProductForm setUpdated={setUpdated} />
+			<DisplaySuccess product={updated} heading="Update" />
+		</>
+	);
 }
 
 export { UpdateProduct };

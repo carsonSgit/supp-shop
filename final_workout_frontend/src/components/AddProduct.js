@@ -7,14 +7,14 @@ import { DisplayProduct } from "./DisplayProduct";
  * @returns a user-input field and a display-card for the added product.
  */
 function AddProduct() {
-    const [added, setAdded] = useState({});
+	const [added, setAdded] = useState({});
 
-    return (
-        <>
-            <AddProductForm setAdded={setAdded} />
-            <DisplayProduct product={added} heading="The added product" />
-        </>
-    );
+	return (
+		<>
+			<AddProductForm setAdded={setAdded} />
+			<DisplayProduct product={added} heading="The added product" />
+		</>
+	);
 }
 
 export { AddProduct };

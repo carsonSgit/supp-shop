@@ -8,37 +8,48 @@ import { useState } from "react";
  * @returns {JSX.Element} - Update order form component.
  */
 function UpdateOrderForm(props) {
-    const [oldOrderID, setOldId] = useState(null);
-    const [newPrice, setNewPrice] = useState(null);
+	const [oldOrderID, setOldId] = useState(null);
+	const [newPrice, setNewPrice] = useState(null);
 
-    const handleSubmit = async (event) => {
-        event.preventDefault();
+	const handleSubmit = async (event) => {
+		event.preventDefault();
 
-        const requestOptions = {
-            method: "PUT",
-            body: JSON.stringify({
-                orderId: oldOrderID,
-                price: newPrice,
-            }),
-            headers: {
-                "Content-type": "application/json; charset=UTF-8",
-            },
-        };
+		const requestOptions = {
+			method: "PUT",
+			body: JSON.stringify({
+				orderId: oldOrderID,
+				price: newPrice,
+			}),
+			headers: {
+				"Content-type": "application/json; charset=UTF-8",
+			},
+		};
 
-        const response = await fetch("http://localhost:1339/orders/" + oldOrderID, requestOptions);
-        const result = await response.json();
-        props.setUpdated(result);
-    };
+		const response = await fetch(
+			"http://localhost:1339/orders/" + oldOrderID,
+			requestOptions,
+		);
+		const result = await response.json();
+		props.setUpdated(result);
+	};
 
-    return (
-        <form onSubmit={handleSubmit}>
-            <label htmlFor="oldOrderID">Current Order Id</label>
-            <input type="text" placeholder="Current Order Id" onChange={(e) => setOldId(e.target.value)} />
-            <label htmlFor="oldOrderID">New Price</label>
-            <input type="text" placeholder="New Price" onChange={(e) => setNewPrice(e.target.value)} />
-            {oldOrderID && newPrice && <button type="submit">Update Order</button>}
-        </form>
-    );
+	return (
+		<form onSubmit={handleSubmit}>
+			<label htmlFor="oldOrderID">Current Order Id</label>
+			<input
+				type="text"
+				placeholder="Current Order Id"
+				onChange={(e) => setOldId(e.target.value)}
+			/>
+			<label htmlFor="oldOrderID">New Price</label>
+			<input
+				type="text"
+				placeholder="New Price"
+				onChange={(e) => setNewPrice(e.target.value)}
+			/>
+			{oldOrderID && newPrice && <button type="submit">Update Order</button>}
+		</form>
+	);
 }
 
 export { UpdateOrderForm };

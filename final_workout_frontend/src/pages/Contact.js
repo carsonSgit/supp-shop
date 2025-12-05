@@ -5,22 +5,23 @@ import { useCookies } from "react-cookie";
  *
  * @returns {JSX.Element} - Contact Us component.
  */
-function Contact(){
-    const [cookies,setCookie] = useCookies(["lang"]);
-    return(
-        <div>    
-            {cookies.lang === "EN" ? 
-                <> 
-                    <h1>Contact Us</h1>
-                </>
-            : 
-                <>
-                    <h1>Contactez-nous</h1>
-                </>}
-            <h2>+1(800) 267-2001</h2>
-            <h2>nacsupplements@gmail.com</h2>
-        </div>
-    ); 
+function Contact() {
+	const [cookies, setCookie] = useCookies(["lang"]);
+	return (
+		<div>
+			{cookies.lang === "EN" ? (
+				<>
+					<h1>Contact Us</h1>
+				</>
+			) : (
+				<>
+					<h1>Contactez-nous</h1>
+				</>
+			)}
+			<h2>+1(800) 267-2001</h2>
+			<h2>nacsupplements@gmail.com</h2>
+		</div>
+	);
 }
 
 export default Contact;

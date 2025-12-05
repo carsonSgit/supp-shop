@@ -8,14 +8,14 @@ import { DisplayOrder } from "./DisplayOrder";
  * @returns {JSX.Element} - Single order component.
  */
 function SingleOrder() {
-    const [added, setAdded] = useState({});
+	const [added, setAdded] = useState({});
 
-    return (
-        <>
-            <GetSingleOrderForm setAdded={setAdded} />
-            <DisplayOrder order={added} heading="The found order is: " />
-        </>
-    );
+	return (
+		<>
+			<GetSingleOrderForm setAdded={setAdded} />
+			<DisplayOrder order={added} heading="The found order is: " />
+		</>
+	);
 }
 
 export { SingleOrder };

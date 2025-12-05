@@ -1,5 +1,5 @@
-import {useState} from "react";
-import {DisplayProduct} from "./DisplayProduct";
+import { useState } from "react";
+import { DisplayProduct } from "./DisplayProduct";
 import { GetSingleProductForm } from "./SingleProductForm";
 
 /**
@@ -7,14 +7,14 @@ import { GetSingleProductForm } from "./SingleProductForm";
  * @returns a button and display for button results.
  */
 function SingleProduct() {
-    const [product, setProduct] = useState({});
+	const [product, setProduct] = useState({});
 
-    return (
-        <>
-            <GetSingleProductForm setProduct={setProduct}/>
-            <DisplayProduct product={product} heading="The found product is" />
-        </>
-    )
+	return (
+		<>
+			<GetSingleProductForm setProduct={setProduct} />
+			<DisplayProduct product={product} heading="The found product is" />
+		</>
+	);
 }
 
 export { SingleProduct };

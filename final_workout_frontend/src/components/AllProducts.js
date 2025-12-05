@@ -7,20 +7,22 @@ import { ListProducts } from "./ListProducts";
  * @returns a button that will display all products.
  */
 function AllProducts() {
-    const [products, setProducts] = useState([]); // default empty state
+	const [products, setProducts] = useState([]); // default empty state
 
-    const callGetAllProducts = async () => {
-        const response = await fetch("http://localhost:1339/products/all", {method: "GET"});
-        const result = await response.json();
-        setProducts(result);
-    };
+	const callGetAllProducts = async () => {
+		const response = await fetch("http://localhost:1339/products/all", {
+			method: "GET",
+		});
+		const result = await response.json();
+		setProducts(result);
+	};
 
-    return (
-        <>
-            <ListProducts products={products} />
-            <button onClick={callGetAllProducts}>Get All Products</button>
-        </>
-    )
+	return (
+		<>
+			<ListProducts products={products} />
+			<button onClick={callGetAllProducts}>Get All Products</button>
+		</>
+	);
 }
 
 export { AllProducts };
