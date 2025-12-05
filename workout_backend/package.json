@@ -9,7 +9,7 @@
   "author": "",
   "license": "ISC",
   "dependencies": {
-    "bcrypt": "^5.1.0",
+    "bcrypt": "^6.0.0",
     "cookie-parser": "^1.4.6",
     "cors": "^2.8.5",
     "dotenv": "^16.0.3",
@@ -17,7 +17,7 @@
     "express-list-endpoints": "^6.0.0",
     "jest": "^29.5.0",
     "jsdoc": "^4.0.2",
-    "mongodb": "^5.4.0",
+    "mongodb": "^5.9.2",
     "mongodb-memory-server": "^8.12.2",
     "pino": "^8.12.1",
     "pino-http": "^8.3.3",
