@@ -1,10 +1,10 @@
 
-workout_backend/logs/server-log
+backend/logs/server-log
 
-workout_backend/node_modules
+backend/node_modules
 
-final_workout_frontend/node_modules
+frontend/node_modules
 
 .env
-workout_backend/.env
-final_workout_frontend/.env
+backend/.env
+frontend/.env
