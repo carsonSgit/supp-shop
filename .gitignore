@@ -1,2 +1,6 @@
 
 workout_backend/logs/server-log
+
+workout_backend/node_modules
+
+final_workout_frontend/node_modules
