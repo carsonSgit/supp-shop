@@ -6,6 +6,7 @@ const productImages: Record<string, string> = {
 	Chocolate: proteinChoc,
 	Vanilla: proteinVanilla,
 	"Fruit Punch": prePunch,
+	Raspberry: prePunch,
 };
 
 /**

@@ -560,10 +560,10 @@ export async function addProduct(
 			type: type,
 			price: price,
 			description: description,
-			ingredients: ingredients || [],
-			nutrition: nutrition || { calories: 0, protein: 0, carbs: 0, fat: 0 },
-			benefits: benefits || [],
-			rating: rating || 5.0
+			ingredients: ingredients,
+			nutrition: nutrition,
+			benefits: benefits,
+			rating: rating
 		};
 	} else {
 		throw new InvalidInputError("Product values invalid");
