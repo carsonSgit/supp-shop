@@ -132,9 +132,9 @@ export async function addUser(
 	}
 	//insert the new user into the collection
 	const hashedPassword = await bcrypt.hash(password, saltRounds);
-	newUser = { 
-		username: username, 
-		email: email, 
+	newUser = {
+		username: username,
+		email: email,
 		password: hashedPassword,
 		role: "user" // Default role for new users
 	};
@@ -544,6 +544,10 @@ export async function addProduct(
 	type: "Pre-workout" | "Protein-powder",
 	price: number,
 	description?: string,
+	ingredients?: string[],
+	nutrition?: { calories: number; protein: number; carbs: number; fat: number },
+	benefits?: string[],
+	rating?: number
 ): Promise<Product> {
 	if (!productsCollection) {
 		throw new DatabaseError("Products collection not initialized");
@@ -556,6 +560,10 @@ export async function addProduct(
 			type: type,
 			price: price,
 			description: description,
+			ingredients: ingredients || [],
+			nutrition: nutrition || { calories: 0, protein: 0, carbs: 0, fat: 0 },
+			benefits: benefits || [],
+			rating: rating || 5.0
 		};
 	} else {
 		throw new InvalidInputError("Product values invalid");

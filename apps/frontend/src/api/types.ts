@@ -15,6 +15,15 @@ export interface Product {
 	price: number | string;
 	description?: string;
 	quantity?: number;
+	ingredients?: string[];
+	nutrition?: {
+		calories: number;
+		protein: number;
+		carbs: number;
+		fat: number;
+	};
+	benefits?: string[];
+	rating?: number;
 	[key: string]: unknown;
 }
 

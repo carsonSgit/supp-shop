@@ -24,9 +24,13 @@ async function createProduct(request: Request, response: Response): Promise<void
 	const type = request.body.type;
 	const price = request.body.price;
 	const description = request.body.description;
+	const ingredients = request.body.ingredients;
+	const nutrition = request.body.nutrition;
+	const benefits = request.body.benefits;
+	const rating = request.body.rating;
 	try {
 		// async add product to MongoDB database
-		const added = await model.addProduct(flavour, type, price, description);
+		const added = await model.addProduct(flavour, type, price, description, ingredients, nutrition, benefits, rating);
 
 		if (added) {
 			logger.info("Successfully added a product");
@@ -81,10 +85,10 @@ async function getAllProduct(_request: Request, response: Response): Promise<voi
 	// Otherwise, display the product found in the database
 	else {
 		/*let printString = "";
-        for(let i=0; i<foundProduct.length; i++){
-            printString += "<br>Flavour: " + foundProduct[i].flavour + " Type: "
-            + foundProduct[i].type + " Price: $" + foundProduct[i].price;
-        }*/
+		for(let i=0; i<foundProduct.length; i++){
+			printString += "<br>Flavour: " + foundProduct[i].flavour + " Type: "
+			+ foundProduct[i].type + " Price: $" + foundProduct[i].price;
+		}*/
 		response.status(200);
 		response.send(foundProduct);
 	}

@@ -15,6 +15,15 @@ export interface Product {
 	type: "Pre-workout" | "Protein-powder";
 	price: number;
 	description?: string;
+	ingredients?: string[];
+	nutrition?: {
+		calories: number;
+		protein: number;
+		carbs: number;
+		fat: number;
+	};
+	benefits?: string[];
+	rating?: number;
 	_id?: ObjectId;
 }
 

@@ -20,7 +20,7 @@ export function isValidProduct(
 	type: string,
 	price: number | string,
 ): boolean {
-	if (!flavour || !validator.isAlpha(flavour)) {
+	if (!flavour || !/^[a-zA-Z\s]+$/.test(flavour)) {
 		console.log("Invalid flavour input: Must be valid string");
 		return false;
 	}

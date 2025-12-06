@@ -13,6 +13,7 @@ import {
 	DialogTitle,
 	DialogTrigger,
 } from "../components/ui/dialog";
+import { Link } from '@tanstack/react-router';
 
 import proteinChoc from '../assets/products/protein_chocolate.png';
 import proteinVanilla from '../assets/products/protein_vanilla.png';
@@ -86,7 +87,7 @@ function Products(): React.JSX.Element {
 			<div className="grid grid-cols-1 lg:grid-cols-4 gap-12">
 				{/* Sidebar Filters */}
 				<div className="lg:col-span-1 space-y-8">
-					<div className="bg-gray-50/50 p-6 rounded-3xl">
+					<div className="p-0">
 						<h3 className="font-serif text-2xl mb-6">Filters</h3>
 						<ShopFilters
 							searchQuery={searchQuery}
@@ -121,7 +122,12 @@ function Products(): React.JSX.Element {
 								const imageSrc = productImages[product.flavour] || defaultImage;
 
 								return (
-									<div key={product.flavour} className="group flex flex-col h-full cursor-pointer">
+									<Link
+										key={product.flavour}
+										to="/product/$flavour"
+										params={{ flavour: product.flavour }}
+										className="group flex flex-col h-full cursor-pointer"
+									>
 										{/* Image Container */}
 										<div className="aspect-[4/5] relative overflow-hidden flex items-center justify-center bg-[#f8f8f8] mb-6 rounded-2xl group-hover:bg-[#f0f0f0] transition-colors duration-500">
 											<img
@@ -133,7 +139,7 @@ function Products(): React.JSX.Element {
 											{/* Hover Quick Action */}
 											<div className="absolute inset-x-6 bottom-6 translate-y-[150%] group-hover:translate-y-0 transition-transform duration-500 ease-out z-10">
 												<Button className="w-full bg-[#1a1a1a] hover:bg-lime-500 hover:text-[#1a1a1a] text-white font-bold uppercase py-6 rounded-xl shadow-xl">
-													<ShoppingBag className="mr-2 h-4 w-4" /> Add to Cart
+													<ShoppingBag className="mr-2 h-4 w-4" /> View Details
 												</Button>
 											</div>
 										</div>
@@ -155,7 +161,7 @@ function Products(): React.JSX.Element {
 												{product.description || "Premium quality supplement for your daily needs."}
 											</p>
 										</div>
-									</div>
+									</Link>
 								);
 							})}
 						</div>

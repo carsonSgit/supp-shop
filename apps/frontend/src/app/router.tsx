@@ -41,6 +41,8 @@ const rootRoute = createRootRoute({
 	component: () => <Outlet />,
 });
 
+import ProductDetail from '../pages/ProductDetail';
+
 // Create layout route with outlet
 const layoutRoute = createRoute({
 	getParentRoute: () => rootRoute,
@@ -140,6 +142,12 @@ const getProductRoute = createRoute({
 	component: GetSingleProduct,
 });
 
+const productDetailRoute = createRoute({
+	getParentRoute: () => layoutRoute,
+	path: '/product/$flavour',
+	component: ProductDetail,
+});
+
 const productsAddRoute = createRoute({
 	getParentRoute: () => layoutRoute,
 	path: '/productsAdd',
@@ -188,6 +196,7 @@ const routeTree = rootRoute.addChildren([
 		deleteOrderRoute,
 		productsRoute,
 		getProductRoute,
+		productDetailRoute,
 		productsAddRoute,
 		getProductsRoute,
 		productsUpdateRoute,
