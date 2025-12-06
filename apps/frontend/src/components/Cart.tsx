@@ -1,4 +1,5 @@
 import React from "react";
+import { Link } from "@tanstack/react-router";
 import { useCart } from "../features/cart/context/CartContext";
 import { Button } from "./ui/button";
 import { ScrollArea } from "./ui/scroll-area";
@@ -81,8 +82,11 @@ export function Cart() {
 						</SheetFooter>
 					</>
 				) : (
-					<div className="flex flex-1 items-center justify-center">
+					<div className="flex flex-1 flex-col items-center justify-center gap-3 text-center">
 						<p className="text-muted-foreground">Your cart is empty.</p>
+						<Button variant="outline" asChild>
+							<Link to="/products">Browse products</Link>
+						</Button>
 					</div>
 				)}
 			</SheetContent>

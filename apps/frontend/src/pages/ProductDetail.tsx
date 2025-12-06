@@ -3,23 +3,13 @@ import { useParams } from '@tanstack/react-router';
 import { useQuery } from '@tanstack/react-query';
 import { productsApi } from '../api/products';
 import { Button } from "../components/ui/button";
-import { Loader2, ArrowLeft, Star, Award } from "lucide-react";
+import { Loader2, ArrowLeft, Star, Award, RefreshCcw } from "lucide-react";
 import { Link } from '@tanstack/react-router';
 import { motion } from 'framer-motion';
 import { useCart } from '../features/cart/context/CartContext';
 import { useToast } from '../components/ui/use-toast';
-
-import proteinChoc from '../assets/products/protein_chocolate.png';
-import proteinVanilla from '../assets/products/protein_vanilla.png';
-import prePunch from '../assets/products/preworkout_punch.png';
-
-const productImages: Record<string, string> = {
-    'Chocolate': proteinChoc,
-    'Vanilla': proteinVanilla,
-    'Fruit Punch': prePunch
-};
-
-const defaultImage = proteinChoc;
+import { getProductImage } from '../shared/utils/productAssets';
+import { cn } from '../lib/utils';
 
 export default function ProductDetail() {
     const { flavour } = useParams({ strict: false });
@@ -28,13 +18,13 @@ export default function ProductDetail() {
 
     // We fetch all products and find the one matching the flavour
     // In a real app, we'd have a getByFlavour API endpoint
-    const { data: products, isLoading } = useQuery({
+    const { data: products, isLoading, isError, error, refetch, isFetching } = useQuery({
         queryKey: ['products'],
         queryFn: productsApi.getAll,
     });
 
     const product = products?.find(p => p.flavour === flavour);
-    const imageSrc = product ? (productImages[product.flavour] || defaultImage) : defaultImage;
+    const imageSrc = getProductImage(product?.flavour);
 
     // Fake extra data for demo since older products don't have it in DB yet
     const nutrition = product?.nutrition || { calories: 120, protein: 24, carbs: 3, fat: 1 };
@@ -42,11 +32,31 @@ export default function ProductDetail() {
     const benefits = product?.benefits || ["Muscle Recovery", "Fast Absorption", "Great Taste", "Keto Friendly"];
     const rating = product?.rating || 4.9;
 
-    if (isLoading) return (
-        <div className="min-h-screen flex items-center justify-center">
-            <Loader2 className="h-10 w-10 animate-spin text-lime-500" />
-        </div>
-    );
+    if (isLoading) {
+        return (
+            <div className="min-h-screen flex items-center justify-center">
+                <Loader2 className="h-10 w-10 animate-spin text-lime-500" />
+            </div>
+        );
+    }
+
+    if (isError) {
+        return (
+            <div className="min-h-screen flex flex-col items-center justify-center gap-4 px-4 text-center">
+                <h1 className="text-2xl font-bold">We couldn't load this product</h1>
+                <p className="text-muted-foreground max-w-md">{error instanceof Error ? error.message : "Please check your connection and try again."}</p>
+                <div className="flex gap-3">
+                    <Button variant="outline" onClick={() => refetch()} disabled={isFetching}>
+                        <RefreshCcw className={cn("mr-2 h-4 w-4", isFetching && "animate-spin")} />
+                        Retry
+                    </Button>
+                    <Link to="/products">
+                        <Button variant="ghost">Back to shop</Button>
+                    </Link>
+                </div>
+            </div>
+        );
+    }
 
     if (!product) return (
         <div className="min-h-screen flex flex-col items-center justify-center gap-4">
