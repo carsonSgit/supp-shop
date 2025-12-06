@@ -28,17 +28,17 @@ function Contact(): React.JSX.Element {
 	];
 
 	return (
-		<div className="min-h-screen bg-[#fafafa] pb-24 pt-32">
+		<div className="min-h-screen bg-background pb-24 pt-32">
 			<div className="container">
 				<div className="text-center mb-20 space-y-6">
 					<motion.h1
 						initial={{ opacity: 0, y: 20 }}
 						animate={{ opacity: 1, y: 0 }}
-						className="text-5xl md:text-7xl font-serif font-bold text-[#1a1a1a]"
+						className="text-5xl md:text-7xl font-serif font-bold text-foreground"
 					>
 						Get in <span className="text-lime-500 italic">Touch</span>
 					</motion.h1>
-					<p className="text-gray-500 text-xl max-w-2xl mx-auto leading-relaxed">
+					<p className="text-muted-foreground text-xl max-w-2xl mx-auto leading-relaxed">
 						Have a question about your order or need advice on supplements? We're here to help.
 					</p>
 				</div>
@@ -51,23 +51,23 @@ function Contact(): React.JSX.Element {
 							animate={{ opacity: 1, x: 0 }}
 							transition={{ delay: 0.2 }}
 						>
-							<h2 className="text-3xl font-serif font-bold mb-8 text-[#1a1a1a]">Message Us</h2>
+							<h2 className="text-3xl font-serif font-bold mb-8 text-foreground">Message Us</h2>
 							<form className="space-y-6">
 								<div className="grid grid-cols-2 gap-6">
 									<div className="space-y-2">
-										<Input placeholder="First Name" className="h-14 bg-transparent border-b border-gray-300 focus:border-lime-500 rounded-none px-0 transition-colors placeholder:text-gray-400" />
+										<Input placeholder="First Name" />
 									</div>
 									<div className="space-y-2">
-										<Input placeholder="Last Name" className="h-14 bg-transparent border-b border-gray-300 focus:border-lime-500 rounded-none px-0 transition-colors placeholder:text-gray-400" />
+										<Input placeholder="Last Name" />
 									</div>
 								</div>
 								<div className="space-y-2">
-									<Input type="email" placeholder="Email Address" className="h-14 bg-transparent border-b border-gray-300 focus:border-lime-500 rounded-none px-0 transition-colors placeholder:text-gray-400" />
+									<Input type="email" placeholder="Email Address" />
 								</div>
 								<div className="space-y-2">
-									<Textarea placeholder="Your Message" className="min-h-[150px] bg-transparent border-b border-gray-300 focus:border-lime-500 rounded-none px-0 resize-none transition-colors placeholder:text-gray-400" />
+									<Textarea placeholder="Your Message" className="min-h-[150px] resize-none" />
 								</div>
-								<Button className="w-full font-bold uppercase tracking-widest bg-[#1a1a1a] hover:bg-lime-500 hover:text-[#1a1a1a] h-14 rounded-none text-sm transition-all shadow-none">
+								<Button className="w-full font-bold uppercase tracking-widest">
 									Send Message
 								</Button>
 							</form>
@@ -87,20 +87,20 @@ function Contact(): React.JSX.Element {
 									{ label: "HQ", value: "123 Fitness Blvd, Austin, TX" }
 								].map((item) => (
 									<div key={item.label}>
-										<p className="text-xs font-bold text-gray-400 uppercase tracking-widest mb-1">{item.label}</p>
-										<p className="text-xl font-serif text-[#1a1a1a]">{item.value}</p>
+										<p className="text-xs font-bold text-muted-foreground uppercase tracking-widest mb-1">{item.label}</p>
+										<p className="text-xl font-serif text-foreground">{item.value}</p>
 									</div>
 								))}
 							</div>
 
 							{/* FAQ Accordion */}
 							<div className="space-y-6">
-								<h3 className="text-xl font-serif font-bold text-[#1a1a1a]">F.A.Q.</h3>
+								<h3 className="text-xl font-serif font-bold text-foreground">F.A.Q.</h3>
 								<Accordion type="single" collapsible className="w-full">
 									{faqs.map((faq, index) => (
-										<AccordionItem key={index} value={`item-${index}`} className="border-gray-200">
+										<AccordionItem key={index} value={`item-${index}`} className="border-border">
 											<AccordionTrigger className="text-base hover:text-lime-600 font-serif text-left py-4">{faq.question}</AccordionTrigger>
-											<AccordionContent className="text-gray-500 text-sm leading-relaxed pb-6">{faq.answer}</AccordionContent>
+											<AccordionContent className="text-muted-foreground text-sm leading-relaxed pb-6">{faq.answer}</AccordionContent>
 										</AccordionItem>
 									))}
 								</Accordion>

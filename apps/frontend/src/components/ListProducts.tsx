@@ -11,6 +11,9 @@ import {
 import { Button } from "./ui/button";
 import { Badge } from "./ui/badge";
 import { ShoppingCart } from "lucide-react";
+import { useCart } from "../features/cart/context/CartContext";
+import { useToast } from "./ui/use-toast";
+import { Link } from "@tanstack/react-router";
 
 interface ListProductsProps {
 	products: Product[];
@@ -22,6 +25,17 @@ interface ListProductsProps {
  * @returns a list of all products sorted by id.
  */
 function ListProducts({ products }: ListProductsProps): React.JSX.Element {
+	const { addToCart } = useCart();
+	const { toast } = useToast();
+
+	const handleAddToCart = (product: Product) => {
+		addToCart(product, 1);
+		toast({
+			title: "Item added to cart",
+			description: `${product.flavour} has been added to your cart.`,
+		});
+	};
+
 	return (
 		<div className="container mx-auto px-4 py-8">
 			<h1 className="text-3xl font-bold mb-6">All Products</h1>
@@ -57,13 +71,19 @@ function ListProducts({ products }: ListProductsProps): React.JSX.Element {
 									</div>
 								</CardContent>
 								<CardFooter className="flex gap-2">
-									<Button className="flex-1" variant="default">
+									<Button
+										className="flex-1"
+										variant="default"
+										onClick={() => handleAddToCart(product)}
+									>
 										<ShoppingCart className="mr-2 h-4 w-4" />
 										Add to Cart
 									</Button>
-									<Button variant="outline" className="flex-1">
-										View Details
-									</Button>
+									<Link to="/product/$flavour" params={{ flavour: product.flavour }} className="flex-1">
+										<Button variant="outline" className="w-full">
+											View Details
+										</Button>
+									</Link>
 								</CardFooter>
 							</Card>
 						);

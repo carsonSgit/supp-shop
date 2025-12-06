@@ -8,6 +8,7 @@ import { CookiesProvider } from 'react-cookie';
 import React from 'react';
 import { Toaster } from '../components/ui/toaster';
 import { LanguageProvider } from '../shared/contexts/LanguageContext';
+import { CartProvider } from '../features/cart/context/CartContext';
 import { AuthProvider } from '../features/auth/context/AuthContext';
 import { ProtectedRoute } from '../components/ProtectedRoute';
 
@@ -236,10 +237,12 @@ export function AppRouter() {
 		<CookiesProvider>
 			<LanguageProvider>
 				<AuthProvider>
-					<QueryClientProvider client={queryClient}>
-						<RouterProvider router={router} />
-						<Toaster />
-					</QueryClientProvider>
+					<CartProvider>
+						<QueryClientProvider client={queryClient}>
+							<RouterProvider router={router} />
+							<Toaster />
+						</QueryClientProvider>
+					</CartProvider>
 				</AuthProvider>
 			</LanguageProvider>
 		</CookiesProvider>

@@ -11,6 +11,7 @@ import {
 import { ShoppingCart, Menu, X, Leaf } from "lucide-react";
 import LanguageButton from "./LanguageButton";
 import { cn } from "../lib/utils";
+import { Cart } from "./Cart";
 import { useAuth } from "../features/auth/context/AuthContext";
 import { useTranslation } from "../shared/hooks/useTranslation";
 
@@ -19,16 +20,7 @@ function Header(): React.JSX.Element {
 	const currentPath = router.location.pathname;
 	const { isAuthenticated, isAdmin, logout } = useAuth();
 	const t = useTranslation();
-	const [isScrolled, setIsScrolled] = useState(false);
 	const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
-
-	useEffect(() => {
-		const handleScroll = () => {
-			setIsScrolled(window.scrollY > 20);
-		};
-		window.addEventListener("scroll", handleScroll);
-		return () => window.removeEventListener("scroll", handleScroll);
-	}, []);
 
 	// Public navigation items
 	const publicNavItems = [
@@ -58,12 +50,7 @@ function Header(): React.JSX.Element {
 			initial={{ y: -100 }}
 			animate={{ y: 0 }}
 			transition={{ duration: 0.5 }}
-			className={cn(
-				"fixed top-0 left-0 right-0 z-50 transition-all duration-300 border-b border-transparent",
-				isScrolled
-					? "bg-background/80 backdrop-blur-md shadow-sm border-border/20 py-2"
-					: "bg-transparent py-4"
-			)}
+			className="fixed top-0 left-0 right-0 z-50 bg-background shadow-sm border-b"
 		>
 			<div className="container flex items-center justify-between px-4 h-20">
 
@@ -71,17 +58,12 @@ function Header(): React.JSX.Element {
 				<nav className="hidden md:flex items-center space-x-12 mx-auto">
 					{navItems.map((item) => {
 						const isActive = currentPath === item.to;
-						const isHome = currentPath === "/";
-
 						if (item.to === "#" && (item as any).onClick) {
 							return (
 								<button
 									key={item.label}
 									onClick={(item as any).onClick}
-									className={cn(
-										"text-lg font-serif transition-colors hover:text-primary tracking-tight",
-										!isScrolled && isHome ? "text-white/90 hover:text-white" : "text-[#1a1a1a]"
-									)}
+									className="text-lg font-serif transition-colors hover:text-primary tracking-tight text-foreground"
 								>
 									{item.label}
 								</button>
@@ -92,9 +74,8 @@ function Header(): React.JSX.Element {
 							<Link key={item.to} to={item.to} className="relative group">
 								<span
 									className={cn(
-										"text-lg font-serif transition-colors tracking-tight block py-2",
-										!isScrolled && isHome ? "text-white/90 hover:text-white" : "text-[#1a1a1a]",
-										isActive && isScrolled && "text-lime-600"
+										"text-lg font-serif transition-colors tracking-tight block py-2 text-foreground",
+										isActive && "text-lime-600"
 									)}
 								>
 									{item.label}
@@ -109,21 +90,9 @@ function Header(): React.JSX.Element {
 
 				{/* Right Actions */}
 				<div className="flex items-center space-x-6 absolute right-8">
-					<Button
-						variant="ghost"
-						size="icon"
-						className={cn(
-							"relative transition-colors hover:bg-transparent",
-							!isScrolled && currentPath === "/" ? "text-white" : "text-[#1a1a1a]"
-						)}
-					>
-						<ShoppingCart className="h-5 w-5" />
-						<span className="absolute -top-1 -right-1 flex h-4 w-4 items-center justify-center bg-lime-500 text-[10px] font-bold text-[#1a1a1a] rounded-none">
-							0
-						</span>
-					</Button>
+					<Cart />
 
-					<div className={cn(!isScrolled && currentPath === "/" ? "text-white" : "")}>
+					<div className="text-foreground">
 						<LanguageButton />
 					</div>
 
@@ -131,7 +100,7 @@ function Header(): React.JSX.Element {
 					<Button
 						variant="ghost"
 						size="icon"
-						className={cn("md:hidden", !isScrolled && currentPath === "/" ? "text-white hover:bg-white/10" : "")}
+						className="md:hidden text-foreground"
 						onClick={() => setMobileMenuOpen(!mobileMenuOpen)}
 					>
 						{mobileMenuOpen ? <X className="h-6 w-6" /> : <Menu className="h-6 w-6" />}

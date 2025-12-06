@@ -50,16 +50,12 @@ function UpdateProductForm(props: FormWithSetUpdatedProps<Product>): React.JSX.E
 
 	const handleSubmit = async (values: UpdateProductFormValues): Promise<void> => {
 		try {
-			const priceValue = values.oldPrice
-				? isNaN(Number(values.oldPrice))
-					? values.oldPrice
-					: Number(values.oldPrice)
-				: 0;
+			const priceValue = Number(values.oldPrice) || 0;
 			const result = await updateProduct.mutateAsync({
 				flavour: values.oldFlavour,
 				type: values.oldType || undefined,
 				price: priceValue,
-				updatePrice: values.newPrice,
+				updatePrice: Number(values.newPrice),
 			});
 			props.setUpdated(result);
 			form.reset();

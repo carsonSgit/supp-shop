@@ -3,9 +3,11 @@ import { useParams } from '@tanstack/react-router';
 import { useQuery } from '@tanstack/react-query';
 import { productsApi } from '../api/products';
 import { Button } from "../components/ui/button";
-import { Loader2, ArrowLeft, Star, ShoppingBag, Leaf, Zap, Award } from "lucide-react";
+import { Loader2, ArrowLeft, Star, Award } from "lucide-react";
 import { Link } from '@tanstack/react-router';
 import { motion } from 'framer-motion';
+import { useCart } from '../features/cart/context/CartContext';
+import { useToast } from '../components/ui/use-toast';
 
 import proteinChoc from '../assets/products/protein_chocolate.png';
 import proteinVanilla from '../assets/products/protein_vanilla.png';
@@ -21,6 +23,8 @@ const defaultImage = proteinChoc;
 
 export default function ProductDetail() {
     const { flavour } = useParams({ strict: false });
+    const { addToCart } = useCart();
+    const { toast } = useToast();
 
     // We fetch all products and find the one matching the flavour
     // In a real app, we'd have a getByFlavour API endpoint
@@ -53,11 +57,21 @@ export default function ProductDetail() {
         </div>
     );
 
+    const handleAddToCart = () => {
+        if (product) {
+            addToCart(product, 1);
+            toast({
+                title: "Item added to cart",
+                description: `${product.flavour} has been added to your cart.`,
+            });
+        }
+    };
+
     return (
-        <div className="min-h-screen bg-[#fafafa] pb-24">
+        <div className="min-h-screen bg-background pb-24">
             {/* Header / Nav Back */}
             <div className="container py-8">
-                <Link to="/products" className="inline-flex items-center text-gray-500 hover:text-lime-600 transition-colors">
+                <Link to="/products" className="inline-flex items-center text-muted-foreground hover:text-primary transition-colors">
                     <ArrowLeft className="h-4 w-4 mr-2" /> Back to Shop
                 </Link>
             </div>
@@ -85,20 +99,20 @@ export default function ProductDetail() {
                 >
                     <div className="space-y-4">
                         <div className="flex items-center gap-2 text-lime-600 font-bold uppercase tracking-wider text-sm">
-                            <span className="bg-lime-100 px-3 py-1 rounded-full">{product.type}</span>
-                            <div className="flex items-center gap-1 text-yellow-500 bg-yellow-50 px-2 py-1 rounded-full">
+                            <span className="bg-lime-100 px-3 py-1">{product.type}</span>
+                            <div className="flex items-center gap-1 text-yellow-500 bg-yellow-50 px-2 py-1">
                                 <Star className="h-4 w-4 fill-current" /> {rating}
                             </div>
                         </div>
-                        <h1 className="text-5xl md:text-6xl font-serif font-bold text-[#1a1a1a] leading-tight">
+                        <h1 className="text-5xl md:text-6xl font-serif font-bold text-foreground leading-tight">
                             {product.flavour}
                         </h1>
-                        <p className="text-3xl font-mono font-bold text-gray-900">
+                        <p className="text-3xl font-mono font-bold text-foreground">
                             ${String(product.price)}
                         </p>
                     </div>
 
-                    <p className="text-gray-500 text-lg leading-relaxed">
+                    <p className="text-muted-foreground text-lg leading-relaxed">
                         {product.description || "Premium quality supplement crafted for peak performance. Featuring ultra-pure ingredients and rapid absorption technology."}
                     </p>
 
@@ -107,42 +121,42 @@ export default function ProductDetail() {
                         {benefits.map((benefit, i) => (
                             <div key={i} className="flex items-center gap-3 p-2 bg-transparent">
                                 <Award className="h-5 w-5 text-lime-500" />
-                                <span className="font-bold text-gray-700 text-sm">{benefit}</span>
+                                <span className="font-bold text-foreground text-sm">{benefit}</span>
                             </div>
                         ))}
                     </div>
 
-                    <div className="flex gap-4 pt-4 border-t border-gray-100">
-                        <Button className="flex-1 h-14 bg-[#1a1a1a] hover:bg-lime-500 hover:text-[#1a1a1a] text-lg font-bold uppercase tracking-wide rounded-xl shadow-none hover:shadow-lg transition-all">
+                    <div className="flex gap-4 pt-4 border-t border-border">
+                        <Button onClick={handleAddToCart} size="lg" className="flex-1 text-lg font-bold uppercase tracking-wide">
                             Add to Cart - ${String(product.price)}
                         </Button>
                     </div>
 
                     {/* Nutrition Accordion Style (Flat) */}
-                    <div className="space-y-6 pt-8 border-t border-gray-100">
+                    <div className="space-y-6 pt-8 border-t border-border">
                         <h3 className="font-serif font-bold text-2xl">Nutrition Facts</h3>
                         <div className="grid grid-cols-4 gap-4 text-center">
-                            <div className="p-4 bg-transparent border-r border-gray-200 last:border-0">
-                                <div className="text-2xl font-bold text-[#1a1a1a]">{nutrition.calories}</div>
-                                <div className="text-xs text-gray-500 uppercase font-bold">Cals</div>
+                            <div className="p-4 bg-transparent border-r border-border last:border-0">
+                                <div className="text-2xl font-bold text-foreground">{nutrition.calories}</div>
+                                <div className="text-xs text-muted-foreground uppercase font-bold">Cals</div>
                             </div>
-                            <div className="p-4 bg-transparent border-r border-gray-200 last:border-0">
-                                <div className="text-2xl font-bold text-[#1a1a1a]">{nutrition.protein}g</div>
-                                <div className="text-xs text-gray-500 uppercase font-bold">Prot</div>
+                            <div className="p-4 bg-transparent border-r border-border last:border-0">
+                                <div className="text-2xl font-bold text-foreground">{nutrition.protein}g</div>
+                                <div className="text-xs text-muted-foreground uppercase font-bold">Prot</div>
                             </div>
-                            <div className="p-4 bg-transparent border-r border-gray-200 last:border-0">
-                                <div className="text-2xl font-bold text-[#1a1a1a]">{nutrition.carbs}g</div>
-                                <div className="text-xs text-gray-500 uppercase font-bold">Carbs</div>
+                            <div className="p-4 bg-transparent border-r border-border last:border-0">
+                                <div className="text-2xl font-bold text-foreground">{nutrition.carbs}g</div>
+                                <div className="text-xs text-muted-foreground uppercase font-bold">Carbs</div>
                             </div>
                             <div className="p-4 bg-transparent">
-                                <div className="text-2xl font-bold text-[#1a1a1a]">{nutrition.fat}g</div>
-                                <div className="text-xs text-gray-500 uppercase font-bold">Fat</div>
+                                <div className="text-2xl font-bold text-foreground">{nutrition.fat}g</div>
+                                <div className="text-xs text-muted-foreground uppercase font-bold">Fat</div>
                             </div>
                         </div>
 
                         <div className="bg-transparent pt-4">
-                            <h4 className="font-bold uppercase text-sm text-gray-400 mb-3">Ingredients</h4>
-                            <p className="text-gray-600 leading-relaxed text-sm">
+                            <h4 className="font-bold uppercase text-sm text-muted-foreground mb-3">Ingredients</h4>
+                            <p className="text-muted-foreground leading-relaxed text-sm">
                                 {ingredients.join(", ")}
                             </p>
                         </div>

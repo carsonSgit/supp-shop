@@ -55,11 +55,12 @@ function DeleteProductForm(props: FormWithSetDeletedProps<Product>): React.JSX.E
 
 	const handleSubmit = async (values: DeleteProductFormValues): Promise<void> => {
 		try {
-			await deleteProduct.mutateAsync({
+			const productToDelete: Product = {
 				flavour: values.oldFlavour,
 				price: 0,
-			});
-			props.setDeleted({ flavour: values.oldFlavour, price: 0 });
+			};
+			await deleteProduct.mutateAsync(productToDelete);
+			props.setDeleted(productToDelete);
 			form.reset();
 			toast({
 				title: "Success",

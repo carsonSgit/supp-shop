@@ -16,7 +16,7 @@ module.exports = {
 		extend: {
 			fontFamily: {
 				sans: ["Outfit", "sans-serif"],
-				serif: ["Playfair Display", "serif"],
+				serif: ["Instrument Serif", "serif"],
 			},
 			colors: {
 				lime: {
@@ -56,11 +56,6 @@ module.exports = {
 					DEFAULT: "hsl(var(--card))",
 					foreground: "hsl(var(--card-foreground))",
 				},
-			},
-			borderRadius: {
-				lg: "var(--radius)",
-				md: "calc(var(--radius) - 2px)",
-				sm: "calc(var(--radius) - 4px)",
 			},
 			keyframes: {
 				"accordion-down": {

@@ -10,9 +10,10 @@ export interface User {
 }
 
 export interface Product {
+	_id?: string;
 	flavour: string;
 	type?: string;
-	price: number | string;
+	price: number;
 	description?: string;
 	quantity?: number;
 	ingredients?: string[];

@@ -53,7 +53,7 @@ function AddProductForm(props: FormWithSetAddedProps<Product>): React.JSX.Elemen
 			const result = await createProduct.mutateAsync({
 				flavour: values.flavour,
 				type: values.type,
-				price: values.price,
+				price: Number(values.price),
 				description: values.description || "",
 			});
 			props.setAdded(result);
@@ -61,7 +61,7 @@ function AddProductForm(props: FormWithSetAddedProps<Product>): React.JSX.Elemen
 		} catch (error: unknown) {
 			const errorMessage =
 				(error as { errorMessage?: string; message?: string }).errorMessage ||
-				(error as { errorMessage?: string; message?: string }).message ||
+				(error as { errorMessage?: string; message?:string }).message ||
 				"Failed to create product";
 			const errorStatus = (error as { status?: number }).status;
 			if (errorStatus === 500) {
