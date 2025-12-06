@@ -1,20 +1,22 @@
-import React from 'react';
+import React, { useState } from 'react';
 import { useParams } from '@tanstack/react-router';
 import { useQuery } from '@tanstack/react-query';
 import { productsApi } from '../api/products';
 import { Button } from "../components/ui/button";
-import { Loader2, ArrowLeft, Star, RefreshCcw, CheckCircle2 } from "lucide-react";
+import { Loader2, ArrowLeft, Star, RefreshCcw, CheckCircle2, Minus, Plus } from "lucide-react";
 import { Link } from '@tanstack/react-router';
 import { motion } from 'framer-motion';
 import { useCart } from '../features/cart/context/CartContext';
 import { useToast } from '../components/ui/use-toast';
 import { getProductImage } from '../shared/utils/productAssets';
 import { cn } from '../lib/utils';
+import { Accordion, AccordionContent, AccordionItem, AccordionTrigger } from "../components/ui/accordion";
 
 export default function ProductDetail() {
     const { flavour } = useParams({ strict: false });
     const { addToCart } = useCart();
     const { toast } = useToast();
+    const [quantity, setQuantity] = useState(1);
 
     const { data: products, isLoading, isError, error, refetch, isFetching } = useQuery({
         queryKey: ['products'],
@@ -28,6 +30,17 @@ export default function ProductDetail() {
     const ingredients = product?.ingredients;
     const benefits = product?.benefits;
     const rating = product?.rating;
+    const unitPrice = Number(product?.price ?? 0);
+    const safeUnitPrice = Number.isFinite(unitPrice) ? unitPrice : 0;
+    const totalPrice = safeUnitPrice * quantity;
+    const macroSummary = [
+        { label: "Calories", value: nutrition?.calories !== undefined ? `${nutrition.calories} kcal` : "—" },
+        { label: "Protein", value: nutrition?.protein !== undefined ? `${nutrition.protein} g` : "—" },
+        { label: "Carbs", value: nutrition?.carbs !== undefined ? `${nutrition.carbs} g` : "—" },
+        { label: "Fat", value: nutrition?.fat !== undefined ? `${nutrition.fat} g` : "—" },
+    ];
+    const ingredientsText = ingredients && ingredients.length > 0 ? ingredients.join(", ") : "No ingredients provided.";
+    const benefitsList = benefits && benefits.length > 0 ? benefits : [];
 
     if (isLoading) {
         return (
@@ -66,13 +79,17 @@ export default function ProductDetail() {
 
     const handleAddToCart = () => {
         if (product) {
-            addToCart(product, 1);
+            addToCart(product, quantity);
             toast({
                 title: "Item added to cart",
-                description: `${product.flavour} has been added to your cart.`,
+                description: `${quantity} x ${product.flavour} added to your cart.`,
             });
         }
     };
+
+    const incrementQuantity = () => setQuantity(qty => qty + 1);
+    const decrementQuantity = () =>
+        setQuantity(qty => (qty > 1 ? qty - 1 : 1));
 
     return (
         <div className="min-h-screen bg-[#f6f7f8] pb-24">
@@ -115,7 +132,7 @@ export default function ProductDetail() {
                             {product.flavour}
                         </h1>
                         <p className="text-3xl font-bold text-[#1a1a1a] tracking-tight">
-                            ${String(product.price)}
+                            ${safeUnitPrice.toFixed(2)}
                         </p>
                         <p className="text-muted-foreground text-lg leading-relaxed max-w-2xl">
                             {product.description || "Optional description for the product"}
@@ -175,14 +192,43 @@ export default function ProductDetail() {
                         </div>
                     </div>
 
-                    <div className="pt-2">
+                    <div className="pt-2 space-y-4">
+                        <div className="flex items-center gap-3">
+                            <Button
+                                type="button"
+                                variant="outline"
+                                size="icon"
+                                onClick={decrementQuantity}
+                                disabled={quantity <= 1}
+                                className="rounded-sm h-10 w-10"
+                                aria-label="Decrease quantity"
+                            >
+                                <Minus className="h-4 w-4" />
+                            </Button>
+                            <span className="text-xl font-bold min-w-[2ch] text-center">
+                                {quantity}
+                            </span>
+                            <Button
+                                type="button"
+                                variant="outline"
+                                size="icon"
+                                onClick={incrementQuantity}
+                                className="rounded-sm h-10 w-10"
+                                aria-label="Increase quantity"
+                            >
+                                <Plus className="h-4 w-4" />
+                            </Button>
+                            <div className="ml-auto text-sm text-muted-foreground">
+                                Total: ${totalPrice.toFixed(2)}
+                            </div>
+                        </div>
                         <Button
                             onClick={handleAddToCart}
                             size="lg"
                             variant="default"
                             className="w-full rounded-none text-lg font-bold uppercase tracking-wide py-6 text-[#1a1a1a]"
                         >
-                            Add to Cart - ${String(product.price)}
+                            Add {quantity} to Cart - ${totalPrice.toFixed(2)}
                         </Button>
                     </div>
 
@@ -210,6 +256,74 @@ export default function ProductDetail() {
 
                 </motion.div>
             </main>
+
+            <section className="container grid grid-cols-1 lg:grid-cols-[1.2fr_0.8fr] gap-12 mt-16">
+                <div className="space-y-4 bg-white border border-border shadow-sm p-8">
+                    <h3 className="text-3xl font-serif font-bold text-[#1a1a1a]">Detailed Description</h3>
+                    <p className="text-[#1a1a1a] leading-relaxed">
+                        {product.description || "No additional description provided."}
+                    </p>
+                    <ul className="space-y-2 text-sm text-[#1a1a1a]">
+                        <li className="flex gap-2"><span className="font-semibold">Macros:</span> {macroSummary.map(item => `${item.label}: ${item.value}`).join(" · ")}</li>
+                        <li className="flex gap-2"><span className="font-semibold">Flavor:</span> {product.flavour}</li>
+                        <li className="flex gap-2"><span className="font-semibold">Type:</span> {product.type || "Not specified"}</li>
+                    </ul>
+                </div>
+
+                <div className="bg-white border border-border shadow-sm p-6">
+                    <Accordion type="single" collapsible defaultValue="overview">
+                        <AccordionItem value="overview">
+                            <AccordionTrigger className="text-lg font-semibold">Overview</AccordionTrigger>
+                            <AccordionContent className="text-sm text-[#1a1a1a] space-y-2">
+                                <p>{product.description || "No overview available."}</p>
+                            </AccordionContent>
+                        </AccordionItem>
+
+                        <AccordionItem value="macros">
+                            <AccordionTrigger className="text-lg font-semibold">Macros & Nutrition</AccordionTrigger>
+                            <AccordionContent className="text-sm text-[#1a1a1a] space-y-2">
+                                <ul className="space-y-1">
+                                    {macroSummary.map(item => (
+                                        <li key={item.label} className="flex justify-between border-b border-border/60 pb-1">
+                                            <span className="font-medium">{item.label}</span>
+                                            <span>{item.value}</span>
+                                        </li>
+                                    ))}
+                                </ul>
+                            </AccordionContent>
+                        </AccordionItem>
+
+                        <AccordionItem value="ingredients">
+                            <AccordionTrigger className="text-lg font-semibold">Ingredients</AccordionTrigger>
+                            <AccordionContent className="text-sm text-[#1a1a1a]">
+                                {ingredientsText}
+                            </AccordionContent>
+                        </AccordionItem>
+
+                        <AccordionItem value="benefits">
+                            <AccordionTrigger className="text-lg font-semibold">Benefits</AccordionTrigger>
+                            <AccordionContent className="text-sm text-[#1a1a1a] space-y-2">
+                                {benefitsList.length === 0 ? (
+                                    <p className="text-muted-foreground">No benefits provided.</p>
+                                ) : (
+                                    <ul className="list-disc list-inside space-y-1">
+                                        {benefitsList.map(benefit => (
+                                            <li key={benefit}>{benefit}</li>
+                                        ))}
+                                    </ul>
+                                )}
+                            </AccordionContent>
+                        </AccordionItem>
+
+                        <AccordionItem value="usage">
+                            <AccordionTrigger className="text-lg font-semibold">How to Use</AccordionTrigger>
+                            <AccordionContent className="text-sm text-[#1a1a1a] space-y-2">
+                                <p>Enjoy straight from the pack or as a quick post-training option.</p>
+                            </AccordionContent>
+                        </AccordionItem>
+                    </Accordion>
+                </div>
+            </section>
         </div>
     );
 }
