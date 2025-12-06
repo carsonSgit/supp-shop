@@ -43,79 +43,70 @@ function Contact(): React.JSX.Element {
 					</p>
 				</div>
 
-				<div className="grid grid-cols-1 lg:grid-cols-2 gap-16 items-start">
-					{/* Contact Form */}
-					<motion.div
-						initial={{ opacity: 0, x: -20 }}
-						animate={{ opacity: 1, x: 0 }}
-						transition={{ delay: 0.2 }}
-						className="bg-white p-8 md:p-12 rounded-[2rem] shadow-xl shadow-gray-200/50"
-					>
-						<h2 className="text-3xl font-serif font-bold mb-8">Send us a message</h2>
-						<form className="space-y-6">
-							<div className="grid grid-cols-2 gap-6">
-								<div className="space-y-2">
-									<label className="text-sm font-bold text-gray-700 uppercase tracking-wider">First Name</label>
-									<Input placeholder="John" className="h-12 bg-gray-50 border-gray-100 focus:border-lime-500 rounded-xl" />
-								</div>
-								<div className="space-y-2">
-									<label className="text-sm font-bold text-gray-700 uppercase tracking-wider">Last Name</label>
-									<Input placeholder="Doe" className="h-12 bg-gray-50 border-gray-100 focus:border-lime-500 rounded-xl" />
-								</div>
-							</div>
-							<div className="space-y-2">
-								<label className="text-sm font-bold text-gray-700 uppercase tracking-wider">Email</label>
-								<Input type="email" placeholder="john@example.com" className="h-12 bg-gray-50 border-gray-100 focus:border-lime-500 rounded-xl" />
-							</div>
-							<div className="space-y-2">
-								<label className="text-sm font-bold text-gray-700 uppercase tracking-wider">Message</label>
-								<Textarea placeholder="How can we help you?" className="min-h-[150px] bg-gray-50 border-gray-100 focus:border-lime-500 rounded-xl resize-none" />
-							</div>
-							<Button className="w-full font-bold uppercase bg-[#1a1a1a] hover:bg-lime-500 hover:text-[#1a1a1a] h-14 rounded-xl text-lg shadow-lg" size="lg">
-								Send Message <Send className="ml-2 h-5 w-5" />
-							</Button>
-						</form>
-					</motion.div>
-
-					{/* Contact Info & FAQ */}
-					<motion.div
-						initial={{ opacity: 0, x: 20 }}
-						animate={{ opacity: 1, x: 0 }}
-						transition={{ delay: 0.4 }}
-						className="space-y-12"
-					>
-						{/* Info Cards */}
-						<div className="grid gap-6">
-							{[
-								{ icon: Phone, label: "Phone", value: "+1 (800) 267-2001" },
-								{ icon: Mail, label: "Email", value: "support@supplementshop.com" },
-								{ icon: MapPin, label: "HQ", value: "123 Fitness Blvd, Austin, TX" }
-							].map((item) => (
-								<div key={item.label} className="flex items-center p-6 bg-white rounded-2xl shadow-sm border border-gray-100 hover:border-lime-200 transition-colors">
-									<div className="h-14 w-14 rounded-2xl bg-lime-50 flex items-center justify-center text-lime-600 mr-6">
-										<item.icon className="h-6 w-6" />
+				<div className="max-w-4xl mx-auto">
+					{/* Contact Form & Info Combined */}
+					<div className="grid grid-cols-1 lg:grid-cols-2 gap-16 lg:gap-24">
+						<motion.div
+							initial={{ opacity: 0, x: -20 }}
+							animate={{ opacity: 1, x: 0 }}
+							transition={{ delay: 0.2 }}
+						>
+							<h2 className="text-3xl font-serif font-bold mb-8 text-[#1a1a1a]">Message Us</h2>
+							<form className="space-y-6">
+								<div className="grid grid-cols-2 gap-6">
+									<div className="space-y-2">
+										<Input placeholder="First Name" className="h-14 bg-transparent border-b border-gray-300 focus:border-lime-500 rounded-none px-0 transition-colors placeholder:text-gray-400" />
 									</div>
-									<div>
-										<p className="text-sm font-bold text-gray-400 uppercase tracking-wider mb-1">{item.label}</p>
-										<p className="text-xl font-serif font-bold text-[#1a1a1a]">{item.value}</p>
+									<div className="space-y-2">
+										<Input placeholder="Last Name" className="h-14 bg-transparent border-b border-gray-300 focus:border-lime-500 rounded-none px-0 transition-colors placeholder:text-gray-400" />
 									</div>
 								</div>
-							))}
-						</div>
+								<div className="space-y-2">
+									<Input type="email" placeholder="Email Address" className="h-14 bg-transparent border-b border-gray-300 focus:border-lime-500 rounded-none px-0 transition-colors placeholder:text-gray-400" />
+								</div>
+								<div className="space-y-2">
+									<Textarea placeholder="Your Message" className="min-h-[150px] bg-transparent border-b border-gray-300 focus:border-lime-500 rounded-none px-0 resize-none transition-colors placeholder:text-gray-400" />
+								</div>
+								<Button className="w-full font-bold uppercase tracking-widest bg-[#1a1a1a] hover:bg-lime-500 hover:text-[#1a1a1a] h-14 rounded-none text-sm transition-all shadow-none">
+									Send Message
+								</Button>
+							</form>
+						</motion.div>
 
-						{/* FAQ Accordion */}
-						<div className="space-y-6">
-							<h3 className="text-2xl font-serif font-bold">Frequently Asked Questions</h3>
-							<Accordion type="single" collapsible className="w-full">
-								{faqs.map((faq, index) => (
-									<AccordionItem key={index} value={`item-${index}`} className="border-gray-200">
-										<AccordionTrigger className="text-lg font-medium hover:text-lime-600 font-serif">{faq.question}</AccordionTrigger>
-										<AccordionContent className="text-gray-500 text-base leading-relaxed">{faq.answer}</AccordionContent>
-									</AccordionItem>
+						<motion.div
+							initial={{ opacity: 0, x: 20 }}
+							animate={{ opacity: 1, x: 0 }}
+							transition={{ delay: 0.4 }}
+							className="space-y-16"
+						>
+							{/* Contact Details */}
+							<div className="space-y-8">
+								{[
+									{ label: "Phone", value: "+1 (800) 267-2001" },
+									{ label: "Email", value: "support@supplementshop.com" },
+									{ label: "HQ", value: "123 Fitness Blvd, Austin, TX" }
+								].map((item) => (
+									<div key={item.label}>
+										<p className="text-xs font-bold text-gray-400 uppercase tracking-widest mb-1">{item.label}</p>
+										<p className="text-xl font-serif text-[#1a1a1a]">{item.value}</p>
+									</div>
 								))}
-							</Accordion>
-						</div>
-					</motion.div>
+							</div>
+
+							{/* FAQ Accordion */}
+							<div className="space-y-6">
+								<h3 className="text-xl font-serif font-bold text-[#1a1a1a]">F.A.Q.</h3>
+								<Accordion type="single" collapsible className="w-full">
+									{faqs.map((faq, index) => (
+										<AccordionItem key={index} value={`item-${index}`} className="border-gray-200">
+											<AccordionTrigger className="text-base hover:text-lime-600 font-serif text-left py-4">{faq.question}</AccordionTrigger>
+											<AccordionContent className="text-gray-500 text-sm leading-relaxed pb-6">{faq.answer}</AccordionContent>
+										</AccordionItem>
+									))}
+								</Accordion>
+							</div>
+						</motion.div>
+					</div>
 				</div>
 			</div>
 		</div>

@@ -53,8 +53,8 @@ function About(): React.JSX.Element {
 			</section>
 
 			{/* Stats Grid */}
-			<section className="container transform -translate-y-16 relative z-20">
-				<div className="grid grid-cols-2 md:grid-cols-4 gap-6">
+			<section className="container py-24 border-b border-gray-100">
+				<div className="grid grid-cols-2 md:grid-cols-4 gap-12 text-center">
 					{stats.map((stat, index) => (
 						<motion.div
 							key={stat.label}
@@ -63,12 +63,9 @@ function About(): React.JSX.Element {
 							viewport={{ once: true }}
 							transition={{ delay: index * 0.1 }}
 						>
-							<div className="bg-white p-8 rounded-3xl shadow-xl shadow-gray-200/50 text-center group hover:-translate-y-2 transition-transform duration-300">
-								<div className="mx-auto w-14 h-14 rounded-2xl bg-lime-50 text-lime-600 flex items-center justify-center mb-4 group-hover:scale-110 transition-transform duration-300">
-									{stat.icon}
-								</div>
-								<div className="text-4xl font-serif font-bold text-[#1a1a1a] mb-1">{stat.value}</div>
-								<div className="text-sm font-medium text-gray-400 uppercase tracking-wider">{stat.label}</div>
+							<div className="space-y-2">
+								<div className="text-4xl md:text-5xl font-serif font-bold text-[#1a1a1a]">{stat.value}</div>
+								<div className="text-sm font-medium text-gray-500 uppercase tracking-widest">{stat.label}</div>
 							</div>
 						</motion.div>
 					))}
@@ -76,38 +73,31 @@ function About(): React.JSX.Element {
 			</section>
 
 			{/* Team Section */}
-			<section className="container py-16">
-				<div className="text-center mb-20 space-y-4">
-					<h2 className="text-4xl font-serif font-bold text-[#1a1a1a]">Meet the Team</h2>
-					<p className="text-gray-500 max-w-xl mx-auto text-lg">
-						The experts working behind the scenes to fuel your journey.
-					</p>
+			<section className="container py-24">
+				<div className="text-center mb-24 space-y-4">
+					<h2 className="text-5xl font-serif font-bold text-[#1a1a1a]">Meet the Team</h2>
 				</div>
-				<div className="grid grid-cols-1 md:grid-cols-3 gap-12">
+				<div className="grid grid-cols-1 md:grid-cols-3 gap-x-8 gap-y-16">
 					{team.map((member, index) => (
 						<motion.div
 							key={member.name}
-							initial={{ opacity: 0, scale: 0.95 }}
-							whileInView={{ opacity: 1, scale: 1 }}
+							initial={{ opacity: 0, y: 20 }}
+							whileInView={{ opacity: 1, y: 0 }}
 							viewport={{ once: true }}
 							transition={{ delay: index * 0.2 }}
-							className="group"
+							className="group text-center"
 						>
-							<div className="relative mb-6">
-								<div className="aspect-square rounded-[2rem] overflow-hidden bg-gray-100">
-									<img
-										src={member.image}
-										alt={member.name}
-										className="w-full h-full object-cover grayscale group-hover:grayscale-0 transition-all duration-500 scale-100 group-hover:scale-110"
-									/>
-								</div>
-								<div className="absolute -bottom-6 right-6 bg-white p-4 rounded-2xl shadow-lg max-w-[200px]">
-									<p className="text-sm text-gray-600 italic leading-snug">"{member.bio}"</p>
-								</div>
+							<div className="relative mb-8 bg-gray-100 aspect-[3/4] overflow-hidden">
+								<img
+									src={member.image}
+									alt={member.name}
+									className="w-full h-full object-cover grayscale group-hover:grayscale-0 transition-all duration-700"
+								/>
 							</div>
-							<div className="pl-4">
-								<h3 className="text-2xl font-serif font-bold text-[#1a1a1a] group-hover:text-lime-600 transition-colors">{member.name}</h3>
-								<p className="text-lime-600 font-medium font-mono">{member.role}</p>
+							<div className="space-y-2">
+								<h3 className="text-2xl font-serif font-bold text-[#1a1a1a]">{member.name}</h3>
+								<p className="text-lime-600 font-medium text-sm uppercase tracking-widest">{member.role}</p>
+								<p className="text-gray-400 text-sm italic mt-2">"{member.bio}"</p>
 							</div>
 						</motion.div>
 					))}

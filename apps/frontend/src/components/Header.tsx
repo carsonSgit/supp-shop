@@ -65,79 +65,60 @@ function Header(): React.JSX.Element {
 					: "bg-transparent py-4"
 			)}
 		>
-			<div className="container flex items-center justify-between px-4">
-				{/* Logo */}
-				<Link to="/" className="flex items-center space-x-2 group">
-					<div className="h-8 w-8 bg-primary rounded-lg flex items-center justify-center text-primary-foreground transform group-hover:rotate-12 transition-transform duration-300">
-						<Leaf className="h-5 w-5" />
-					</div>
-					<span className={cn(
-						"text-xl font-bold tracking-tight transition-colors",
-						!isScrolled && currentPath === "/" ? "text-white" : "text-foreground"
-					)}>
-						Supplement Shop
-					</span>
-				</Link>
+			<div className="container flex items-center justify-between px-4 h-20">
 
-				{/* Desktop Navigation */}
-				<div className="hidden md:flex items-center space-x-1">
+				{/* Desktop Navigation (Centered) */}
+				<nav className="hidden md:flex items-center space-x-12 mx-auto">
 					{navItems.map((item) => {
 						const isActive = currentPath === item.to;
 						const isHome = currentPath === "/";
 
 						if (item.to === "#" && (item as any).onClick) {
 							return (
-								<Button
+								<button
 									key={item.label}
-									variant="ghost"
 									onClick={(item as any).onClick}
 									className={cn(
-										"text-sm font-medium transition-colors hover:text-primary",
-										!isScrolled && isHome ? "text-white/90 hover:text-white hover:bg-white/10" : "text-muted-foreground"
+										"text-lg font-serif transition-colors hover:text-primary tracking-tight",
+										!isScrolled && isHome ? "text-white/90 hover:text-white" : "text-[#1a1a1a]"
 									)}
 								>
 									{item.label}
-								</Button>
+								</button>
 							);
 						}
 
 						return (
-							<Link key={item.to} to={item.to}>
-								<Button
-									variant="ghost"
+							<Link key={item.to} to={item.to} className="relative group">
+								<span
 									className={cn(
-										"text-sm font-medium transition-colors relative",
-										!isScrolled && isHome ? "text-white/90 hover:text-white hover:bg-white/10" : "text-muted-foreground hover:text-primary",
-										isActive && "text-primary font-semibold"
+										"text-lg font-serif transition-colors tracking-tight block py-2",
+										!isScrolled && isHome ? "text-white/90 hover:text-white" : "text-[#1a1a1a]",
+										isActive && isScrolled && "text-lime-600"
 									)}
 								>
 									{item.label}
-									{isActive && (
-										<motion.div
-											layoutId="navbar-indicator"
-											className="absolute bottom-0 left-0 right-0 h-0.5 bg-primary"
-											initial={false}
-											transition={{ type: "spring", stiffness: 500, damping: 30 }}
-										/>
-									)}
-								</Button>
+								</span>
+								{isActive && (
+									<span className="absolute bottom-0 left-0 w-full h-0.5 bg-lime-500" />
+								)}
 							</Link>
 						);
 					})}
-				</div>
+				</nav>
 
 				{/* Right Actions */}
-				<div className="flex items-center space-x-2">
+				<div className="flex items-center space-x-6 absolute right-8">
 					<Button
 						variant="ghost"
 						size="icon"
 						className={cn(
-							"relative transition-colors",
-							!isScrolled && currentPath === "/" ? "text-white hover:bg-white/10" : "text-foreground"
+							"relative transition-colors hover:bg-transparent",
+							!isScrolled && currentPath === "/" ? "text-white" : "text-[#1a1a1a]"
 						)}
 					>
 						<ShoppingCart className="h-5 w-5" />
-						<span className="absolute -top-1 -right-1 flex h-4 w-4 items-center justify-center rounded-full bg-primary text-[10px] font-bold text-primary-foreground">
+						<span className="absolute -top-1 -right-1 flex h-4 w-4 items-center justify-center bg-lime-500 text-[10px] font-bold text-[#1a1a1a] rounded-none">
 							0
 						</span>
 					</Button>
