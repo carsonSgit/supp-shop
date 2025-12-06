@@ -6,7 +6,7 @@ const routeRoot = "/products";
 import * as model from "../models/workoutMongoDb";
 import logger from "../logger";
 import { requireAdmin } from "../middleware/adminAuth";
-import { productCreateSchema, productUpdateSchema } from "../validators/productSchema";
+import { productCreateSchema, productUpdateSchema, productDeleteSchema } from "../validators/productSchema";
 import { ZodError } from "zod";
 
 /**
@@ -29,7 +29,8 @@ async function createProduct(request: Request, response: Response): Promise<void
 
 		if (added) {
 			logger.info("Successfully added a product");
-			response.status(200);
+			response.status(201);
+			response.location(`${routeRoot}/${added.flavour ?? flavour}`);
 			response.send(added);
 		} else {
 			logger.info("Unexpected failure to add product");
@@ -69,24 +70,20 @@ async function createProduct(request: Request, response: Response): Promise<void
 router.get("/all", getAllProduct);
 
 async function getAllProduct(_request: Request, response: Response): Promise<void> {
-	// Get the product from the database
-	let foundProduct = await model.getAllProducts();
-
-	// If returns a null value display that there was no successful match
-
-	if (foundProduct == null) {
-		response.status(400);
-		response.send("Product database was empty.");
-	}
-	// Otherwise, display the product found in the database
-	else {
-		/*let printString = "";
-		for(let i=0; i<foundProduct.length; i++){
-			printString += "<br>Flavour: " + foundProduct[i].flavour + " Type: "
-			+ foundProduct[i].type + " Price: $" + foundProduct[i].price;
-		}*/
+	try {
+		const foundProduct = await model.getAllProducts();
+		const products = foundProduct ?? [];
 		response.status(200);
-		response.send(foundProduct);
+		response.send(products);
+	} catch (err) {
+		if (err instanceof DatabaseError) {
+			response.status(500);
+			response.send(err.message);
+		} else {
+			const error = err as Error;
+			response.status(500);
+			response.send("Unexpected error: " + error.message);
+		}
 	}
 }
 
@@ -116,7 +113,7 @@ async function getOneProduct(request: Request, response: Response): Promise<void
 			// If returns a null value display that there was no successful match
 
 			if (foundProduct == null) {
-				response.status(400);
+				response.status(404);
 				response.send("Product " + flavour + " was not found.");
 			}
 			// Otherwise, display the product found in the database
@@ -190,9 +187,9 @@ async function updateProduct(request: Request, response: Response): Promise<void
 // Protect DELETE route with admin auth
 router.delete("/", requireAdmin, deleteProduct);
 async function deleteProduct(request: Request, response: Response): Promise<void> {
-	const flavour = request.body.flavour;
 	try {
-		const updated = await model.deleteOneProduct(flavour);
+		const parsed = productDeleteSchema.parse(request.body);
+		const updated = await model.deleteOneProduct(parsed.flavour);
 		if (updated) {
 			logger.info("Successfully deleted a product");
 			response.status(200);
@@ -203,7 +200,10 @@ async function deleteProduct(request: Request, response: Response): Promise<void
 			response.send("Failed to delete product for invalid input reason");
 		}
 	} catch (err) {
-		if (err instanceof DatabaseError) {
+		if (err instanceof ZodError) {
+			response.status(400);
+			response.send(err.flatten());
+		} else if (err instanceof DatabaseError) {
 			logger.info(err.message);
 			response.status(500);
 			response.send(err.message);

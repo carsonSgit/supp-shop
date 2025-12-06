@@ -11,19 +11,23 @@ import { useToast } from '../components/ui/use-toast';
 import { getProductImage } from '../shared/utils/productAssets';
 import { cn } from '../lib/utils';
 import { Accordion, AccordionContent, AccordionItem, AccordionTrigger } from "../components/ui/accordion";
+import { ApiClientError } from '../api/client';
+import type { Product } from '../api/types';
 
 export default function ProductDetail() {
     const { flavour } = useParams({ strict: false });
+    const flavourParam = flavour ?? "";
     const { addToCart } = useCart();
     const { toast } = useToast();
     const [quantity, setQuantity] = useState(1);
 
-    const { data: products, isLoading, isError, error, refetch, isFetching } = useQuery({
-        queryKey: ['products'],
-        queryFn: productsApi.getAll,
+    const { data: product, isLoading, isError, error, refetch, isFetching } = useQuery<Product, ApiClientError>({
+        queryKey: ['product', flavourParam],
+        queryFn: () => productsApi.getById(flavourParam),
+        enabled: flavourParam.length > 0,
     });
-
-    const product = products?.find(p => p.flavour === flavour);
+    const apiError = error;
+    const notFound = apiError?.status === 404;
     const imageSrc = getProductImage(product?.flavour);
 
     const nutrition = product?.nutrition;
@@ -42,7 +46,18 @@ export default function ProductDetail() {
     const ingredientsText = ingredients && ingredients.length > 0 ? ingredients.join(", ") : "No ingredients provided.";
     const benefitsList = benefits && benefits.length > 0 ? benefits : [];
 
-    if (isLoading) {
+    if (!flavourParam) {
+        return (
+            <div className="min-h-screen flex flex-col items-center justify-center gap-4">
+                <h1 className="text-2xl font-bold">Product not specified</h1>
+                <Link to="/products">
+                    <Button>Back to Shop</Button>
+                </Link>
+            </div>
+        );
+    }
+
+    if (isLoading || (isFetching && !product)) {
         return (
             <div className="min-h-screen flex items-center justify-center">
                 <Loader2 className="h-10 w-10 animate-spin text-lime-500" />
@@ -50,11 +65,11 @@ export default function ProductDetail() {
         );
     }
 
-    if (isError) {
+    if (isError && !notFound) {
         return (
             <div className="min-h-screen flex flex-col items-center justify-center gap-4 px-4 text-center">
                 <h1 className="text-2xl font-bold">We couldn't load this product</h1>
-                <p className="text-muted-foreground max-w-md">{error instanceof Error ? error.message : "Please check your connection and try again."}</p>
+                <p className="text-muted-foreground max-w-md">{apiError instanceof Error ? apiError.message : "Please check your connection and try again."}</p>
                 <div className="flex gap-3">
                     <Button variant="outline" onClick={() => refetch()} disabled={isFetching}>
                         <RefreshCcw className={cn("mr-2 h-4 w-4", isFetching && "animate-spin")} />
@@ -68,14 +83,16 @@ export default function ProductDetail() {
         );
     }
 
-    if (!product) return (
-        <div className="min-h-screen flex flex-col items-center justify-center gap-4">
-            <h1 className="text-2xl font-bold">Product not found</h1>
-            <Link to="/products">
-                <Button>Back to Shop</Button>
-            </Link>
-        </div>
-    );
+    if (notFound || !product) {
+        return (
+            <div className="min-h-screen flex flex-col items-center justify-center gap-4">
+                <h1 className="text-2xl font-bold">Product not found</h1>
+                <Link to="/products">
+                    <Button>Back to Shop</Button>
+                </Link>
+            </div>
+        );
+    }
 
     const handleAddToCart = () => {
         if (product) {

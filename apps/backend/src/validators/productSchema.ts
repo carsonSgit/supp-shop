@@ -40,6 +40,11 @@ export const productUpdateSchema = z.object({
 	updatePrice: z.coerce.number().positive(),
 });
 
+export const productDeleteSchema = z.object({
+	flavour: z.string().trim().min(1, "flavour is required"),
+});
+
 export type ProductCreateInput = z.infer<typeof productCreateSchema>;
 export type ProductUpdateInput = z.infer<typeof productUpdateSchema>;
+export type ProductDeleteInput = z.infer<typeof productDeleteSchema>;
 
