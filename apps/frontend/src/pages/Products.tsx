@@ -144,48 +144,41 @@ function Products(): React.JSX.Element {
 										params={{ flavour: product.flavour }}
 										className="group flex flex-col h-full cursor-pointer"
 									>
-										{/* Image Container */}
-										<div className="aspect-[4/5] relative overflow-hidden flex items-center justify-center bg-[#f8f8f8] mb-6 rounded-2xl group-hover:bg-[#f0f0f0] transition-colors duration-500">
+										{/* Hero Card */}
+										<div className="relative bg-[#ededed] overflow-hidden flex items-center justify-center shadow-[0_18px_36px_rgba(0,0,0,0.08)] aspect-[3/4]">
 											<img
 												src={imageSrc}
 												alt={product.flavour}
-												className="w-4/5 h-4/5 object-contain filter drop-shadow-xl transform transition-transform duration-700 group-hover:scale-110 group-hover:-rotate-3"
+												className="h-full w-full object-cover"
 											/>
-
-											{/* Hover Quick Action */}
-											<div className="absolute inset-x-6 bottom-6 translate-y-[150%] group-hover:translate-y-0 transition-transform duration-500 ease-out z-10">
-												<Button className="w-full bg-[#1a1a1a] hover:bg-lime-500 hover:text-[#1a1a1a] text-white font-bold uppercase py-6 rounded-xl shadow-xl">
-													<ShoppingBag className="mr-2 h-4 w-4" /> View Details
-												</Button>
-											</div>
+											<div className="absolute inset-0 bg-white/15 opacity-0 transition-opacity duration-300 group-hover:opacity-100" />
 										</div>
 
 										{/* Product Info */}
-										<div className="space-y-2">
-											<div className="flex justify-between items-start gap-4">
-												<h3 className="font-serif text-xl text-[#1a1a1a] leading-tight group-hover:text-lime-600 transition-colors duration-300">
-													{product.flavour}
-												</h3>
-												<span className="font-mono font-bold text-lg text-lime-600 shrink-0">
-													${String(product.price)}
-												</span>
-											</div>
-											<p className="text-sm text-muted-foreground uppercase tracking-wider font-medium">
-												{product.type}
+										<div className="pt-6 space-y-1 text-[#1a1a1a]">
+											<p className="text-[11px] font-black uppercase tracking-[0.22em] text-gray-800">
+												{product.type || "Featured Product"}
 											</p>
-											<p className="text-sm text-gray-500 line-clamp-2 leading-relaxed">
-												{product.description || "Premium quality supplement for your daily needs."}
+											<h3 className="text-xl font-extrabold leading-snug">
+												{product.flavour}
+											</h3>
+											<p className="text-[11px] uppercase tracking-[0.18em] text-gray-600">
+												{product.type ? `${product.type}` : "Signature Series"}
+												{product.flavour ? ` • ${product.flavour}` : ""}
 											</p>
-											<div className="flex pt-3">
+											<div className="pt-3 flex items-center justify-between gap-4">
+												<div className="text-lg font-black shrink-0">
+													${Number(product.price || 0).toFixed(2)}
+												</div>
 												<Button
 													type="button"
-													variant="secondary"
+													variant="ghost"
 													size="sm"
+													className="text-[#1a1a1a] hover:bg-black/5 rounded-none uppercase font-semibold tracking-wide px-5"
 													onClick={(e) => {
 														e.preventDefault();
 														handleAddToCart(product);
 													}}
-													className="uppercase font-semibold tracking-wide w-full"
 												>
 													<ShoppingBag className="mr-2 h-4 w-4" />
 													Add to Cart
