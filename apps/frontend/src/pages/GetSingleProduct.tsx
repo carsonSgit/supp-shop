@@ -5,22 +5,21 @@ import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "../co
 
 function GetProduct(): React.JSX.Element {
 	return (
-		<div className="container mx-auto px-4 py-8">
-			<Card className="max-w-4xl mx-auto">
-				<CardHeader>
-					<CardTitle className="text-2xl">
-						Type in the product you want to look for
-					</CardTitle>
-					<CardDescription>
-						Search for a product by its flavour
-					</CardDescription>
-				</CardHeader>
-				<CardContent>
-					<ErrorBoundary>
-						<SingleProduct />
-					</ErrorBoundary>
-				</CardContent>
-			</Card>
+		<div className="container mx-auto px-4 py-24 max-w-3xl text-center space-y-8">
+			<div className="space-y-2">
+				<h1 className="text-4xl font-serif font-bold text-[#1a1a1a]">
+					Search <span className="text-lime-500 italic">Collection</span>
+				</h1>
+				<p className="text-gray-500 text-lg">
+					Find specific products by flavour or name
+				</p>
+			</div>
+
+			<div className="bg-white p-10 rounded-[2rem] shadow-xl shadow-gray-200/50 text-left border border-gray-50">
+				<ErrorBoundary>
+					<SingleProduct />
+				</ErrorBoundary>
+			</div>
 		</div>
 	);
 }

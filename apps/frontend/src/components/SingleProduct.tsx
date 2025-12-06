@@ -14,21 +14,14 @@ function SingleProduct(): React.JSX.Element {
 	const [product, setProduct] = useState<Product>({} as Product);
 
 	return (
-		<div className="container mx-auto px-4 py-8 space-y-6">
-			<Card>
-				<CardHeader>
-					<CardTitle>Find Product</CardTitle>
-				</CardHeader>
-				<CardContent className="space-y-6">
-					<GetSingleProductForm setFetched={setProduct} />
-					{(product.flavour || product.price) && (
-						<>
-							<Separator />
-							<DisplayProduct product={product} heading="The found product is" />
-						</>
-					)}
-				</CardContent>
-			</Card>
+		<div className="space-y-8">
+			<GetSingleProductForm setFetched={setProduct} />
+			{(product.flavour || product.price) && (
+				<div className="animate-in fade-in slide-in-from-bottom-4 duration-500">
+					<Separator className="my-8" />
+					<DisplayProduct product={product} heading="Product Found" />
+				</div>
+			)}
 		</div>
 	);
 }

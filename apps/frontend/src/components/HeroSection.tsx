@@ -1,124 +1,150 @@
-import React from 'react';
-import { motion } from 'framer-motion';
-import { ArrowRight, Star, Leaf, ShieldCheck } from 'lucide-react';
-import { Button } from './ui/button';
-import heroBg from '../assets/hero-bg-scenic.png';
+import React, { useState, useEffect } from "react";
+import { motion, useScroll, useTransform } from "framer-motion";
+import { ArrowRight, Star, ShoppingBag } from "lucide-react";
+import { Button } from "./ui/button";
+
+// Import local assets
+// Note: In a real app these might be dynamic, but for the hero collage we use specific ones
+import heroProduct from "../assets/products/protein_chocolate.png";
 
 export function HeroSection() {
+    const { scrollY } = useScroll();
+    const y1 = useTransform(scrollY, [0, 500], [0, 100]);
+    const y2 = useTransform(scrollY, [0, 500], [0, -100]);
+    const rotate = useTransform(scrollY, [0, 500], [0, 10]);
+
     return (
-        <div className="relative min-h-[90vh] w-full overflow-hidden flex items-center">
-            {/* Background with Parallax-like Scale Effect */}
-            <motion.div
-                initial={{ scale: 1.1 }}
-                animate={{ scale: 1 }}
-                transition={{ duration: 10, ease: "easeOut" }}
-                className="absolute inset-0 z-0"
-            >
-                <div
-                    className="absolute inset-0 bg-cover bg-center"
-                    style={{ backgroundImage: `url(${heroBg})` }}
-                />
-                <div className="absolute inset-0 bg-gradient-to-r from-black/80 via-black/40 to-transparent" />
-            </motion.div>
+        <section className="relative min-h-screen w-full overflow-hidden bg-[#fafafa] flex flex-col justify-center">
 
-            <div className="container relative z-10 px-4 md:px-6">
-                <div className="max-w-3xl space-y-8">
-                    {/* Badge */}
-                    <motion.div
-                        initial={{ opacity: 0, y: 20 }}
-                        animate={{ opacity: 1, y: 0 }}
-                        transition={{ delay: 0.2 }}
-                        className="inline-flex items-center rounded-full border border-white/20 bg-white/10 px-4 py-1.5 text-sm font-medium text-white backdrop-blur-md"
-                    >
-                        <span className="flex h-2 w-2 rounded-full bg-green-400 mr-2 animate-pulse" />
-                        New Scenic Collection Available
-                    </motion.div>
+            <div className="container relative z-10 px-4 md:px-6 pt-20">
+                {/* Top Navigation / Brand element could go here if header isn't fixed */}
 
-                    {/* Headline */}
-                    <motion.h1
-                        initial={{ opacity: 0, y: 20 }}
-                        animate={{ opacity: 1, y: 0 }}
-                        transition={{ delay: 0.4, duration: 0.8 }}
-                        className="text-5xl md:text-7xl lg:text-8xl font-extrabold tracking-tight text-white uppercase italic"
-                    >
-                        Unlock Your <br />
-                        <span className="text-transparent bg-clip-text bg-gradient-to-r from-green-400 to-emerald-600">
-                            Natural Potential
-                        </span>
-                    </motion.h1>
+                <div className="grid grid-cols-1 lg:grid-cols-12 gap-8 items-center">
 
-                    {/* Subheadline */}
-                    <motion.p
-                        initial={{ opacity: 0, y: 20 }}
-                        animate={{ opacity: 1, y: 0 }}
-                        transition={{ delay: 0.6 }}
-                        className="text-xl text-gray-200 max-w-xl leading-relaxed"
-                    >
-                        Premium supplements sourced from the purest ingredients on Earth.
-                        Experience vitality, focus, and recovery the way nature intended.
-                    </motion.p>
-
-                    {/* CTAs */}
-                    <motion.div
-                        initial={{ opacity: 0, y: 20 }}
-                        animate={{ opacity: 1, y: 0 }}
-                        transition={{ delay: 0.8 }}
-                        className="flex flex-col sm:flex-row gap-4 pt-4"
-                    >
-                        <Button
-                            size="lg"
-                            className="h-14 px-8 text-lg bg-green-600 hover:bg-green-700 text-white border-0 rounded-full font-bold uppercase tracking-wider shadow-[0_0_20px_rgba(34,197,94,0.4)] hover:shadow-[0_0_30px_rgba(34,197,94,0.6)] transition-all"
+                    {/* Left Content - Text */}
+                    <div className="lg:col-span-5 relative z-20">
+                        <motion.h1
+                            initial={{ opacity: 0, y: 30 }}
+                            animate={{ opacity: 1, y: 0 }}
+                            transition={{ duration: 0.8, ease: "easeOut" }}
+                            className="text-6xl md:text-8xl font-serif text-[#1a1a1a] tracking-tight leading-[0.9]"
                         >
-                            Shop Now <ArrowRight className="ml-2 h-5 w-5" />
-                        </Button>
-                        <Button
-                            size="lg"
-                            variant="outline"
-                            className="h-14 px-8 text-lg border-white/30 bg-white/5 text-white hover:bg-white hover:text-black rounded-full font-bold uppercase tracking-wider backdrop-blur-sm transition-all"
-                        >
-                            Our Story
-                        </Button>
-                    </motion.div>
+                            Supplements <br />
+                            crafted to <br />
+                            move with <br />
+                            <span className="relative inline-block">
+                                your
+                                <motion.svg
+                                    initial={{ pathLength: 0 }}
+                                    animate={{ pathLength: 1 }}
+                                    transition={{ delay: 0.5, duration: 0.8 }}
+                                    className="absolute -bottom-2 left-0 w-full h-3 text-lime-400 -z-10"
+                                    viewBox="0 0 100 10"
+                                    preserveAspectRatio="none">
+                                    <path d="M0 5 Q 50 10 100 5" stroke="currentColor" strokeWidth="8" fill="none" />
+                                </motion.svg>
+                            </span> story
+                        </motion.h1>
 
-                    {/* Social Proof / Trust Signals */}
-                    <motion.div
-                        initial={{ opacity: 0 }}
-                        animate={{ opacity: 1 }}
-                        transition={{ delay: 1.2 }}
-                        className="pt-8 flex items-center gap-6 text-white/80"
-                    >
-                        <div className="flex items-center gap-2">
-                            <div className="flex -space-x-2">
-                                {[1, 2, 3, 4].map((i) => (
-                                    <div key={i} className="h-8 w-8 rounded-full bg-gray-400 border-2 border-black flex items-center justify-center text-xs font-bold text-black">
-                                        {/* Placeholder avatars */}
-                                        U{i}
+                        <motion.div
+                            initial={{ opacity: 0 }}
+                            animate={{ opacity: 1 }}
+                            transition={{ delay: 0.8 }}
+                            className="mt-12 flex items-center gap-4"
+                        >
+                            <div className="flex -space-x-3">
+                                {[1, 2].map((i) => (
+                                    <div key={i} className="h-12 w-12 rounded-full border-2 border-white bg-gray-200 overflow-hidden">
+                                        <img src={`https://i.pravatar.cc/100?img=${i + 10}`} alt="User" />
                                     </div>
                                 ))}
-                            </div>
-                            <div className="flex flex-col">
-                                <div className="flex text-yellow-400">
-                                    <Star className="h-4 w-4 fill-current" />
-                                    <Star className="h-4 w-4 fill-current" />
-                                    <Star className="h-4 w-4 fill-current" />
-                                    <Star className="h-4 w-4 fill-current" />
-                                    <Star className="h-4 w-4 fill-current" />
+                                <div className="h-12 w-12 rounded-full border-2 border-white bg-black text-white flex items-center justify-center text-xs font-bold">
+                                    2k+
                                 </div>
-                                <span className="text-xs font-medium">10k+ Happy Athletes</span>
                             </div>
+                            <div className="text-sm font-medium text-gray-600 max-w-[150px] leading-tight">
+                                Athletes trust our clean formulas.
+                            </div>
+                        </motion.div>
+                    </div>
+
+                    {/* Center/Right Content - Collage Image */}
+                    <div className="lg:col-span-7 relative h-[600px] md:h-[800px] w-full flex items-center justify-center">
+
+                        {/* Floating Elements (Stickers, Arrows, etc) */}
+
+                        {/* Circle Sticker */}
+                        <motion.div
+                            style={{ y: y2 }}
+                            className="absolute top-[10%] left-[10%] z-10"
+                        >
+                            <div className="h-24 w-24 rounded-full bg-white border border-gray-200 shadow-xl flex items-center justify-center transform -rotate-12">
+                                <span className="font-serif text-3xl">☺</span>
+                            </div>
+                        </motion.div>
+
+                        {/* Main Hero Image Frame */}
+                        <motion.div
+                            style={{ y: y1 }}
+                            className="relative z-10 w-[80%] max-w-md"
+                        >
+                            {/* Polaroid Frame */}
+                            <div className="bg-white p-4 pb-16 shadow-2xl transform rotate-2 border border-gray-100">
+                                <div className="bg-gray-100 aspect-[4/5] overflow-hidden relative">
+                                    <img
+                                        src={heroProduct}
+                                        alt="Chocolate Protein"
+                                        className="w-full h-full object-cover transform hover:scale-105 transition-transform duration-700"
+                                    />
+                                    {/* Tag on image */}
+                                    <div className="absolute bottom-4 left-4 bg-white/80 backdrop-blur-sm px-3 py-1 rounded-full text-xs font-bold tracking-wider uppercase border border-white/50">
+                                        Whey Isolate
+                                    </div>
+                                </div>
+                                <div className="absolute bottom-4 left-0 right-0 text-center font-handwriting text-2xl text-gray-600 font-serif italic">
+                                    Daily Essentials
+                                </div>
+                            </div>
+
+                            {/* Floating Product Tag */}
+                            <motion.div
+                                animate={{ y: [0, -10, 0] }}
+                                transition={{ repeat: Infinity, duration: 4, ease: "easeInOut" }}
+                                className="absolute -right-8 top-1/2 bg-[#fafafa] border border-gray-200 p-2 shadow-lg max-w-[150px] rotate-6"
+                            >
+                                <div className="flex items-center gap-2 mb-1">
+                                    <div className="w-2 h-2 rounded-full bg-green-500"></div>
+                                    <span className="text-[10px] uppercase font-bold text-gray-500">In Stock</span>
+                                </div>
+                                <p className="font-serif text-sm leading-tight">
+                                    Chocolate Fudge Brownie <br />
+                                    <span className="bg-lime-300 px-1">100% Grass Fed</span>
+                                </p>
+                            </motion.div>
+                        </motion.div>
+
+                        {/* Number decoration */}
+                        <div className="absolute bottom-0 right-10 text-[12rem] font-serif leading-none text-gray-100 -z-10 select-none">
+                            (01)
                         </div>
-                        <div className="h-8 w-px bg-white/20" />
-                        <div className="flex gap-4">
-                            <div className="flex items-center gap-1 text-sm font-medium">
-                                <Leaf className="h-4 w-4 text-green-400" /> Organic
-                            </div>
-                            <div className="flex items-center gap-1 text-sm font-medium">
-                                <ShieldCheck className="h-4 w-4 text-blue-400" /> Lab Tested
-                            </div>
+                    </div>
+                </div>
+
+                {/* Bottom Links/Product Previews */}
+                <div className="absolute bottom-10 left-10 hidden lg:block">
+                    <div className="flex gap-4">
+                        <div className="w-24 h-32 bg-white border border-gray-200 p-2 shadow-sm transform -rotate-3 hover:rotate-0 transition-transform cursor-pointer">
+                            <div className="w-full h-20 bg-gray-50 mb-2"></div>
+                            <div className="text-[10px] text-center uppercase tracking-wider text-gray-500">(02) Vanilla</div>
                         </div>
-                    </motion.div>
+                        <div className="w-24 h-32 bg-white border border-gray-200 p-2 shadow-sm transform rotate-3 hover:rotate-0 transition-transform cursor-pointer">
+                            <div className="w-full h-20 bg-gray-50 mb-2"></div>
+                            <div className="text-[10px] text-center uppercase tracking-wider text-gray-500">(03) Pre</div>
+                        </div>
+                    </div>
                 </div>
             </div>
-        </div>
+        </section>
     );
 }
+

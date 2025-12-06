@@ -89,9 +89,13 @@ function LoginForm(props: LoginFormProps): React.JSX.Element {
 					name="username"
 					render={({ field }) => (
 						<FormItem>
-							<FormLabel>{t.forms.username}</FormLabel>
+							<FormLabel className="font-bold text-gray-700 uppercase tracking-widest text-xs">{t.forms.username}</FormLabel>
 							<FormControl>
-								<Input placeholder={`${t.forms.username}...`} {...field} />
+								<Input
+									placeholder={`${t.forms.username}...`}
+									className="h-12 bg-gray-50 border-gray-100 focus:border-lime-500 rounded-xl transition-all"
+									{...field}
+								/>
 							</FormControl>
 							<FormMessage />
 						</FormItem>
@@ -103,16 +107,25 @@ function LoginForm(props: LoginFormProps): React.JSX.Element {
 					name="password"
 					render={({ field }) => (
 						<FormItem>
-							<FormLabel>{t.forms.password}</FormLabel>
+							<FormLabel className="font-bold text-gray-700 uppercase tracking-widest text-xs">{t.forms.password}</FormLabel>
 							<FormControl>
-								<Input type="password" placeholder={`${t.forms.password}...`} {...field} />
+								<Input
+									type="password"
+									placeholder={`${t.forms.password}...`}
+									className="h-12 bg-gray-50 border-gray-100 focus:border-lime-500 rounded-xl transition-all"
+									{...field}
+								/>
 							</FormControl>
 							<FormMessage />
 						</FormItem>
 					)}
 				/>
 
-				<Button type="submit" className="w-full" disabled={isLoading}>
+				<Button
+					type="submit"
+					className="w-full h-12 rounded-xl text-lg font-bold uppercase tracking-wider bg-[#1a1a1a] hover:bg-lime-500 hover:text-[#1a1a1a] transition-colors shadow-lg"
+					disabled={isLoading}
+				>
 					{isLoading ? t.pages.login.loggingIn : t.nav.login}
 				</Button>
 			</form>

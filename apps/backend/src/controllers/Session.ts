@@ -45,5 +45,4 @@ export class SessionClass implements Session {
 }
 
 // Export Session type alias for backward compatibility
-export { Session };
 

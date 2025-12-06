@@ -16,8 +16,13 @@ module.exports = {
 		extend: {
 			fontFamily: {
 				sans: ["Outfit", "sans-serif"],
+				serif: ["Playfair Display", "serif"],
 			},
 			colors: {
+				lime: {
+					400: "#d3fc03", // Bright lime from reference
+					500: "#b3d902",
+				},
 				border: "hsl(var(--border))",
 				input: "hsl(var(--input))",
 				ring: "hsl(var(--ring))",

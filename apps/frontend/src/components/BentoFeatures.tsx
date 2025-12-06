@@ -20,14 +20,10 @@ function BentoCard({ title, description, icon, className, delay = 0 }: BentoCard
             transition={{ delay, duration: 0.5 }}
             whileHover={{ scale: 1.02 }}
             className={cn(
-                "group relative overflow-hidden rounded-3xl bg-card p-6 shadow-sm border border-border/50 hover:border-primary/50 hover:shadow-lg transition-all duration-300 flex flex-col justify-between",
-                className
+                "group relative overflow-hidden rounded-3xl bg-transparent p-6 hover:bg-secondary/5 transition-all duration-300 flex flex-col justify-between",
+                className,
             )}
         >
-            <div className="absolute top-0 right-0 p-4 opacity-10 group-hover:opacity-20 transition-opacity transform group-hover:scale-110 duration-500">
-                {React.cloneElement(icon as React.ReactElement<any>, { size: 120 })}
-            </div>
-
             <div className="relative z-10">
                 <div className="mb-4 inline-flex h-12 w-12 items-center justify-center rounded-full bg-primary/10 text-primary group-hover:bg-primary group-hover:text-white transition-colors duration-300">
                     {icon}
@@ -35,7 +31,7 @@ function BentoCard({ title, description, icon, className, delay = 0 }: BentoCard
                 <h3 className="text-xl font-bold uppercase tracking-tight text-foreground mb-2">{title}</h3>
                 <p className="text-muted-foreground text-sm leading-relaxed">{description}</p>
             </div>
-        </motion.div>
+        </motion.div >
     );
 }
 

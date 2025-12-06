@@ -16,6 +16,9 @@ const url =
 	(process.env.URL_POST as string);
 
 // Validate that environment variables are loaded
+console.log("URL_PRE:", process.env.URL_PRE);
+console.log("MONGODB_PWD:", process.env.MONGODB_PWD);
+console.log("URL_POST:", process.env.URL_POST);
 if (!process.env.URL_PRE || !process.env.MONGODB_PWD || !process.env.URL_POST) {
 	console.error("Error: Missing required environment variables. Please check your .env file.");
 	process.exit(1);
