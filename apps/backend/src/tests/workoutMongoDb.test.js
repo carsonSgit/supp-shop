@@ -1,28 +1,18 @@
 const model = require("../models/workoutMongoDb");
-const valUtils = require("../models/validateUtils");
 const { InvalidInputError } = require("../models/InvalidInputError");
-const { DatabaseError } = require("../models/DatabaseError");
 const { MongoMemoryServer } = require("mongodb-memory-server");
 const GenerateUsername = require("unique-username-generator");
+const bcrypt = require("bcrypt");
+
 const dbName = "user_db_test";
 
 require("dotenv").config();
 
-jest.setTimeout(50000);
+jest.setTimeout(20000);
+// Keep Mongo operations tight to avoid bun killing processes on slow tests
+const OP_TIMEOUT_MS = 1500;
 
-//Set up mongodb in memory
 let mongod;
-
-beforeAll(async () => {
-	//this will create a new instance of "MongoMemoryServer" and automatically start it
-	mongod = await MongoMemoryServer.create();
-	console.log("Mock Database started");
-});
-
-afterAll(async () => {
-	await mongod.stop(); //Stop the MongoMemoryServer
-	console.log("Mock Database stopped");
-});
 
 const generateUserData = () => {
 	const username = GenerateUsername.generateUsername();
@@ -32,187 +22,167 @@ const generateUserData = () => {
 	return { name: username, email: email, password: password };
 };
 
+async function getUsers() {
+	const cursor = await model.getUserCollection();
+	const results = await cursor.find().toArray();
+	return results;
+}
+
+beforeAll(async () => {
+	// Use a single in-memory server for the suite to avoid repeated startup
+	// delays/timeouts on Windows.
+	mongod = await MongoMemoryServer.create();
+	console.log("Mock Database started");
+});
+
 beforeEach(async () => {
-	try {
-		const url = mongod.getUri();
-		await model.initialize(dbName, true, url, ["users"]);
-	} catch (err) {
-		console.log(err.message);
-	}
+	const url = mongod.getUri();
+	await model.initialize(dbName, true, url, ["users"]);
+	const users = await model.getUserCollection();
+	// ensure unique indexes exist before tests run
+	await users.createIndex({ email: 1 }, { unique: true, collation: { locale: "en", strength: 1 } });
+	await users.createIndex({ username: 1 }, { unique: true, collation: { locale: "en", strength: 1 } });
 });
 
 afterEach(async () => {
 	await model.close();
 });
 
+afterAll(async () => {
+	if (mongod) {
+		try {
+			// Skip filesystem cleanup to avoid EBUSY on Windows when Bun kills
+			// background processes between tests.
+			await mongod.stop({ doCleanup: false, timeout: OP_TIMEOUT_MS });
+		} catch (err) {
+			if (err && (err.code === "EBUSY" || err.code === "EPERM")) {
+				console.warn("MongoMemoryServer cleanup skipped: temp files locked");
+			} else {
+				throw err;
+			}
+		}
+		console.log("Mock Database stopped");
+		mongod = undefined;
+	}
+});
+
 //#region Adding Tests
-test("can add a user to DB", async () => {
+test("addUser hashes password and stores defaults", async () => {
 	const { name, email, password } = generateUserData();
 	await model.addUser(name, email, password);
 
-	let cursor = await model.getUserCollection();
-	cursor = cursor.find();
-
-	const results = await cursor.toArray();
-
-	expect(Array.isArray(results)).toBe(true);
-	expect(results.length).toBe(1);
-	expect(results[0].username.toLowerCase() == name.toLowerCase()).toBe(true);
-	expect(results[0].email.toLowerCase() == email.toLowerCase()).toBe(true);
+	const users = await getUsers();
+	expect(users).toHaveLength(1);
+	expect(users[0].username).toBe(name);
+	expect(users[0].email).toBe(email);
+	expect(users[0].role).toBe("user");
+	expect(await bcrypt.compare(password, users[0].password)).toBe(true);
 });
 
-test("Cannot add same user twice to DB", async () => {
+test("addUser rejects duplicates", async () => {
 	const { name, email, password } = generateUserData();
 	await model.addUser(name, email, password);
-
-	let cursor = await model.getUserCollection();
-	cursor = cursor.find();
-
-	const results = await cursor.toArray();
-
-	expect(Array.isArray(results)).toBe(true);
-	expect(results.length).toBe(1);
-	expect(results[0].username.toLowerCase() == name.toLowerCase()).toBe(true);
-	expect(results[0].email.toLowerCase() == email.toLowerCase()).toBe(true);
-
-	await expect(model.addUser(name, email, password)).rejects.toThrowError(
+	await expect(model.addUser(name, email, password)).rejects.toThrow(
 		InvalidInputError,
 	);
 });
 
-test("Cannot add user with invalid email", async () => {
-	const badEmail = "badEmail";
+test("addUser validates input", async () => {
 	const { name, email, password } = generateUserData();
-	await expect(model.addUser(name, badEmail, password)).rejects.toThrowError(
+	await expect(model.addUser(name, "bad", password)).rejects.toThrow(
+		InvalidInputError,
+	);
+	await expect(model.addUser("", email, password)).rejects.toThrow(
+		InvalidInputError,
+	);
+	await expect(model.addUser(name, email, "weak")).rejects.toThrow(
 		InvalidInputError,
 	);
 });
-
-test("Cannot add user with weak password", async () => {
-	const weakPassword = "weakPwd";
-	const { name, email, password } = generateUserData();
-	await expect(model.addUser(name, email, weakPassword)).rejects.toThrowError(
-		InvalidInputError,
-	);
-});
-
-test("Cannot add user with empty password", async () => {
-	const { name, email, password } = generateUserData();
-	await expect(model.addUser(name, email, "")).rejects.toThrowError(
-		InvalidInputError,
-	);
-});
-
-test("Cannot add user with empty name", async () => {
-	const { name, email, password } = generateUserData();
-	await expect(model.addUser("", email, password)).rejects.toThrowError(
-		InvalidInputError,
-	);
-});
-
 //#endregion
 
 //#region Getting Tests
-test("Can get all users from DB", async () => {
-	let cursor = await model.getUserCollection();
+test("getAllUsers returns empty array when no users", async () => {
+	const users = await model.getAllUsers();
+	expect(users).toEqual([]);
+});
 
-	const { name, email, password } = generateUserData();
-	await cursor.insertOne({ username: name, email: email, password: password });
-
-	const {
-		name: name2,
-		email: email2,
-		password: password2,
-	} = generateUserData();
-	await cursor.insertOne({
-		username: name2,
-		email: email2,
-		password: password2,
-	});
+test("getAllUsers returns stored users", async () => {
+	const first = generateUserData();
+	const second = generateUserData();
+	await model.addUser(first.name, first.email, first.password);
+	await model.addUser(second.name, second.email, second.password);
 
 	const users = await model.getAllUsers();
-
-	expect(Array.isArray(users)).toBe(true);
-	expect(users.length).toBe(2);
-	expect(users[0].username.toLowerCase() == name.toLowerCase()).toBe(true);
-	expect(users[0].email.toLowerCase() == email.toLowerCase()).toBe(true);
-
-	expect(users[1].username.toLowerCase() == name2.toLowerCase()).toBe(true);
-	expect(users[1].email.toLowerCase() == email2.toLowerCase()).toBe(true);
-});
-
-test("Cannot get all users from DB with no users", async () => {
-	const users = await model.getAllUsers();
-	expect(Array.isArray(users)).toBe(true);
-	expect(users.length).toBe(0);
-});
-
-test("Can get a single user from DB", async () => {
-	let cursor = await model.getUserCollection();
-
-	const { name, email, password } = generateUserData();
-	cursor.insertOne({ username: name, email: email, password: password });
-
-	const user = await model.getSingleUser(name);
-
-	expect(user.username.toLowerCase() == name.toLowerCase()).toBe(true);
-	expect(user.email.toLowerCase() == email.toLowerCase()).toBe(true);
-});
-
-test("Cannot get a single user from DB with no user", async () => {
-	await expect(model.getSingleUser("")).rejects.toThrowError(InvalidInputError);
-});
-
-//#endregion
-
-//#region Delete tests
-test("Can delete a user from DB", async () => {
-	let cursor = await model.getUserCollection();
-
-	const { name, email, password } = generateUserData();
-	await cursor.insertOne({ username: name, email: email, password: password });
-
-	await model.deleteSingleUser(name);
-
-	cursor = cursor.find();
-	const results = await cursor.toArray();
-	expect(Array.isArray(results)).toBe(true);
-	expect(results.length).toBe(0);
-});
-
-test("Cannot delete a user from DB with no user", async () => {
-	await expect(model.deleteSingleUser("")).rejects.toThrowError(
-		InvalidInputError,
+	expect(users.map((u) => u.username)).toEqual(
+		expect.arrayContaining([first.name, second.name]),
 	);
 });
 
+test("getSingleUser returns existing user", async () => {
+	const { name, email, password } = generateUserData();
+	await model.addUser(name, email, password);
+	const user = await model.getSingleUser(name);
+	expect(user.username).toBe(name);
+});
+
+test("getSingleUser throws when user missing", async () => {
+	await expect(model.getSingleUser("")).rejects.toThrow(InvalidInputError);
+	await expect(model.getSingleUser("ghost")).rejects.toThrow(
+		InvalidInputError,
+	);
+});
+//#endregion
+
+//#region Delete tests
+test("deleteSingleUser removes existing user", async () => {
+	const { name, email, password } = generateUserData();
+	await model.addUser(name, email, password);
+	await model.deleteSingleUser(name);
+
+	const users = await getUsers();
+	expect(users).toHaveLength(0);
+});
+
+test("deleteSingleUser throws for missing user", async () => {
+	await expect(model.deleteSingleUser("")).rejects.toThrow(InvalidInputError);
+});
 //#endregion
 
 //#region Update tests
-test("Can update a user in DB", async () => {
-	let cursor = await model.getUserCollection();
-	const { name, email, password } = generateUserData();
-	await cursor.insertOne({ username: name, email: email, password: password });
+test("updateSingleUser updates fields and hashes password", async () => {
+	const original = generateUserData();
+	await model.addUser(original.name, original.email, original.password);
+	const updated = generateUserData();
 
-	const {
-		name: name2,
-		email: email2,
-		password: password2,
-	} = generateUserData();
-	await model.updateSingleUser(name, name2, email2, password2);
+	await model.updateSingleUser(
+		original.name,
+		updated.name,
+		updated.email,
+		updated.password,
+	);
 
-	cursor = cursor.find();
-	const results = await cursor.toArray();
-
-	expect(results[0].username.toLowerCase() == name2.toLowerCase()).toBe(true);
-	expect(results[0].email.toLowerCase() == email2.toLowerCase()).toBe(true);
+	const users = await getUsers();
+	expect(users).toHaveLength(1);
+	expect(users[0].username).toBe(updated.name);
+	expect(users[0].email).toBe(updated.email);
+	expect(await bcrypt.compare(updated.password, users[0].password)).toBe(true);
 });
 
-test("Cannot update a user in DB with no user", async () => {
-	const { name, email, password } = generateUserData();
+test("updateSingleUser validates input", async () => {
+	const original = generateUserData();
+	await model.addUser(original.name, original.email, original.password);
+
 	await expect(
-		model.updateSingleUser("", name, email, password),
-	).rejects.toThrowError(InvalidInputError);
+		model.updateSingleUser(original.name, "", original.email, original.password),
+	).rejects.toThrow(InvalidInputError);
+	await expect(
+		model.updateSingleUser(
+			original.name,
+			original.name,
+			"bad",
+			original.password,
+		),
+	).rejects.toThrow(InvalidInputError);
 });
-
 //#endregion

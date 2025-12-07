@@ -1,143 +1,119 @@
 require("dotenv").config();
 const model = require("../models/workoutMongoDb");
-const utils = require("../models/validateUtils");
 const { InvalidInputError } = require("../models/InvalidInputError");
-const db = "unitTestDB";
-jest.setTimeout(5000);
 const { MongoMemoryServer } = require("mongodb-memory-server");
-const { DatabaseError } = require("../models/DatabaseError");
+
+const db = "unitTestDB";
+jest.setTimeout(10000);
 let mongod;
 
 const productData = [
-	{ flavour: "Chocolate", type: "Protein-powder", price: "49.99" },
-	{ flavour: "Natural", type: "Protein-powder", price: "59.99" },
-	{ flavour: "BlueRazz", type: "Pre-workout", price: "63.99" },
-	{ flavour: "Strawberry", type: "Protein-powder", price: "60.00" },
-	{ flavour: "Vanilla", type: "Protein-powder", price: "35.00" },
-	{ flavour: "SourApple", type: "Pre-workout", price: "45.99" },
+	{ flavour: "Chocolate", type: "Protein-powder", price: 49.99 },
+	{ flavour: "Natural", type: "Protein-powder", price: 59.99 },
+	{ flavour: "BlueRazz", type: "Pre-workout", price: 63.99 },
+	{ flavour: "Strawberry", type: "Protein-powder", price: 60 },
+	{ flavour: "Vanilla", type: "Protein-powder", price: 35 },
+	{ flavour: "SourApple", type: "Pre-workout", price: 45.99 },
 ];
 
-/**
- * Finds a pokemon from the pokemon array
- * @returns A pokemon from the array of example pokemon
- */
-const generateProductData = () => {
+const sampleProduct = () => {
 	const index = Math.floor(Math.random() * productData.length);
-	return productData.slice(index, index + 1)[0];
+	return productData[index];
 };
 
-beforeEach(async () => {
-	try {
-		const url = mongod.getUri();
-		await model.initialize(url, db, true, ["products"]);
-	} catch (err) {
-		console.log(err.message);
-	}
-});
-afterEach(async () => {
-	await model.close();
-});
+async function readProducts() {
+	const collection = await model.getProductsCollection();
+	const cursor = collection?.find();
+	return cursor ? cursor.toArray() : [];
+}
+
 beforeAll(async () => {
 	mongod = await MongoMemoryServer.create();
 	console.log("Mock Database started");
 });
+
 afterAll(async () => {
 	await mongod.stop();
 	console.log("Mock Database stopped");
 });
-test("Can add product to DB", async () => {
-	const { flavour, type, price } = generateProductData();
-	await model.addProduct(flavour, type, price);
 
-	let cursor = await model.getCollection();
-	cursor = cursor.find();
-	const results = await cursor.toArray();
-
-	expect(Array.isArray(results)).toBe(true);
-	expect(results.length).toBe(1);
-	expect(results[0].flavour.toLowerCase() == flavour.toLowerCase()).toBe(true);
-	expect(results[0].type.toLowerCase() == type.toLowerCase()).toBe(true);
-	expect(results[0].price == price).toBe(true);
+beforeEach(async () => {
+	const url = mongod.getUri();
+	await model.initialize(db, true, url, ["products"]);
 });
-test("Invalid product adding will throw InvalidInputError", async () => {
-	let error = null;
-	try {
-		const { flavour, type, price } = generateProductData();
-		await model.addProduct(null, type, price);
 
-		let cursor = await model.getCollection();
-		cursor = cursor.find();
-		const results = await cursor.toArray();
-	} catch (err) {
-		error = err;
-	}
-	expect(error).toBeInstanceOf(InvalidInputError);
+afterEach(async () => {
+	await model.close();
 });
-test("Can find product from flavour name", async () => {
-	const { flavour, type, price } = generateProductData();
-	await model.addProduct(flavour, type, price);
-	const foundProduct = await model.getSingleProduct(flavour);
 
-	expect(flavour).toBe(foundProduct.flavour);
-});
-test("Can't find product that doesn't exist", async () => {
-	const { flavour, type, price } = generateProductData();
-	await model.addProduct(flavour, type, price);
+test("addProduct persists product with optional fields", async () => {
+	const { flavour, type, price } = sampleProduct();
+	const product = await model.addProduct(flavour, type, price, "desc", ["ing1"], {
+		calories: 10,
+		protein: 1,
+		carbs: 2,
+		fat: 0,
+	});
 
-	expect(await model.getSingleProduct("NO")).toBe(null);
+	expect(product.flavour).toBe(flavour);
+	const products = await readProducts();
+	expect(products).toHaveLength(1);
+	expect(products[0].type).toBe(type);
+	expect(products[0].price).toBe(price);
 });
-test("Can replace existing product with new one", async () => {
-	const { flavour, type, price } = generateProductData();
+
+test("addProduct rejects invalid payload", async () => {
+	await expect(
+		model.addProduct("", "Pre-workout", 10),
+	).rejects.toBeInstanceOf(InvalidInputError);
+});
+
+test("getSingleProduct returns inserted product", async () => {
+	const { flavour, type, price } = sampleProduct();
 	await model.addProduct(flavour, type, price);
-	await model.updateOneProduct(
-		{ flavour: flavour, type: type, price: price },
-		{ price: "100" },
+	const found = await model.getSingleProduct(flavour);
+	expect(found.flavour).toBe(flavour);
+});
+
+test("getSingleProduct throws for missing product", async () => {
+	await expect(model.getSingleProduct("ghost")).rejects.toBeInstanceOf(
+		InvalidInputError,
 	);
-
-	let cursor = await model.getCollection();
-	cursor = cursor.find();
-	const results = await cursor.toArray();
-
-	expect(results[0].price).toBe("100");
 });
-test("Can delete existing product", async () => {
-	const { flavour, type, price } = generateProductData();
+
+test("updateOneProduct updates price", async () => {
+	const { flavour, type, price } = sampleProduct();
 	await model.addProduct(flavour, type, price);
-	await model.deleteOneProduct(flavour);
-
-	let cursor = await model.getCollection();
-	cursor = cursor.find();
-	const results = await cursor.toArray();
-
-	expect(results[0]).toBe(undefined);
+	const updated = await model.updateOneProduct(
+		{ flavour, type },
+		{ price: 100 },
+	);
+	expect(updated).toBe(true);
+	const products = await readProducts();
+	expect(products[0].price).toBe(100);
 });
-test("Can't delete a non-existing product", async () => {
-	const { flavour, type, price } = generateProductData();
+
+test("deleteOneProduct removes existing product", async () => {
+	const { flavour, type, price } = sampleProduct();
 	await model.addProduct(flavour, type, price);
+	const deleted = await model.deleteOneProduct(flavour);
+	expect(deleted).toBe(true);
+	expect(await readProducts()).toHaveLength(0);
+});
+
+test("deleteOneProduct returns false when nothing deleted", async () => {
 	expect(await model.deleteOneProduct("NOT A PRODUCT")).toBe(false);
 });
-test("More than one product can be added to database & read (2)", async () => {
-	const { flavour, type, price } = generateProductData();
+
+test("getAllProducts returns all stored products", async () => {
+	const { flavour, type, price } = sampleProduct();
 	await model.addProduct(flavour, type, price);
-	await model.addProduct(flavour, type, "100");
+	await model.addProduct("Vanilla", "Protein-powder", 25);
+	await model.addProduct("SourApple", "Pre-workout", 30);
 
-	let cursor = await model.getCollection();
-	cursor = cursor.find();
-	const results = await cursor.toArray();
-
-	expect(results.length).toBe(2);
-});
-test("More than one product can be added to database & read (5)", async () => {
-	const { flavour, type, price } = generateProductData();
-	await model.addProduct(flavour, type, price);
-	await model.addProduct(flavour, type, "100");
-	await model.addProduct(flavour, type, "200");
-	await model.addProduct(flavour, type, "300");
-	await model.addProduct(flavour, type, "400");
-
-	let cursor = await model.getCollection();
-	cursor = cursor.find();
-	const results = await cursor.toArray();
-
-	expect(results.length).toBe(5);
+	const products = await model.getAllProducts();
+	expect(products).toHaveLength(3);
+	expect(products.map((p) => p.flavour)).toEqual(
+		expect.arrayContaining(["Vanilla", flavour, "SourApple"]),
+	);
 });
