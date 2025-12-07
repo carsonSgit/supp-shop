@@ -6,6 +6,8 @@ const routeRoot = "/products";
 import * as model from "../models/workoutMongoDb";
 import logger from "../logger";
 import { requireAdmin } from "../middleware/adminAuth";
+import { productCreateSchema, productUpdateSchema, productDeleteSchema } from "../validators/productSchema";
+import { ZodError } from "zod";
 
 /**
  * Function that adds a product to the database through POST
@@ -19,22 +21,16 @@ import { requireAdmin } from "../middleware/adminAuth";
 router.post("/", requireAdmin, createProduct);
 
 async function createProduct(request: Request, response: Response): Promise<void> {
-	// Assign values to those given in the POST request
-	const flavour = request.body.flavour;
-	const type = request.body.type;
-	const price = request.body.price;
-	const description = request.body.description;
-	const ingredients = request.body.ingredients;
-	const nutrition = request.body.nutrition;
-	const benefits = request.body.benefits;
-	const rating = request.body.rating;
 	try {
+		const parsed = productCreateSchema.parse(request.body);
+		const { flavour, type, price, description, ingredients, nutrition, benefits, rating } = parsed;
 		// async add product to MongoDB database
 		const added = await model.addProduct(flavour, type, price, description, ingredients, nutrition, benefits, rating);
 
 		if (added) {
 			logger.info("Successfully added a product");
-			response.status(200);
+			response.status(201);
+			response.location(`${routeRoot}/${added.flavour ?? flavour}`);
 			response.send(added);
 		} else {
 			logger.info("Unexpected failure to add product");
@@ -42,9 +38,10 @@ async function createProduct(request: Request, response: Response): Promise<void
 			response.send("Failed to add product for unexpected reason");
 		}
 	} catch (err) {
-		// If there was an input error caught in addProduct,
-		// send to 400 page with error message
-		if (err instanceof InvalidInputError) {
+		if (err instanceof ZodError) {
+			response.status(400);
+			response.send(err.flatten());
+		} else if (err instanceof InvalidInputError) {
 			response.status(400);
 			response.send(err.message);
 		}
@@ -73,24 +70,20 @@ async function createProduct(request: Request, response: Response): Promise<void
 router.get("/all", getAllProduct);
 
 async function getAllProduct(_request: Request, response: Response): Promise<void> {
-	// Get the product from the database
-	let foundProduct = await model.getAllProducts();
-
-	// If returns a null value display that there was no successful match
-
-	if (foundProduct == null) {
-		response.status(400);
-		response.send("Product database was empty.");
-	}
-	// Otherwise, display the product found in the database
-	else {
-		/*let printString = "";
-		for(let i=0; i<foundProduct.length; i++){
-			printString += "<br>Flavour: " + foundProduct[i].flavour + " Type: "
-			+ foundProduct[i].type + " Price: $" + foundProduct[i].price;
-		}*/
+	try {
+		const foundProduct = await model.getAllProducts();
+		const products = foundProduct ?? [];
 		response.status(200);
-		response.send(foundProduct);
+		response.send(products);
+	} catch (err) {
+		if (err instanceof DatabaseError) {
+			response.status(500);
+			response.send(err.message);
+		} else {
+			const error = err as Error;
+			response.status(500);
+			response.send("Unexpected error: " + error.message);
+		}
 	}
 }
 
@@ -120,7 +113,7 @@ async function getOneProduct(request: Request, response: Response): Promise<void
 			// If returns a null value display that there was no successful match
 
 			if (foundProduct == null) {
-				response.status(400);
+				response.status(404);
 				response.send("Product " + flavour + " was not found.");
 			}
 			// Otherwise, display the product found in the database
@@ -153,16 +146,11 @@ async function getOneProduct(request: Request, response: Response): Promise<void
 // Protect UPDATE route with admin auth
 router.put("/", requireAdmin, updateProduct);
 async function updateProduct(request: Request, response: Response): Promise<void> {
-	const flavour = request.body.flavour;
-	const type = request.body.type;
-	const price = request.body.price;
-	const updatePrice = request.body.updatePrice;
-
-	const oldProduct = { flavour: flavour, type: type, price: price };
 	try {
-		const updated = await model.updateOneProduct(oldProduct, {
-			price: updatePrice,
-		});
+		const parsed = productUpdateSchema.parse(request.body);
+		const { flavour, type, updatePrice } = parsed;
+
+		const updated = await model.updateOneProduct({ flavour, type }, { price: updatePrice });
 		if (updated) {
 			logger.info("Successfully updated a product");
 			response.status(200);
@@ -173,7 +161,10 @@ async function updateProduct(request: Request, response: Response): Promise<void
 			response.send("Failed to update product for invalid input reason");
 		}
 	} catch (err) {
-		if (err instanceof DatabaseError) {
+		if (err instanceof ZodError) {
+			response.status(400);
+			response.send(err.flatten());
+		} else if (err instanceof DatabaseError) {
 			logger.info(err.message);
 			response.status(500);
 			response.send(err.message);
@@ -196,9 +187,9 @@ async function updateProduct(request: Request, response: Response): Promise<void
 // Protect DELETE route with admin auth
 router.delete("/", requireAdmin, deleteProduct);
 async function deleteProduct(request: Request, response: Response): Promise<void> {
-	const flavour = request.body.flavour;
 	try {
-		const updated = await model.deleteOneProduct(flavour);
+		const parsed = productDeleteSchema.parse(request.body);
+		const updated = await model.deleteOneProduct(parsed.flavour);
 		if (updated) {
 			logger.info("Successfully deleted a product");
 			response.status(200);
@@ -209,7 +200,10 @@ async function deleteProduct(request: Request, response: Response): Promise<void
 			response.send("Failed to delete product for invalid input reason");
 		}
 	} catch (err) {
-		if (err instanceof DatabaseError) {
+		if (err instanceof ZodError) {
+			response.status(400);
+			response.send(err.flatten());
+		} else if (err instanceof DatabaseError) {
 			logger.info(err.message);
 			response.status(500);
 			response.send(err.message);

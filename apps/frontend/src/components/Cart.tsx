@@ -1,4 +1,5 @@
 import React from "react";
+import { Link } from "@tanstack/react-router";
 import { useCart } from "../features/cart/context/CartContext";
 import { Button } from "./ui/button";
 import { ScrollArea } from "./ui/scroll-area";
@@ -15,10 +16,11 @@ import { ShoppingCart, Trash2 } from "lucide-react";
 export function Cart() {
 	const { cart, removeFromCart, cartCount } = useCart();
 
-	const total = cart.reduce(
-		(acc, item) => acc + item.price * item.quantity,
-		0,
-	);
+	const total = cart.reduce((acc, item) => {
+		const price = Number(item.price);
+		const safePrice = Number.isFinite(price) ? price : 0;
+		return acc + safePrice * item.quantity;
+	}, 0);
 
 	return (
 		<Sheet>
@@ -40,32 +42,32 @@ export function Cart() {
 					<>
 						<ScrollArea className="flex-1 pr-4">
 							<div className="space-y-4">
-								{cart.map(item => (
-									<div key={item._id} className="flex items-center justify-between">
-										<div>
-											<p className="font-semibold">{item.flavour}</p>
-											<p className="text-sm text-muted-foreground">
-												${item.price.toFixed(2)} x {item.quantity}
-											</p>
+								{cart.map(item => {
+									const price = Number(item.price);
+									const safePrice = Number.isFinite(price) ? price : 0;
+									return (
+										<div key={item.id} className="flex items-center justify-between">
+											<div>
+												<p className="font-semibold">{item.flavour}</p>
+												<p className="text-sm text-muted-foreground">
+													${safePrice.toFixed(2)} x {item.quantity}
+												</p>
+											</div>
+											<div className="flex items-center gap-4">
+												<p className="font-semibold">
+													${(safePrice * item.quantity).toFixed(2)}
+												</p>
+												<Button
+													variant="ghost"
+													size="icon"
+													onClick={() => removeFromCart(item.id)}
+												>
+													<Trash2 className="h-4 w-4" />
+												</Button>
+											</div>
 										</div>
-										<div className="flex items-center gap-4">
-											<p className="font-semibold">
-												${(item.price * item.quantity).toFixed(2)}
-											</p>
-											<Button
-												variant="ghost"
-												size="icon"
-												onClick={() => {
-													if (item._id) {
-														removeFromCart(item._id);
-													}
-												}}
-											>
-												<Trash2 className="h-4 w-4" />
-											</Button>
-										</div>
-									</div>
-								))}
+									);
+								})}
 							</div>
 						</ScrollArea>
 						<SheetFooter className="mt-4">
@@ -81,8 +83,11 @@ export function Cart() {
 						</SheetFooter>
 					</>
 				) : (
-					<div className="flex flex-1 items-center justify-center">
+					<div className="flex flex-1 flex-col items-center justify-center gap-3 text-center">
 						<p className="text-muted-foreground">Your cart is empty.</p>
+						<Button variant="outline" asChild>
+							<Link to="/products">Browse products</Link>
+						</Button>
 					</div>
 				)}
 			</SheetContent>

@@ -1,8 +1,9 @@
 import React, { useState, useMemo } from "react";
 import { useQuery } from "@tanstack/react-query";
 import { productsApi } from "../api/products";
+import { Product } from "../api/types";
 import { Button } from "../components/ui/button";
-import { Loader2, Settings, ShoppingBag } from "lucide-react";
+import { Loader2, RefreshCcw, Settings, ShoppingBag } from "lucide-react";
 import { ShopFilters } from "../components/ShopFilters";
 import ProductMenu from "../components/ProductMenu";
 import {
@@ -14,24 +15,19 @@ import {
 	DialogTrigger,
 } from "../components/ui/dialog";
 import { Link } from '@tanstack/react-router';
-
-import proteinChoc from '../assets/products/protein_chocolate.png';
-import proteinVanilla from '../assets/products/protein_vanilla.png';
-import prePunch from '../assets/products/preworkout_punch.png';
-
-const productImages: Record<string, string> = {
-	'Chocolate': proteinChoc,
-	'Vanilla': proteinVanilla,
-	'Fruit Punch': prePunch
-};
-
-const defaultImage = proteinChoc;
+import { useCart } from "../features/cart/context/CartContext";
+import { useToast } from "../components/ui/use-toast";
+import { ProductSkeletonGrid } from "../components/ProductSkeletonGrid";
+import { getProductImage } from "../shared/utils/productAssets";
+import { cn } from "../lib/utils";
 
 function Products(): React.JSX.Element {
 	const [searchQuery, setSearchQuery] = useState("");
 	const [selectedCategory, setSelectedCategory] = useState<string | null>(null);
+	const { addToCart } = useCart();
+	const { toast } = useToast();
 
-	const { data: products, isLoading } = useQuery({
+	const { data: products, isLoading, isError, error, refetch, isFetching } = useQuery({
 		queryKey: ['products'],
 		queryFn: productsApi.getAll,
 	});
@@ -52,6 +48,14 @@ function Products(): React.JSX.Element {
 			return matchesSearch && matchesCategory;
 		});
 	}, [products, searchQuery, selectedCategory]);
+
+	const handleAddToCart = (product: Product) => {
+		addToCart(product, 1);
+		toast({
+			title: "Added to cart",
+			description: `${product.flavour} has been added to your cart.`,
+		});
+	};
 
 	return (
 		<div className="container mx-auto px-4 py-16 space-y-12">
@@ -102,8 +106,20 @@ function Products(): React.JSX.Element {
 				{/* Product Grid */}
 				<div className="lg:col-span-3">
 					{isLoading ? (
-						<div className="flex justify-center py-32">
-							<Loader2 className="h-10 w-10 animate-spin text-lime-500" />
+						<ProductSkeletonGrid />
+					) : isError ? (
+						<div className="flex flex-col items-center gap-4 rounded-xl border border-border bg-card p-10 text-center">
+							<p className="text-lg font-semibold text-foreground">We couldn't load the catalog</p>
+							<p className="text-muted-foreground">{error instanceof Error ? error.message : "Please check your connection and try again."}</p>
+							<div className="flex gap-3">
+								<Button variant="outline" onClick={() => refetch()} disabled={isFetching}>
+									<RefreshCcw className={cn("mr-2 h-4 w-4", isFetching && "animate-spin")} />
+									Retry
+								</Button>
+								<Button variant="ghost" onClick={() => { setSearchQuery(""); setSelectedCategory(null); }}>
+									Clear filters
+								</Button>
+							</div>
 						</div>
 					) : filteredProducts.length === 0 ? (
 						<div className="text-center py-32 space-y-4">
@@ -119,7 +135,7 @@ function Products(): React.JSX.Element {
 					) : (
 						<div className="grid grid-cols-1 md:grid-cols-2 xl:grid-cols-3 gap-x-8 gap-y-16">
 							{filteredProducts.map((product) => {
-								const imageSrc = productImages[product.flavour] || defaultImage;
+								const imageSrc = getProductImage(product.flavour);
 
 								return (
 									<Link
@@ -128,38 +144,46 @@ function Products(): React.JSX.Element {
 										params={{ flavour: product.flavour }}
 										className="group flex flex-col h-full cursor-pointer"
 									>
-										{/* Image Container */}
-										<div className="aspect-[4/5] relative overflow-hidden flex items-center justify-center bg-[#f8f8f8] mb-6 rounded-2xl group-hover:bg-[#f0f0f0] transition-colors duration-500">
+										{/* Hero Card */}
+										<div className="relative bg-[#ededed] overflow-hidden flex items-center justify-center shadow-[0_18px_36px_rgba(0,0,0,0.08)] aspect-[3/4]">
 											<img
 												src={imageSrc}
 												alt={product.flavour}
-												className="w-4/5 h-4/5 object-contain filter drop-shadow-xl transform transition-transform duration-700 group-hover:scale-110 group-hover:-rotate-3"
+												className="h-full w-full object-cover"
 											/>
-
-											{/* Hover Quick Action */}
-											<div className="absolute inset-x-6 bottom-6 translate-y-[150%] group-hover:translate-y-0 transition-transform duration-500 ease-out z-10">
-												<Button className="w-full bg-[#1a1a1a] hover:bg-lime-500 hover:text-[#1a1a1a] text-white font-bold uppercase py-6 rounded-xl shadow-xl">
-													<ShoppingBag className="mr-2 h-4 w-4" /> View Details
-												</Button>
-											</div>
+											<div className="absolute inset-0 bg-white/15 opacity-0 transition-opacity duration-300 group-hover:opacity-100" />
 										</div>
 
 										{/* Product Info */}
-										<div className="space-y-2">
-											<div className="flex justify-between items-start gap-4">
-												<h3 className="font-serif text-xl text-[#1a1a1a] leading-tight group-hover:text-lime-600 transition-colors duration-300">
-													{product.flavour}
-												</h3>
-												<span className="font-mono font-bold text-lg text-lime-600 shrink-0">
-													${String(product.price)}
-												</span>
+										<div className="pt-6 space-y-1 text-[#1a1a1a]">
+											<p className="text-[11px] font-black uppercase tracking-[0.22em] text-gray-800">
+												{product.type || "Featured Product"}
+											</p>
+											<h3 className="text-xl font-extrabold leading-snug">
+												{product.flavour}
+											</h3>
+											<p className="text-[11px] uppercase tracking-[0.18em] text-gray-600">
+												{product.type ? `${product.type}` : "Signature Series"}
+												{product.flavour ? ` • ${product.flavour}` : ""}
+											</p>
+											<div className="pt-3 flex items-center justify-between gap-4">
+												<div className="text-lg font-black shrink-0">
+													${Number(product.price || 0).toFixed(2)}
+												</div>
+												<Button
+													type="button"
+													variant="ghost"
+													size="sm"
+													className="text-[#1a1a1a] hover:bg-black/5 rounded-none uppercase font-semibold tracking-wide px-5"
+													onClick={(e) => {
+														e.preventDefault();
+														handleAddToCart(product);
+													}}
+												>
+													<ShoppingBag className="mr-2 h-4 w-4" />
+													Add to Cart
+												</Button>
 											</div>
-											<p className="text-sm text-muted-foreground uppercase tracking-wider font-medium">
-												{product.type}
-											</p>
-											<p className="text-sm text-gray-500 line-clamp-2 leading-relaxed">
-												{product.description || "Premium quality supplement for your daily needs."}
-											</p>
 										</div>
 									</Link>
 								);

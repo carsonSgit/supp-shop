@@ -1,4 +1,4 @@
-import { MongoClient, Db, Collection } from "mongodb";
+import { MongoClient, Db, Collection, MongoServerError } from "mongodb";
 import { InvalidInputError } from "./InvalidInputError";
 import { DatabaseError } from "./DatabaseError";
 import * as validateUtils from "./validateUtils";
@@ -37,7 +37,13 @@ export async function initialize(
 		try {
 			logger.info("Attempting to connect to " + dbName);
 			//store connected client for use while the app is running
-			client = new MongoClient(url);
+			// Keep server selection timeout low so tests fail fast if a temp
+			// in-memory Mongo instance is unexpectedly unavailable.
+			client = new MongoClient(url, {
+				serverSelectionTimeoutMS: 2000,
+				socketTimeoutMS: 2000,
+				directConnection: true,
+			});
 			await client.connect();
 			logger.info("Connected to MongoDb");
 			db = client.db(dbName);
@@ -47,6 +53,7 @@ export async function initialize(
 				name: collectionNames[i],
 			});
 			const collectionArray = await collectionCursor.toArray();
+			const collation = { locale: "en", strength: 1 };
 
 			//if it exists and flag is set to true then drop the collection
 			if (resetFlag && collectionArray.length > 0)
@@ -54,14 +61,21 @@ export async function initialize(
 
 			if (collectionArray.length == 0 || resetFlag) {
 				//collation specifying case-insensitive collection
-				const collation = { locale: "en", strength: 1 };
 				//no match was found so create new collection
 				await db.createCollection(collectionNames[i], { collation: collation });
 			}
 			//convenient access to collection
-			if (collectionNames[i] === "users")
+			if (collectionNames[i] === "users") {
 				usersCollection = db.collection(collectionNames[i]) as Collection<User>;
-			else if (collectionNames[i] === "products")
+				await usersCollection.createIndex(
+					{ email: 1 },
+					{ unique: true, collation: collation },
+				);
+				await usersCollection.createIndex(
+					{ username: 1 },
+					{ unique: true, collation: collation },
+				);
+			} else if (collectionNames[i] === "products")
 				productsCollection = db.collection(
 					collectionNames[i],
 				) as Collection<Product>;
@@ -91,11 +105,10 @@ export async function addUser(
 	email: string,
 	password: string,
 ): Promise<void> {
+	console.log("[debug] addUser start", { username, email });
 	if (!usersCollection) {
 		throw new DatabaseError("Users collection not initialized");
 	}
-
-	let newUser: User;
 
 	//validate each individually for more robust error handling.
 	if (!(await validateUtils.isValidUsername(username))) {
@@ -118,21 +131,24 @@ export async function addUser(
 		throw new InvalidInputError(responseMessage);
 	}
 
-	//Check if user or email already exists in collection
-	if (await isEmailInUse(email)) {
-		const responseMessage = "Email is already in use: " + email;
+	// Fast-fail duplicate username/email before hashing to avoid hanging inserts
+	const duplicate = await usersCollection.findOne(
+		{ $or: [{ email }, { username }] },
+		{ collation: { locale: "en", strength: 1 }, maxTimeMS: 1000 },
+	);
+	if (duplicate) {
+		const duplicateField = duplicate.email === email ? "Email" : "Username";
+		const duplicateValue =
+			duplicateField === "Email" ? duplicate.email : duplicate.username;
+		const responseMessage =
+			duplicateField + " is already in use: " + duplicateValue;
 		logger.error(responseMessage);
 		throw new InvalidInputError(responseMessage);
 	}
 
-	if (await isUsernameInUse(username)) {
-		const responseMessage = "Username is already in use: " + username;
-		logger.error(responseMessage);
-		throw new InvalidInputError(responseMessage);
-	}
-	//insert the new user into the collection
+	console.log("[debug] hashing password");
 	const hashedPassword = await bcrypt.hash(password, saltRounds);
-	newUser = {
+	const newUser: User = {
 		username: username,
 		email: email,
 		password: hashedPassword,
@@ -140,9 +156,26 @@ export async function addUser(
 	};
 	try {
 		//try to insert the user
-		await usersCollection.insertOne(newUser);
+		console.log("[debug] inserting user");
+		await usersCollection.insertOne(newUser, {
+			// small timeout to keep tests from hanging on stalled writes
+			maxTimeMS: 3000,
+		});
+		console.log("[debug] insert complete");
 	} catch (err) {
-		const error = err as Error;
+		const error = err as MongoServerError;
+		if (error instanceof MongoServerError && error.code === 11000) {
+			const duplicateField =
+				error.keyPattern?.email != null ? "Email" : "Username";
+			const duplicateValue =
+				(error.keyValue?.email as string | undefined) ??
+				(error.keyValue?.username as string | undefined) ??
+				(duplicateField === "Email" ? email : username);
+			const responseMessage =
+				duplicateField + " is already in use: " + duplicateValue;
+			logger.error(responseMessage);
+			throw new InvalidInputError(responseMessage);
+		}
 		logger.error(error.message);
 		throw new DatabaseError(
 			"Error inserting user into database: " + error.message,
@@ -282,19 +315,36 @@ export async function updateSingleUser(
 		throw new InvalidInputError(responseMessage);
 	}
 
-	if (await isEmailInUse(email)) {
+	// Ensure user exists and target username/email are not already taken by others
+	const existingUser = await usersCollection.findOne(
+		{ username },
+		{ collation: { locale: "en", strength: 1 } },
+	);
+	if (!existingUser) {
 		const responseMessage =
-			"Cannot update user " + username + " Email is already in use: " + email;
+			"User " + username + " not found and wasn't updated with " + newUsername;
 		logger.error(responseMessage);
 		throw new InvalidInputError(responseMessage);
 	}
 
-	if (await isUsernameInUse(newUsername)) {
+	const duplicate = await usersCollection.findOne(
+		{
+			$or: [{ email }, { username: newUsername }],
+			username: { $ne: username },
+		},
+		{ collation: { locale: "en", strength: 1 } },
+	);
+	if (duplicate) {
+		const duplicateField = duplicate.email === email ? "Email" : "Username";
+		const duplicateValue =
+			duplicateField === "Email" ? duplicate.email : duplicate.username;
 		const responseMessage =
 			"Cannot update user " +
 			username +
-			" Username is already in use: " +
-			newUsername;
+			" " +
+			duplicateField.toLowerCase() +
+			" is already in use: " +
+			duplicateValue;
 		logger.error(responseMessage);
 		throw new InvalidInputError(responseMessage);
 	}
@@ -305,9 +355,27 @@ export async function updateSingleUser(
 		updatedUser = await usersCollection.updateOne(
 			{ username: username },
 			{ $set: { username: newUsername, email: email, password: hashedPassword } },
+			{ maxTimeMS: 3000 },
 		);
 	} catch (err) {
-		const error = err as Error;
+		const error = err as MongoServerError;
+		if (error instanceof MongoServerError && error.code === 11000) {
+			const duplicateField =
+				error.keyPattern?.email != null ? "Email" : "Username";
+			const duplicateValue =
+				(error.keyValue?.email as string | undefined) ??
+				(error.keyValue?.username as string | undefined) ??
+				(duplicateField === "Email" ? email : newUsername);
+			const responseMessage =
+				"Cannot update user " +
+				username +
+				" " +
+				duplicateField.toLowerCase() +
+				" is already in use: " +
+				duplicateValue;
+			logger.error(responseMessage);
+			throw new InvalidInputError(responseMessage);
+		}
 		logger.error(error.message);
 		throw new DatabaseError(
 			"Error updating user " + username + " in database: " + error.message,
@@ -560,10 +628,10 @@ export async function addProduct(
 			type: type,
 			price: price,
 			description: description,
-			ingredients: ingredients || [],
-			nutrition: nutrition || { calories: 0, protein: 0, carbs: 0, fat: 0 },
-			benefits: benefits || [],
-			rating: rating || 5.0
+			ingredients: ingredients,
+			nutrition: nutrition,
+			benefits: benefits,
+			rating: rating
 		};
 	} else {
 		throw new InvalidInputError("Product values invalid");
@@ -738,41 +806,6 @@ export async function getOrdersCollection(): Promise<Collection<Order> | null> {
 //#region Helper functions
 
 /**
- * Checks if the passed email is already in use
- * @param email
- * @returns true if email is already in use, false if it isn't
- */
-async function isEmailInUse(email: string): Promise<boolean> {
-	if (!usersCollection) {
-		throw new DatabaseError("Users collection not initialized");
-	}
-
-	const user = await usersCollection.findOne({ email: email });
-
-	if (user == null) {
-		return false;
-	}
-	return true;
-}
-
-/**
- * Checks if the passed username is already in use
- * @param username
- * @returns true if username is already in use, false if it isn't
- */
-async function isUsernameInUse(username: string): Promise<boolean> {
-	if (!usersCollection) {
-		throw new DatabaseError("Users collection not initialized");
-	}
-
-	const user = await usersCollection.findOne({ username: username });
-	if (user == null) {
-		return false;
-	}
-	return true;
-}
-
-/**
  * Closes the connection to the database
  */
 export async function close(): Promise<void> {
@@ -784,6 +817,13 @@ export async function close(): Promise<void> {
 	} catch (err) {
 		const error = err as Error;
 		logger.error(error.message);
+	} finally {
+		// ensure a clean slate for tests between runs
+		client = null;
+		db = null;
+		usersCollection = null;
+		productsCollection = null;
+		ordersCollection = null;
 	}
 }
 //#endregion Helper functions

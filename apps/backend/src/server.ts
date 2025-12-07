@@ -10,17 +10,20 @@ import * as model from "./models/workoutMongoDb";
 import { InvalidInputError } from "./models/InvalidInputError";
 import { DatabaseError } from "./models/DatabaseError";
 
+/**
+ * Support both a single Mongo URL (`MONGO_URL`) and the legacy
+ * split variables (`URL_PRE`, `MONGODB_PWD`, `URL_POST`).
+ */
 const url =
-	(process.env.URL_PRE as string) +
-	(process.env.MONGODB_PWD as string) +
-	(process.env.URL_POST as string);
+	process.env.MONGO_URL ||
+	(process.env.URL_PRE && process.env.MONGODB_PWD && process.env.URL_POST
+		? `${process.env.URL_PRE}${process.env.MONGODB_PWD}${process.env.URL_POST}`
+		: "");
 
-// Validate that environment variables are loaded
-console.log("URL_PRE:", process.env.URL_PRE);
-console.log("MONGODB_PWD:", process.env.MONGODB_PWD);
-console.log("URL_POST:", process.env.URL_POST);
-if (!process.env.URL_PRE || !process.env.MONGODB_PWD || !process.env.URL_POST) {
-	console.error("Error: Missing required environment variables. Please check your .env file.");
+if (!url) {
+	console.error(
+		"Error: Missing Mongo connection details. Provide either MONGO_URL or URL_PRE + MONGODB_PWD + URL_POST in apps/backend/.env",
+	);
 	process.exit(1);
 }
 

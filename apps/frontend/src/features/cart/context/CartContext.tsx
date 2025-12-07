@@ -2,18 +2,46 @@ import React, { createContext, useContext, useState, useEffect, ReactNode } from
 import { Product } from "../../../api/types";
 
 export interface CartItem extends Product {
+	id: string;
 	quantity: number;
 }
 
 interface CartContextType {
 	cart: CartItem[];
 	addToCart: (product: Product, quantity: number) => void;
-	removeFromCart: (productId: string | undefined) => void;
+	removeFromCart: (productId: string) => void;
 	clearCart: () => void;
 	cartCount: number;
 }
 
 const CartContext = createContext<CartContextType | undefined>(undefined);
+
+const getProductId = (product: Partial<Product>): string => {
+	return product._id ?? product.flavour ?? "";
+};
+
+const normalizeCartItems = (data: unknown): CartItem[] => {
+	if (!Array.isArray(data)) return [];
+
+	return data
+		.map(item => {
+			const id = getProductId(item as Product);
+			if (!id) return null;
+
+			const rawQty = Number((item as Product).quantity);
+			const quantity = Number.isFinite(rawQty) && rawQty > 0 ? rawQty : 1;
+			const rawPrice = Number((item as Product).price);
+			const price = Number.isFinite(rawPrice) ? rawPrice : 0;
+
+			return {
+				...(item as Product),
+				id,
+				quantity,
+				price,
+			} satisfies CartItem;
+		})
+		.filter((item): item is CartItem => item !== null);
+};
 
 interface CartProviderProps {
 	children: ReactNode;
@@ -25,7 +53,12 @@ export function CartProvider({ children }: CartProviderProps): React.JSX.Element
 	useEffect(() => {
 		const storedCart = localStorage.getItem("cart");
 		if (storedCart) {
-			setCart(JSON.parse(storedCart));
+			try {
+				const parsed = JSON.parse(storedCart) as CartItem[];
+				setCart(normalizeCartItems(parsed));
+			} catch {
+				setCart([]);
+			}
 		}
 	}, []);
 
@@ -34,22 +67,25 @@ export function CartProvider({ children }: CartProviderProps): React.JSX.Element
 	}, [cart]);
 
 	const addToCart = (product: Product, quantity: number) => {
+		const id = getProductId(product);
+		if (!id) return;
+		const price = Number(product.price);
+
 		setCart(prevCart => {
-			const existingItem = prevCart.find(item => item._id === product._id);
+			const existingItem = prevCart.find(item => item.id === id);
 			if (existingItem) {
 				return prevCart.map(item =>
-					item._id === product._id
+					item.id === id
 						? { ...item, quantity: item.quantity + quantity }
 						: item
 				);
 			}
-			return [...prevCart, { ...product, quantity }];
+			return [...prevCart, { ...product, id, quantity, price: Number.isFinite(price) ? price : 0 }];
 		});
 	};
 
-	const removeFromCart = (productId: string | undefined) => {
-		if (productId === undefined) return;
-		setCart(prevCart => prevCart.filter(item => item._id !== productId));
+	const removeFromCart = (productId: string) => {
+		setCart(prevCart => prevCart.filter(item => item.id !== productId));
 	};
 
 	const clearCart = () => {

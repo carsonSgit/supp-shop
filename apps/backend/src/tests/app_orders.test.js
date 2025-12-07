@@ -1,228 +1,221 @@
 jest.setTimeout(60000);
 const model = require("../models/workoutMongoDb");
 const { MongoMemoryServer } = require("mongodb-memory-server");
-const app = require("../app");
+const app = require("../app").default;
 const supertest = require("supertest");
+const { createSession } = require("../controllers/Session");
+const bcrypt = require("bcrypt");
 const testRequest = supertest(app);
 const dbName = "testOrders_db";
 let mongod;
-/**
- * before each method
- */
-beforeEach(async () => {
-	const url = mongod.getUri();
-	await model.initialize(dbName, true, url, ["orders"]);
-});
+let adminCookie;
+
+async function seedAdminSession() {
+	const users = await model.getUserCollection();
+	const hashed = await bcrypt.hash("AdminPass1!", 10);
+	await users.insertOne({
+		username: "admin",
+		email: "admin@example.com",
+		password: hashed,
+		role: "admin",
+	});
+	return [`sessionId=${createSession("admin", 5)}`];
+}
 
 beforeAll(async () => {
-	// This will create a new instance of "MongoMemoryServer" and automatically start it
 	mongod = await MongoMemoryServer.create();
 	console.log("Mock Database started");
 });
 
 afterAll(async () => {
-	await mongod.stop(); // Stop the MongoMemoryServer
+	await mongod.stop();
 	console.log("Mock Database stopped");
 });
 
-// ======================================================================================================
-
-/**
- *  test method that checks for a successful retrival of an order
- */
-test("GET /orders success (200) case", async () => {
-	const orderId = "04";
-	const price = "17";
-
-	await model.addOrder(orderId, price);
-
-	const testResponse = await testRequest.get("/orders/" + orderId);
-	expect(testResponse.status).toBe(200);
+beforeEach(async () => {
+	const url = mongod.getUri();
+	await model.initialize(dbName, true, url, ["users", "orders"]);
+	adminCookie = await seedAdminSession();
 });
 
-/**
- * Test method that checks if the user input is correct
- */
-test("GET /orders incorrect input (400) case", async () => {
-	const orderId = "7";
-	const price = "12";
-	const wrongOrderId = "8";
+afterEach(async () => {
+	await model.close();
+});
+
+// ======================================================================================================
+
+test("GET /orders/:orderId returns an order when authenticated", async () => {
+	const orderId = "04";
+	const price = 17;
 
 	await model.addOrder(orderId, price);
-	const testResponse = await testRequest.get("/orders/" + wrongOrderId);
+
+	const testResponse = await testRequest
+		.get("/orders/" + orderId)
+		.set("Cookie", adminCookie);
+	expect(testResponse.status).toBe(200);
+	expect(testResponse.body.orderId).toBe(orderId);
+});
+
+test("GET /orders/:orderId returns 400 for invalid id", async () => {
+	const testResponse = await testRequest
+		.get("/orders/" + -1)
+		.set("Cookie", adminCookie);
 	expect(testResponse.status).toBe(400);
 });
 
-/**
- * test method that checks if the database can be accessed
- */
-test("GET /orders incorrect database (500) case", async () => {
-	const orderId = "17";
-	const price = "12";
-
-	await model.addOrder(orderId, price);
-	await model.close(); // Stop the MongoMemoryServer
-
-	const testResponse = await testRequest.get("/orders/" + orderId);
-	expect(testResponse.status).toBe(500);
+test("GET /orders/:orderId returns 401 without auth", async () => {
+	const response = await testRequest.get("/orders/123");
+	expect(response.status).toBe(401);
 });
 
-// ======================================================================================================
+test("GET /orders lists all orders", async () => {
+	await model.addOrder("17", 32);
+	await model.addOrder("1", 23);
 
-/**
- *  test method that checks for a successful retrival of an order
- */
-test("GET /orders (all) success (200) case", async () => {
-	const orderId = "17";
-	const price1 = "32";
-
-	const orderId2 = "1";
-	const price2 = "23";
-
-	await model.addOrder(orderId, price1);
-	await model.addOrder(orderId2, price2);
-
-	const testResponse = await testRequest.get("/orders");
+	const testResponse = await testRequest
+		.get("/orders")
+		.set("Cookie", adminCookie);
 	expect(testResponse.status).toBe(200);
+	expect(Array.isArray(testResponse.body)).toBe(true);
+	expect(testResponse.body.length).toBe(2);
 });
 
-/**
- * test method that checks if the database can be accessed
- */
-test("GET /orders (all) incorrect database (500) case", async () => {
-	await model.close(); // Stop the MongoMemoryServer
+test("GET /orders returns 500 when db is closed", async () => {
+	await model.close();
 
-	const testResponse = await testRequest.get("/orders");
+	const testResponse = await testRequest
+		.get("/orders")
+		.set("Cookie", adminCookie);
 	expect(testResponse.status).toBe(500);
 });
 // ======================================================================================================
 
-/**
- * test method that checks for a successful post
- */
-test("POST /orders success (200) case", async () => {
+test("POST /orders creates an order", async () => {
 	const orderId = "7";
-	const price = "13";
+	const price = 13;
 
-	const testResponse = await testRequest.post("/orders").send({
-		orderId: orderId,
-		price: price,
-	});
+	const testResponse = await testRequest
+		.post("/orders")
+		.set("Cookie", adminCookie)
+		.send({
+			orderId: orderId,
+			price: price,
+		});
 
-	const postedOrder = await model.getOneOrder(orderId);
-	console.log(postedOrder);
 	expect(testResponse.status).toBe(200);
 
 	const cursor = await model.getOrdersCollection();
 	const results = await cursor.find().toArray();
-	expect(Array.isArray(results)).toBe(true);
-	expect(results.length).toBe(1);
-	expect(results[0].orderId == orderId).toBe(true);
-	expect(results[0].price == price).toBe(true);
+	expect(results).toHaveLength(1);
+	expect(results[0].orderId).toBe(orderId);
+	expect(results[0].price).toBe(price);
 });
 
-/**
- * Test method that checks for an invalid input post
- */
-test("POST /orders incorrect input case", async () => {
-	const orderId = "-7";
-	const price = "13";
-
-	const testResponse = await testRequest.post("/orders").send({
-		orderId: orderId,
-		price: price,
-	});
+test("POST /orders rejects invalid input", async () => {
+	const testResponse = await testRequest
+		.post("/orders")
+		.set("Cookie", adminCookie)
+		.send({
+			orderId: "-7",
+			price: 13,
+		});
 
 	expect(testResponse.status).toBe(400);
 });
 
-/**
- * Test method that checks for a level 500 error on post
- */
-test("POST /orders incorrect database case", async () => {
-	const orderId = "17";
-	const price = "13";
-
-	await model.close(); // Stop the MongoMemoryServer
+test("POST /orders returns 401 when unauthenticated", async () => {
 	const testResponse = await testRequest.post("/orders").send({
-		orderId: orderId,
-		price: price,
+		orderId: "17",
+		price: 13,
 	});
+
+	expect(testResponse.status).toBe(401);
+});
+
+test("POST /orders returns 500 when database is closed", async () => {
+	await model.close();
+	const testResponse = await testRequest
+		.post("/orders")
+		.set("Cookie", adminCookie)
+		.send({
+			orderId: "17",
+			price: 13,
+		});
 
 	expect(testResponse.status).toBe(500);
 });
 
 // ======================================================================================================
 
-// Test for a successful PUT request (response status 200)
-test("PUT request returns status 200", async () => {
+test("PUT /orders updates an order", async () => {
 	const orderId = "04";
-	const oldprice = "500";
+	const oldprice = 500;
 
 	const newOrderId = "7";
-	const price = "13";
+	const price = 13;
 	await model.addOrder(orderId, oldprice);
 
 	const response = await testRequest
 		.put("/orders/" + orderId)
+		.set("Cookie", adminCookie)
 		.send({ orderId: newOrderId, price: price });
 	expect(response.status).toBe(200);
 });
 
-/**
- * Test for a failed PUT request (response status 500)
- */
-test("PUT request returns status 500", async () => {
+test("PUT /orders returns 400 for invalid input", async () => {
 	const orderId = "04";
-	const newOrderId = "7";
-	const price = "13";
-	await model.close(); // Stop the MongoMemoryServer
-
-	const response = await testRequest
-		.put("/orders/" + orderId)
-		.send({ orderId: newOrderId, price: price });
-	expect(response.status).toBe(500);
-});
-
-/**
- * Test for a failed PUT request (response status 400)
- */
-test("PUT request returns status 400", async () => {
-	const orderId = "04";
-	const oldPrice = "37";
+	const oldPrice = 37;
 	const newOrderId = "-7";
-	const price = "13";
+	const price = 13;
 	await model.addOrder(orderId, oldPrice);
 	const response = await testRequest
 		.put("/orders/" + orderId)
+		.set("Cookie", adminCookie)
 		.send({ orderId: newOrderId, price: price });
 	expect(response.status).toBe(400);
+});
+
+test("PUT /orders returns 500 when db closed", async () => {
+	const orderId = "04";
+	const newOrderId = "7";
+	const price = 13;
+	await model.close();
+
+	const response = await testRequest
+		.put("/orders/" + orderId)
+		.set("Cookie", adminCookie)
+		.send({ orderId: newOrderId, price: price });
+	expect(response.status).toBe(500);
 });
 
 // ======================================================================================================
 
-// Test for a successful DELETE request (response status 200)
-test("DELETE request returns status 200", async () => {
+test("DELETE /orders deletes an order", async () => {
 	const orderId = "04";
-	const price = "23";
+	const price = 23;
 
 	await model.addOrder(orderId, price);
 
-	const response = await testRequest.delete("/orders/" + orderId);
+	const response = await testRequest
+		.delete("/orders/" + orderId)
+		.set("Cookie", adminCookie);
 	expect(response.status).toBe(200);
 });
 
-// Test for a failed DELETE request (response status 500)
-test("DELETE request returns status 500", async () => {
-	const orderId = "24";
-	await model.close(); // Stop the MongoMemoryServer
-	const response = await testRequest.delete("/orders/" + orderId);
-	expect(response.status).toBe(500);
+test("DELETE /orders returns 400 with invalid data", async () => {
+	const invalidOrderId = "-2";
+	const response = await testRequest
+		.delete("/orders/" + invalidOrderId)
+		.set("Cookie", adminCookie);
+	expect(response.status).toBe(400);
 });
 
-// Test for a DELETE request with invalid data (response status 400)
-test("DELETE request returns status 400 with invalid data", async () => {
-	const invalidOrderId = "-2";
-	const response = await testRequest.delete("/orders/" + invalidOrderId);
-	expect(response.status).toBe(400);
+test("DELETE /orders returns 500 when database closed", async () => {
+	const orderId = "24";
+	await model.close();
+	const response = await testRequest
+		.delete("/orders/" + orderId)
+		.set("Cookie", adminCookie);
+	expect(response.status).toBe(500);
 });
