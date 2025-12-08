@@ -73,32 +73,27 @@ export function BentoFeatures() {
 
                 {/* Left Side: Dynamic Text Content */}
                 <div className="h-full min-h-[400px] flex flex-col justify-center">
-                    <AnimatePresence mode="wait">
-                        <motion.div
-                            key={activeIndex}
-                            initial={{ opacity: 0 }}
-                            animate={{ opacity: 1 }}
-                            exit={{ opacity: 0 }}
-                            transition={{ duration: 0.5, ease: "easeInOut" }}
+                    <div className="h-full min-h-[400px] flex flex-col justify-center">
+                        <div
                             className={cn(
                                 "p-0 flex flex-col justify-start transition-colors duration-500 bg-transparent text-foreground",
                             )}
                         >
-                            <motion.div
+                            <div
                                 className={cn(
                                     "mb-6 inline-flex h-16 w-16 items-center justify-center transition-colors text-foreground ring-1 ring-border/10 rounded-none bg-transparent"
                                 )}
                             >
                                 {FEATURES[activeIndex].icon}
-                            </motion.div>
+                            </div>
                             <h3 className="text-4xl font-serif italic font-bold tracking-tight text-foreground mb-4">
                                 {FEATURES[activeIndex].title}
                             </h3>
                             <p className="text-muted-foreground text-lg leading-relaxed">
                                 {FEATURES[activeIndex].description}
                             </p>
-                        </motion.div>
-                    </AnimatePresence>
+                        </div>
+                    </div>
                 </div>
 
                 {/* Right Side: Visual Stack */}
