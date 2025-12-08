@@ -1,113 +1,108 @@
 import React from "react";
-import { useTranslation } from "../shared/hooks/useTranslation";
 import { motion } from "framer-motion";
-import {
-	Card,
-	CardContent,
-	CardHeader,
-	CardTitle,
-} from "../components/ui/card";
 import { Input } from "../components/ui/input";
 import { Textarea } from "../components/ui/textarea";
 import { Button } from "../components/ui/button";
-import {
-	Accordion,
-	AccordionContent,
-	AccordionItem,
-	AccordionTrigger,
-} from "../components/ui/accordion";
-import { Mail, Phone, MapPin, Send } from "lucide-react";
+import { Checkbox } from "../components/ui/checkbox";
+import { Label } from "../components/ui/label";
 
 function Contact(): React.JSX.Element {
-	const t = useTranslation();
-
-	const faqs = [
-		{ question: "Do you ship internationally?", answer: "Yes, we ship to over 50 countries worldwide with tracked shipping." },
-		{ question: "Are your products vegan?", answer: "Most of our range is vegan-friendly. Check the product label for specific details." },
-		{ question: "What is your return policy?", answer: "We offer a 30-day money-back guarantee on all unopened products." },
-	];
-
 	return (
-		<div className="min-h-screen bg-background pb-24 pt-32">
-			<div className="container">
-				<div className="text-center mb-20 space-y-6">
-					<motion.h1
-						initial={{ opacity: 0, y: 20 }}
-						animate={{ opacity: 1, y: 0 }}
-						className="text-5xl md:text-7xl font-serif font-bold text-foreground"
-					>
-						Get in <span className="text-lime-500 italic">Touch</span>
-					</motion.h1>
-					<p className="text-muted-foreground text-xl max-w-2xl mx-auto leading-relaxed">
-						Have a question about your order or need advice on supplements? We're here to help.
-					</p>
-				</div>
-
-				<div className="max-w-4xl mx-auto">
-					{/* Contact Form & Info Combined */}
-					<div className="grid grid-cols-1 lg:grid-cols-2 gap-16 lg:gap-24">
-						<motion.div
-							initial={{ opacity: 0, x: -20 }}
-							animate={{ opacity: 1, x: 0 }}
-							transition={{ delay: 0.2 }}
-						>
-							<h2 className="text-3xl font-serif font-bold mb-8 text-foreground">Message Us</h2>
-							<form className="space-y-6">
-								<div className="grid grid-cols-2 gap-6">
-									<div className="space-y-2">
-										<Input placeholder="First Name" />
-									</div>
-									<div className="space-y-2">
-										<Input placeholder="Last Name" />
-									</div>
-								</div>
-								<div className="space-y-2">
-									<Input type="email" placeholder="Email Address" />
-								</div>
-								<div className="space-y-2">
-									<Textarea placeholder="Your Message" className="min-h-[150px] resize-none" />
-								</div>
-								<Button className="w-full font-bold uppercase tracking-widest">
-									Send Message
-								</Button>
-							</form>
-						</motion.div>
-
-						<motion.div
-							initial={{ opacity: 0, x: 20 }}
-							animate={{ opacity: 1, x: 0 }}
-							transition={{ delay: 0.4 }}
-							className="space-y-16"
-						>
-							{/* Contact Details */}
-							<div className="space-y-8">
-								{[
-									{ label: "Phone", value: "+1 (800) 267-2001" },
-									{ label: "Email", value: "support@supplementshop.com" },
-									{ label: "HQ", value: "123 Fitness Blvd, Austin, TX" }
-								].map((item) => (
-									<div key={item.label}>
-										<p className="text-xs font-bold text-muted-foreground uppercase tracking-widest mb-1">{item.label}</p>
-										<p className="text-xl font-serif text-foreground">{item.value}</p>
-									</div>
-								))}
-							</div>
-
-							{/* FAQ Accordion */}
-							<div className="space-y-6">
-								<h3 className="text-xl font-serif font-bold text-foreground">F.A.Q.</h3>
-								<Accordion type="single" collapsible className="w-full">
-									{faqs.map((faq, index) => (
-										<AccordionItem key={index} value={`item-${index}`} className="border-border">
-											<AccordionTrigger className="text-base hover:text-lime-600 font-serif text-left py-4">{faq.question}</AccordionTrigger>
-											<AccordionContent className="text-muted-foreground text-sm leading-relaxed pb-6">{faq.answer}</AccordionContent>
-										</AccordionItem>
-									))}
-								</Accordion>
-							</div>
-						</motion.div>
+		<div className="min-h-screen bg-background flex flex-col lg:flex-row">
+			{/* Left Column - Form */}
+			<div className="w-full lg:w-1/2 p-8 lg:p-24 flex items-center justify-center">
+				<div className="w-full max-w-xl space-y-8">
+					<div className="space-y-4">
+						<h1 className="text-4xl lg:text-5xl font-bold tracking-tight text-foreground">
+							We're here to help you perform.
+						</h1>
+						<p className="text-muted-foreground text-lg">
+							Questions about products or your order? Email us at <span className="text-primary font-medium">support@suppshop.com</span>
+						</p>
 					</div>
+
+					<form className="space-y-6">
+						<div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+							<div className="space-y-2">
+								<Label htmlFor="firstName">First name *</Label>
+								<Input id="firstName" placeholder="First name" />
+							</div>
+							<div className="space-y-2">
+								<Label htmlFor="lastName">Last name *</Label>
+								<Input id="lastName" placeholder="Last name" />
+							</div>
+						</div>
+
+						<div className="space-y-2">
+							<Label htmlFor="email">Email *</Label>
+							<Input id="email" type="email" placeholder="you@example.com" />
+						</div>
+
+						<div className="space-y-2">
+							<Label htmlFor="phone">Phone number</Label>
+							<div className="flex">
+								<select className="flex h-10 w-[80px] rounded-l-md border border-input bg-background px-3 py-2 text-sm ring-offset-background placeholder:text-muted-foreground focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 disabled:cursor-not-allowed disabled:opacity-50 border-r-0">
+									<option>US</option>
+									<option>CA</option>
+									<option>UK</option>
+								</select>
+								<Input className="rounded-l-none" placeholder="+1 (555) 000-0000" />
+							</div>
+						</div>
+
+						<div className="space-y-2">
+							<Label htmlFor="message">Message *</Label>
+							<Textarea
+								id="message"
+								placeholder="How can we help you reach your goals?"
+								className="min-h-[150px] resize-none"
+							/>
+						</div>
+
+						<div className="space-y-4">
+							<Label>Topic</Label>
+							<div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+								<div className="flex items-center space-x-2">
+									<Checkbox id="order-status" />
+									<Label htmlFor="order-status" className="font-normal">Order Status</Label>
+								</div>
+								<div className="flex items-center space-x-2">
+									<Checkbox id="product-advice" />
+									<Label htmlFor="product-advice" className="font-normal">Product Advice</Label>
+								</div>
+								<div className="flex items-center space-x-2">
+									<Checkbox id="returns" />
+									<Label htmlFor="returns" className="font-normal">Returns</Label>
+								</div>
+								<div className="flex items-center space-x-2">
+									<Checkbox id="wholesale" />
+									<Label htmlFor="wholesale" className="font-normal">Wholesale</Label>
+								</div>
+								<div className="flex items-center space-x-2">
+									<Checkbox id="partnership" />
+									<Label htmlFor="partnership" className="font-normal">Partnership</Label>
+								</div>
+								<div className="flex items-center space-x-2">
+									<Checkbox id="other" />
+									<Label htmlFor="other" className="font-normal">Other</Label>
+								</div>
+							</div>
+						</div>
+
+						<Button className="w-full bg-primary h-12 text-lg font-medium" size="lg">
+							Send Message
+						</Button>
+					</form>
 				</div>
+			</div>
+
+			{/* Right Column - Image */}
+			<div className="hidden lg:block w-1/2 bg-muted relative overflow-hidden">
+				<img
+					src="https://images.unsplash.com/photo-1517836357463-d25dfeac3438?q=80&w=2670&auto=format&fit=crop"
+					alt="Athlete training in gym"
+					className="absolute inset-0 w-full h-full object-cover"
+				/>
 			</div>
 		</div>
 	);
