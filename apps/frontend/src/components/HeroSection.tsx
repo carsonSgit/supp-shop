@@ -14,7 +14,7 @@ export function HeroSection() {
     const rotate = useTransform(scrollY, [0, 500], [0, 10]);
 
     return (
-        <section className="relative min-h-screen w-full overflow-hidden bg-[#fafafa] flex flex-col justify-center">
+        <section className="relative min-h-screen w-full overflow-hidden bg-[#fafafa] flex flex-col justify-start pt-4 lg:pt-8">
 
             <div className="container relative z-10 px-2 md:px-4">
                 {/* Top Navigation / Brand element could go here if header isn't fixed */}
@@ -22,7 +22,7 @@ export function HeroSection() {
                 <div className="grid grid-cols-1 lg:grid-cols-12 gap-8 items-center">
 
                     {/* Left Content - Text */}
-                    <div className="lg:col-span-5 relative z-20">
+                    <div className="lg:col-span-7 relative z-20">
                         <motion.h1
                             initial={{ opacity: 0, y: 30 }}
                             animate={{ opacity: 1, y: 0 }}
@@ -69,14 +69,14 @@ export function HeroSection() {
                     </div>
 
                     {/* Center/Right Content - Collage Image */}
-                    <div className="lg:col-span-7 relative h-[600px] md:h-[800px] w-full flex items-center justify-center">
+                    <div className="lg:col-span-5 relative h-[600px] md:h-[800px] w-full flex items-center justify-end pr-0 lg:pr-12">
 
                         {/* Floating Elements (Stickers, Arrows, etc) */}
 
                         {/* Interactive Badge */}
                         <motion.div
                             style={{ y: y2 }}
-                            className="absolute top-[10%] left-[10%] z-10 cursor-pointer"
+                            className="absolute top-[10%] left-[10%] z-30 cursor-pointer"
                             whileHover={{ scale: 1.1, rotate: 15 }}
                             whileTap={{ scale: 0.9 }}
                         >
