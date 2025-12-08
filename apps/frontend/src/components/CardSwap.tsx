@@ -114,7 +114,7 @@ const CardSwap: React.FC<CardSwapProps> = ({
 
       const [front, ...rest] = order.current;
       const nextIndex = rest[0];
-      onSwap?.(nextIndex); // Notify parent of the new active card
+      onSwap?.(nextIndex);
 
       const elFront = refs[front].current!;
       const tl = gsap.timeline();
@@ -164,18 +164,11 @@ const CardSwap: React.FC<CardSwapProps> = ({
         },
         'return'
       );
-
-      tl.call(() => {
-        order.current = [...rest, front];
-      });
+      order.current = [...rest, front];
     };
 
-    // Initial play
     intervalRef.current = window.setInterval(swap, delay);
-
-    // Click handler to manual swap
     const handleClick = (e: MouseEvent) => {
-      // Reset timer on manual interaction
       clearInterval(intervalRef.current);
       intervalRef.current = window.setInterval(swap, delay);
       swap();
