@@ -16,7 +16,7 @@ export function HeroSection() {
     return (
         <section className="relative min-h-screen w-full overflow-hidden bg-[#fafafa] flex flex-col justify-center">
 
-            <div className="container relative z-10 px-4 md:px-6 pt-20">
+            <div className="container relative z-10 px-2 md:px-4">
                 {/* Top Navigation / Brand element could go here if header isn't fixed */}
 
                 <div className="grid grid-cols-1 lg:grid-cols-12 gap-8 items-center">
@@ -73,20 +73,26 @@ export function HeroSection() {
 
                         {/* Floating Elements (Stickers, Arrows, etc) */}
 
-                        {/* Circle Sticker */}
+                        {/* Interactive Badge */}
                         <motion.div
                             style={{ y: y2 }}
-                            className="absolute top-[10%] left-[10%] z-10"
+                            className="absolute top-[10%] left-[10%] z-10 cursor-pointer"
+                            whileHover={{ scale: 1.1, rotate: 15 }}
+                            whileTap={{ scale: 0.9 }}
                         >
-                            <div className="h-24 w-24 rounded-full bg-white border border-gray-200 shadow-xl flex items-center justify-center transform -rotate-12">
-                                <span className="font-serif text-3xl">☺</span>
+                            <div className="h-24 w-24 rounded-full bg-white border-2 border-lime-400 shadow-xl flex items-center justify-center transform -rotate-12">
+                                <span className="font-serif text-xs font-bold uppercase text-center leading-tight tracking-wider">
+                                    Certified<br />Clean
+                                </span>
                             </div>
                         </motion.div>
 
                         {/* Main Hero Image Frame */}
                         <motion.div
                             style={{ y: y1 }}
-                            className="relative z-10 w-[80%] max-w-md"
+                            className="relative z-10 w-[80%] max-w-md cursor-pointer"
+                            whileHover={{ scale: 1.02, rotate: 0 }}
+                            transition={{ type: "spring", stiffness: 300, damping: 20 }}
                         >
                             {/* Polaroid Frame */}
                             <div className="bg-white p-4 pb-16 shadow-2xl transform rotate-2 border border-gray-100">
@@ -128,18 +134,24 @@ export function HeroSection() {
                             (01)
                         </div>
                     </div>
-                </div>
 
-                {/* Bottom Links/Product Previews */}
-                <div className="absolute bottom-10 left-10 hidden lg:block">
-                    <div className="flex gap-4">
-                        <div className="w-24 h-32 bg-white border border-gray-200 p-2 shadow-sm transform -rotate-3 hover:rotate-0 transition-transform cursor-pointer">
-                            <div className="w-full h-20 bg-gray-50 mb-2"></div>
-                            <div className="text-[10px] text-center uppercase tracking-wider text-gray-500">(02) Vanilla</div>
-                        </div>
-                        <div className="w-24 h-32 bg-white border border-gray-200 p-2 shadow-sm transform rotate-3 hover:rotate-0 transition-transform cursor-pointer">
-                            <div className="w-full h-20 bg-gray-50 mb-2"></div>
-                            <div className="text-[10px] text-center uppercase tracking-wider text-gray-500">(03) Pre</div>
+                    {/* Bottom Links/Product Previews */}
+                    <div className="absolute bottom-10 left-10 hidden lg:block">
+                        <div className="flex gap-4">
+                            <motion.div
+                                whileHover={{ scale: 1.05, rotate: 0, y: -5 }}
+                                className="w-24 h-32 bg-white border border-gray-200 p-2 shadow-sm transform -rotate-3 cursor-pointer"
+                            >
+                                <div className="w-full h-20 bg-gray-50 mb-2"></div>
+                                <div className="text-[10px] text-center uppercase tracking-wider text-gray-500">(02) Vanilla</div>
+                            </motion.div>
+                            <motion.div
+                                whileHover={{ scale: 1.05, rotate: 0, y: -5 }}
+                                className="w-24 h-32 bg-white border border-gray-200 p-2 shadow-sm transform rotate-3 cursor-pointer"
+                            >
+                                <div className="w-full h-20 bg-gray-50 mb-2"></div>
+                                <div className="text-[10px] text-center uppercase tracking-wider text-gray-500">(03) Pre</div>
+                            </motion.div>
                         </div>
                     </div>
                 </div>
