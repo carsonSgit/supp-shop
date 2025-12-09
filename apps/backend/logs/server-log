@@ -3220,3 +3220,117 @@
 {"level":30,"time":1765073514602,"pid":17284,"hostname":"Carson","msg":"Attempting to connect to user_db_test"}
 {"level":30,"time":1765073514605,"pid":17284,"hostname":"Carson","msg":"Connected to MongoDb"}
 {"level":50,"time":1765073516731,"pid":17284,"hostname":"Carson","msg":"Email is already in use: supervisoryretardant@gmail.com"}
+{"level":30,"time":1765317104066,"pid":5532,"hostname":"carson-laptop-2025","msg":"Starting product scraper script"}
+{"level":30,"time":1765317104067,"pid":5532,"hostname":"carson-laptop-2025","msg":"Starting scraper for: https://shoppopeyes.com/en/collections/proteines-proteins"}
+{"level":30,"time":1765317104067,"pid":5532,"hostname":"carson-laptop-2025","msg":"Fetching collection page: https://shoppopeyes.com/en/collections/proteines-proteins"}
+{"level":30,"time":1765317105065,"pid":5532,"hostname":"carson-laptop-2025","msg":"Found 24 product links"}
+{"level":20,"time":1765317105066,"pid":5532,"hostname":"carson-laptop-2025","msg":"Scraping product page: https://shoppopeyes.com/en/collections/proteines-proteins/products/ans-n-mass-15lbs"}
+{"level":20,"time":1765317105615,"pid":5532,"hostname":"carson-laptop-2025","msg":"Scraped 1/24: ANS N Mass 15lbs"}
+{"level":20,"time":1765317106629,"pid":5532,"hostname":"carson-laptop-2025","msg":"Scraping product page: https://shoppopeyes.com/en/collections/proteines-proteins/products/believe-collagen-refresher-255g-310g"}
+{"level":20,"time":1765317107237,"pid":5532,"hostname":"carson-laptop-2025","msg":"Scraped 2/24: Believe Collagen Refresher 255g-310g"}
+{"level":20,"time":1765317108249,"pid":5532,"hostname":"carson-laptop-2025","msg":"Scraping product page: https://shoppopeyes.com/en/collections/proteines-proteins/products/good-protein-high-protein-shake-940g"}
+{"level":20,"time":1765317108774,"pid":5532,"hostname":"carson-laptop-2025","msg":"Scraped 3/24: Good Protein High Protein Shake 940g"}
+{"level":20,"time":1765317109785,"pid":5532,"hostname":"carson-laptop-2025","msg":"Scraping product page: https://shoppopeyes.com/en/collections/proteines-proteins/products/good-protein-high-protein-shake-470g"}
+{"level":20,"time":1765317110382,"pid":5532,"hostname":"carson-laptop-2025","msg":"Scraped 4/24: Good Protein High Protein Shake 470g"}
+{"level":20,"time":1765317111387,"pid":5532,"hostname":"carson-laptop-2025","msg":"Scraping product page: https://shoppopeyes.com/en/collections/proteines-proteins/products/xp-labs-iso-xp-5lbs"}
+{"level":20,"time":1765317112247,"pid":5532,"hostname":"carson-laptop-2025","msg":"Scraped 5/24: XP Labs ISO XP 5lbs"}
+{"level":20,"time":1765317113272,"pid":5532,"hostname":"carson-laptop-2025","msg":"Scraping product page: https://shoppopeyes.com/en/collections/proteines-proteins/products/ghost-clear-whey-640g"}
+{"level":20,"time":1765317113871,"pid":5532,"hostname":"carson-laptop-2025","msg":"Scraped 6/24: Ghost Clear Whey Isolate 640g"}
+{"level":20,"time":1765317114870,"pid":5532,"hostname":"carson-laptop-2025","msg":"Scraping product page: https://shoppopeyes.com/en/collections/proteines-proteins/products/misfits-boite-de-barres-vegane-15-misfits-box-of-vegan-bars-15"}
+{"level":20,"time":1765317115647,"pid":5532,"hostname":"carson-laptop-2025","msg":"Scraped 7/24: Misfits Box of Vegan Bars (15)"}
+{"level":20,"time":1765317116660,"pid":5532,"hostname":"carson-laptop-2025","msg":"Scraping product page: https://shoppopeyes.com/en/collections/proteines-proteins/products/misfits-barre-vegane-a-lunite-1-misfits-single-vegan-bar-1"}
+{"level":20,"time":1765317117253,"pid":5532,"hostname":"carson-laptop-2025","msg":"Scraped 8/24: Misfits Single Vegan Bar (1)"}
+{"level":20,"time":1765317118264,"pid":5532,"hostname":"carson-laptop-2025","msg":"Scraping product page: https://shoppopeyes.com/en/collections/proteines-proteins/products/basic-mass-gainer-15lb"}
+{"level":20,"time":1765317118992,"pid":5532,"hostname":"carson-laptop-2025","msg":"Scraped 9/24: Basic Mass Gainer 15lb"}
+{"level":20,"time":1765317119995,"pid":5532,"hostname":"carson-laptop-2025","msg":"Scraping product page: https://shoppopeyes.com/en/collections/proteines-proteins/products/basic-isolate-2lb"}
+{"level":20,"time":1765317120557,"pid":5532,"hostname":"carson-laptop-2025","msg":"Scraped 10/24: Basic Isolate 2lb"}
+{"level":20,"time":1765317121569,"pid":5532,"hostname":"carson-laptop-2025","msg":"Scraping product page: https://shoppopeyes.com/en/collections/proteines-proteins/products/good-protein-all-in-one-shake"}
+{"level":20,"time":1765317122224,"pid":5532,"hostname":"carson-laptop-2025","msg":"Scraped 11/24: Good Protein All-in-one Shake 880g"}
+{"level":20,"time":1765317123230,"pid":5532,"hostname":"carson-laptop-2025","msg":"Scraping product page: https://shoppopeyes.com/en/collections/proteines-proteins/products/good-protein-all-in-one-shake-440g"}
+{"level":20,"time":1765317123875,"pid":5532,"hostname":"carson-laptop-2025","msg":"Scraped 12/24: Good Protein All-in-one Shake 440g"}
+{"level":20,"time":1765317124890,"pid":5532,"hostname":"carson-laptop-2025","msg":"Scraping product page: https://shoppopeyes.com/en/collections/proteines-proteins/products/basic-mass-gainer-6lb"}
+{"level":20,"time":1765317125443,"pid":5532,"hostname":"carson-laptop-2025","msg":"Scraped 13/24: Basic Mass Gainer 6lb"}
+{"level":20,"time":1765317126441,"pid":5532,"hostname":"carson-laptop-2025","msg":"Scraping product page: https://shoppopeyes.com/en/collections/proteines-proteins/products/basic-isolate-5lb"}
+{"level":20,"time":1765317126965,"pid":5532,"hostname":"carson-laptop-2025","msg":"Scraped 14/24: Basic Isolate 5lb"}
+{"level":20,"time":1765317127975,"pid":5532,"hostname":"carson-laptop-2025","msg":"Scraping product page: https://shoppopeyes.com/en/collections/proteines-proteins/products/basic-whey-5lb"}
+{"level":20,"time":1765317128703,"pid":5532,"hostname":"carson-laptop-2025","msg":"Scraped 15/24: Basic Whey 4lb"}
+{"level":20,"time":1765317129712,"pid":5532,"hostname":"carson-laptop-2025","msg":"Scraping product page: https://shoppopeyes.com/en/collections/proteines-proteins/products/basic-whey-2lb"}
+{"level":20,"time":1765317130287,"pid":5532,"hostname":"carson-laptop-2025","msg":"Scraped 16/24: Basic Whey 2lb"}
+{"level":20,"time":1765317131289,"pid":5532,"hostname":"carson-laptop-2025","msg":"Scraping product page: https://shoppopeyes.com/en/collections/proteines-proteins/products/mutant-mass-5lbs"}
+{"level":20,"time":1765317131939,"pid":5532,"hostname":"carson-laptop-2025","msg":"Scraped 17/24: Mutant Mass 5lbs"}
+{"level":20,"time":1765317132947,"pid":5532,"hostname":"carson-laptop-2025","msg":"Scraping product page: https://shoppopeyes.com/en/collections/proteines-proteins/products/nutrabolics-hydropure-4-5lb"}
+{"level":20,"time":1765317133608,"pid":5532,"hostname":"carson-laptop-2025","msg":"Scraped 18/24: Nutrabolics Hydropure 4.5lb"}
+{"level":20,"time":1765317134627,"pid":5532,"hostname":"carson-laptop-2025","msg":"Scraping product page: https://shoppopeyes.com/en/collections/proteines-proteins/products/canprev-collagen-beauty-500ml"}
+{"level":20,"time":1765317135252,"pid":5532,"hostname":"carson-laptop-2025","msg":"Scraped 19/24: CanPrev Collagen Beauty 500ml"}
+{"level":20,"time":1765317136270,"pid":5532,"hostname":"carson-laptop-2025","msg":"Scraping product page: https://shoppopeyes.com/en/collections/proteines-proteins/products/pvl-clean-mass-xl-10lbs"}
+{"level":20,"time":1765317136967,"pid":5532,"hostname":"carson-laptop-2025","msg":"Scraped 20/24: PVL Clean Mass XL 10lbs"}
+{"level":20,"time":1765317137982,"pid":5532,"hostname":"carson-laptop-2025","msg":"Scraping product page: https://shoppopeyes.com/en/collections/proteines-proteins/products/believe-protein-refresher-656g"}
+{"level":20,"time":1765317138512,"pid":5532,"hostname":"carson-laptop-2025","msg":"Scraped 21/24: Believe Protein Refresher 656g"}
+{"level":20,"time":1765317139505,"pid":5532,"hostname":"carson-laptop-2025","msg":"Scraping product page: https://shoppopeyes.com/en/collections/proteines-proteins/products/biox-power-casein-complex-5lb"}
+{"level":20,"time":1765317140289,"pid":5532,"hostname":"carson-laptop-2025","msg":"Scraped 22/24: Biox Power Casein Complex 5lb"}
+{"level":20,"time":1765317141291,"pid":5532,"hostname":"carson-laptop-2025","msg":"Scraping product page: https://shoppopeyes.com/en/collections/proteines-proteins/products/progressive-fast-acting-collagen-90-caps"}
+{"level":20,"time":1765317141843,"pid":5532,"hostname":"carson-laptop-2025","msg":"Scraped 23/24: Progressive Fast Acting Collagen 90 caps"}
+{"level":20,"time":1765317142851,"pid":5532,"hostname":"carson-laptop-2025","msg":"Scraping product page: https://shoppopeyes.com/en/collections/proteines-proteins/products/younited-all-in-one-plant-protein-775g"}
+{"level":20,"time":1765317143588,"pid":5532,"hostname":"carson-laptop-2025","msg":"Scraped 24/24: Younited All-In One Plant Protein 775g"}
+{"level":30,"time":1765317143589,"pid":5532,"hostname":"carson-laptop-2025","msg":"Scraping completed. Successfully scraped 24/24 products"}
+{"level":30,"time":1765317143590,"pid":5532,"hostname":"carson-laptop-2025","msg":"Scraping completed successfully!"}
+{"level":30,"time":1765317143591,"pid":5532,"hostname":"carson-laptop-2025","msg":"Total products scraped: 24"}
+{"level":30,"time":1765317143591,"pid":5532,"hostname":"carson-laptop-2025","msg":"Errors encountered: 0"}
+{"level":30,"time":1765317143591,"pid":5532,"hostname":"carson-laptop-2025","msg":"Results saved to: C:\\Users\\DevUser\\Documents\\supp-shop\\apps\\backend\\data\\scraped-products.json"}
+{"level":30,"time":1765317334002,"pid":53960,"hostname":"carson-laptop-2025","msg":"Starting product scraper script"}
+{"level":30,"time":1765317334003,"pid":53960,"hostname":"carson-laptop-2025","msg":"Starting scraper for: https://shoppopeyes.com/en/collections/proteines-proteins"}
+{"level":30,"time":1765317334003,"pid":53960,"hostname":"carson-laptop-2025","msg":"Fetching collection page: https://shoppopeyes.com/en/collections/proteines-proteins"}
+{"level":30,"time":1765317334872,"pid":53960,"hostname":"carson-laptop-2025","msg":"Found 24 product links"}
+{"level":20,"time":1765317334873,"pid":53960,"hostname":"carson-laptop-2025","msg":"Scraping product page: https://shoppopeyes.com/en/collections/proteines-proteins/products/ans-n-mass-15lbs"}
+{"level":20,"time":1765317335414,"pid":53960,"hostname":"carson-laptop-2025","msg":"Scraped 1/24: ANS N Mass 15lbs"}
+{"level":20,"time":1765317336417,"pid":53960,"hostname":"carson-laptop-2025","msg":"Scraping product page: https://shoppopeyes.com/en/collections/proteines-proteins/products/believe-collagen-refresher-255g-310g"}
+{"level":20,"time":1765317336639,"pid":53960,"hostname":"carson-laptop-2025","msg":"Scraped 2/24: Believe Collagen Refresher 255g-310g"}
+{"level":20,"time":1765317337661,"pid":53960,"hostname":"carson-laptop-2025","msg":"Scraping product page: https://shoppopeyes.com/en/collections/proteines-proteins/products/good-protein-high-protein-shake-940g"}
+{"level":20,"time":1765317337835,"pid":53960,"hostname":"carson-laptop-2025","msg":"Scraped 3/24: Good Protein High Protein Shake 940g"}
+{"level":20,"time":1765317338842,"pid":53960,"hostname":"carson-laptop-2025","msg":"Scraping product page: https://shoppopeyes.com/en/collections/proteines-proteins/products/good-protein-high-protein-shake-470g"}
+{"level":20,"time":1765317339494,"pid":53960,"hostname":"carson-laptop-2025","msg":"Scraped 4/24: Good Protein High Protein Shake 470g"}
+{"level":20,"time":1765317340503,"pid":53960,"hostname":"carson-laptop-2025","msg":"Scraping product page: https://shoppopeyes.com/en/collections/proteines-proteins/products/xp-labs-iso-xp-5lbs"}
+{"level":20,"time":1765317340655,"pid":53960,"hostname":"carson-laptop-2025","msg":"Scraped 5/24: XP Labs ISO XP 5lbs"}
+{"level":20,"time":1765317341669,"pid":53960,"hostname":"carson-laptop-2025","msg":"Scraping product page: https://shoppopeyes.com/en/collections/proteines-proteins/products/ghost-clear-whey-640g"}
+{"level":20,"time":1765317341842,"pid":53960,"hostname":"carson-laptop-2025","msg":"Scraped 6/24: Ghost Clear Whey Isolate 640g"}
+{"level":20,"time":1765317342846,"pid":53960,"hostname":"carson-laptop-2025","msg":"Scraping product page: https://shoppopeyes.com/en/collections/proteines-proteins/products/misfits-boite-de-barres-vegane-15-misfits-box-of-vegan-bars-15"}
+{"level":20,"time":1765317343419,"pid":53960,"hostname":"carson-laptop-2025","msg":"Scraped 7/24: Misfits Box of Vegan Bars (15)"}
+{"level":20,"time":1765317344432,"pid":53960,"hostname":"carson-laptop-2025","msg":"Scraping product page: https://shoppopeyes.com/en/collections/proteines-proteins/products/misfits-barre-vegane-a-lunite-1-misfits-single-vegan-bar-1"}
+{"level":20,"time":1765317344921,"pid":53960,"hostname":"carson-laptop-2025","msg":"Scraped 8/24: Misfits Single Vegan Bar (1)"}
+{"level":20,"time":1765317345934,"pid":53960,"hostname":"carson-laptop-2025","msg":"Scraping product page: https://shoppopeyes.com/en/collections/proteines-proteins/products/basic-mass-gainer-15lb"}
+{"level":20,"time":1765317346459,"pid":53960,"hostname":"carson-laptop-2025","msg":"Scraped 9/24: Basic Mass Gainer 15lb"}
+{"level":20,"time":1765317347473,"pid":53960,"hostname":"carson-laptop-2025","msg":"Scraping product page: https://shoppopeyes.com/en/collections/proteines-proteins/products/basic-isolate-2lb"}
+{"level":20,"time":1765317348041,"pid":53960,"hostname":"carson-laptop-2025","msg":"Scraped 10/24: Basic Isolate 2lb"}
+{"level":20,"time":1765317349040,"pid":53960,"hostname":"carson-laptop-2025","msg":"Scraping product page: https://shoppopeyes.com/en/collections/proteines-proteins/products/good-protein-all-in-one-shake"}
+{"level":20,"time":1765317349253,"pid":53960,"hostname":"carson-laptop-2025","msg":"Scraped 11/24: Good Protein All-in-one Shake 880g"}
+{"level":20,"time":1765317350265,"pid":53960,"hostname":"carson-laptop-2025","msg":"Scraping product page: https://shoppopeyes.com/en/collections/proteines-proteins/products/good-protein-all-in-one-shake-440g"}
+{"level":20,"time":1765317350439,"pid":53960,"hostname":"carson-laptop-2025","msg":"Scraped 12/24: Good Protein All-in-one Shake 440g"}
+{"level":20,"time":1765317351450,"pid":53960,"hostname":"carson-laptop-2025","msg":"Scraping product page: https://shoppopeyes.com/en/collections/proteines-proteins/products/basic-mass-gainer-6lb"}
+{"level":20,"time":1765317352033,"pid":53960,"hostname":"carson-laptop-2025","msg":"Scraped 13/24: Basic Mass Gainer 6lb"}
+{"level":20,"time":1765317353048,"pid":53960,"hostname":"carson-laptop-2025","msg":"Scraping product page: https://shoppopeyes.com/en/collections/proteines-proteins/products/basic-isolate-5lb"}
+{"level":20,"time":1765317353690,"pid":53960,"hostname":"carson-laptop-2025","msg":"Scraped 14/24: Basic Isolate 5lb"}
+{"level":20,"time":1765317354702,"pid":53960,"hostname":"carson-laptop-2025","msg":"Scraping product page: https://shoppopeyes.com/en/collections/proteines-proteins/products/basic-whey-5lb"}
+{"level":20,"time":1765317354881,"pid":53960,"hostname":"carson-laptop-2025","msg":"Scraped 15/24: Basic Whey 4lb"}
+{"level":20,"time":1765317355883,"pid":53960,"hostname":"carson-laptop-2025","msg":"Scraping product page: https://shoppopeyes.com/en/collections/proteines-proteins/products/basic-whey-2lb"}
+{"level":20,"time":1765317356465,"pid":53960,"hostname":"carson-laptop-2025","msg":"Scraped 16/24: Basic Whey 2lb"}
+{"level":20,"time":1765317357488,"pid":53960,"hostname":"carson-laptop-2025","msg":"Scraping product page: https://shoppopeyes.com/en/collections/proteines-proteins/products/mutant-mass-5lbs"}
+{"level":20,"time":1765317358124,"pid":53960,"hostname":"carson-laptop-2025","msg":"Scraped 17/24: Mutant Mass 5lbs"}
+{"level":20,"time":1765317359137,"pid":53960,"hostname":"carson-laptop-2025","msg":"Scraping product page: https://shoppopeyes.com/en/collections/proteines-proteins/products/nutrabolics-hydropure-4-5lb"}
+{"level":20,"time":1765317359347,"pid":53960,"hostname":"carson-laptop-2025","msg":"Scraped 18/24: Nutrabolics Hydropure 4.5lb"}
+{"level":20,"time":1765317360349,"pid":53960,"hostname":"carson-laptop-2025","msg":"Scraping product page: https://shoppopeyes.com/en/collections/proteines-proteins/products/canprev-collagen-beauty-500ml"}
+{"level":20,"time":1765317360514,"pid":53960,"hostname":"carson-laptop-2025","msg":"Scraped 19/24: CanPrev Collagen Beauty 500ml"}
+{"level":20,"time":1765317361536,"pid":53960,"hostname":"carson-laptop-2025","msg":"Scraping product page: https://shoppopeyes.com/en/collections/proteines-proteins/products/pvl-clean-mass-xl-10lbs"}
+{"level":20,"time":1765317362098,"pid":53960,"hostname":"carson-laptop-2025","msg":"Scraped 20/24: PVL Clean Mass XL 10lbs"}
+{"level":20,"time":1765317363103,"pid":53960,"hostname":"carson-laptop-2025","msg":"Scraping product page: https://shoppopeyes.com/en/collections/proteines-proteins/products/believe-protein-refresher-656g"}
+{"level":20,"time":1765317363286,"pid":53960,"hostname":"carson-laptop-2025","msg":"Scraped 21/24: Believe Protein Refresher 656g"}
+{"level":20,"time":1765317364299,"pid":53960,"hostname":"carson-laptop-2025","msg":"Scraping product page: https://shoppopeyes.com/en/collections/proteines-proteins/products/biox-power-casein-complex-5lb"}
+{"level":20,"time":1765317364955,"pid":53960,"hostname":"carson-laptop-2025","msg":"Scraped 22/24: Biox Power Casein Complex 5lb"}
+{"level":20,"time":1765317365960,"pid":53960,"hostname":"carson-laptop-2025","msg":"Scraping product page: https://shoppopeyes.com/en/collections/proteines-proteins/products/progressive-fast-acting-collagen-90-caps"}
+{"level":20,"time":1765317366505,"pid":53960,"hostname":"carson-laptop-2025","msg":"Scraped 23/24: Progressive Fast Acting Collagen 90 caps"}
+{"level":20,"time":1765317367514,"pid":53960,"hostname":"carson-laptop-2025","msg":"Scraping product page: https://shoppopeyes.com/en/collections/proteines-proteins/products/younited-all-in-one-plant-protein-775g"}
+{"level":20,"time":1765317368138,"pid":53960,"hostname":"carson-laptop-2025","msg":"Scraped 24/24: Younited All-In One Plant Protein 775g"}
+{"level":30,"time":1765317368138,"pid":53960,"hostname":"carson-laptop-2025","msg":"Scraping completed. Successfully scraped 24/24 products"}
+{"level":30,"time":1765317368139,"pid":53960,"hostname":"carson-laptop-2025","msg":"Scraping completed successfully!"}
+{"level":30,"time":1765317368140,"pid":53960,"hostname":"carson-laptop-2025","msg":"Total products scraped: 24"}
+{"level":30,"time":1765317368140,"pid":53960,"hostname":"carson-laptop-2025","msg":"Errors encountered: 0"}
+{"level":30,"time":1765317368140,"pid":53960,"hostname":"carson-laptop-2025","msg":"Results saved to: C:\\Users\\DevUser\\Documents\\supp-shop\\apps\\backend\\data\\scraped-products.json"}
