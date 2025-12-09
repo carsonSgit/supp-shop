@@ -751,6 +751,55 @@ export async function updateOneProduct(
 }
 
 /**
+ * Updates a product with all fields (comprehensive update)
+ * @param flavour The flavour identifier of the product to update
+ * @param updatedProduct The updated product data
+ * @returns true if successfully updated, false otherwise
+ */
+export async function updateProduct(
+	flavour: string,
+	updatedProduct: Product,
+): Promise<boolean> {
+	if (!productsCollection) {
+		throw new DatabaseError("Products collection not initialized");
+	}
+
+	try {
+		if (
+			await validateUtils.isValidProduct(
+				updatedProduct.flavour,
+				updatedProduct.type,
+				updatedProduct.price,
+			)
+		) {
+			const updateResult = await productsCollection.updateOne(
+				{ flavour: flavour },
+				{
+					$set: {
+						flavour: updatedProduct.flavour,
+						type: updatedProduct.type,
+						price: updatedProduct.price,
+						description: updatedProduct.description,
+						ingredients: updatedProduct.ingredients,
+						nutrition: updatedProduct.nutrition,
+						benefits: updatedProduct.benefits,
+						rating: updatedProduct.rating,
+					},
+				},
+			);
+			return updateResult.modifiedCount > 0;
+		}
+		return false;
+	} catch (err) {
+		if (err instanceof DatabaseError) {
+			throw err;
+		}
+		const error = err as Error;
+		throw new DatabaseError("Error updating product: " + error.message);
+	}
+}
+
+/**
  * Attempts to delete a product from the "products" collection according to the given flavour
  * @param deleteProduct
  * @returns false if delete failed

@@ -5,6 +5,7 @@ import logger from "../logger";
 import { scrapeProducts } from "../services/scraper.service";
 import { transformScrapedToProduct } from "../services/scraperTransformer";
 import type { ScraperConfig } from "../types/scraper.types";
+import type { Product } from "../types/models.types";
 import * as model from "../models/workoutMongoDb";
 import { InvalidInputError } from "../models/InvalidInputError";
 
@@ -44,8 +45,55 @@ async function saveToDatabase(result: Awaited<ReturnType<typeof scrapeProducts>>
 	await model.initialize("workout_db", false, url, collectionNames);
 
 	let savedCount = 0;
+	let updatedCount = 0;
 	let skippedCount = 0;
 	const errors: Array<{ url: string; reason: string }> = [];
+
+	function productsAreEqual(existing: Product, newProduct: Product): boolean {
+		// Compare all fields
+		if (existing.type !== newProduct.type) return false;
+		if (existing.price !== newProduct.price) return false;
+		
+		// Compare optional fields (handle undefined/null)
+		const optionalEqual = (a: string | undefined, b: string | undefined): boolean => {
+			if (a === undefined && b === undefined) return true;
+			if (a === undefined || b === undefined) return false;
+			return a === b;
+		};
+		
+		if (!optionalEqual(existing.description, newProduct.description)) return false;
+		if (existing.rating !== newProduct.rating) return false;
+
+		// Compare arrays
+		const arraysEqual = (a: string[] | undefined, b: string[] | undefined): boolean => {
+			if (!a && !b) return true;
+			if (!a || !b) return false;
+			if (a.length !== b.length) return false;
+			return a.every((val, idx) => val === b[idx]);
+		};
+
+		if (!arraysEqual(existing.ingredients, newProduct.ingredients)) return false;
+		if (!arraysEqual(existing.benefits, newProduct.benefits)) return false;
+
+		// Compare nutrition objects
+		const nutritionEqual = (
+			a: { calories: number; protein: number; carbs: number; fat: number } | undefined,
+			b: { calories: number; protein: number; carbs: number; fat: number } | undefined,
+		): boolean => {
+			if (!a && !b) return true;
+			if (!a || !b) return false;
+			return (
+				a.calories === b.calories &&
+				a.protein === b.protein &&
+				a.carbs === b.carbs &&
+				a.fat === b.fat
+			);
+		};
+
+		if (!nutritionEqual(existing.nutrition, newProduct.nutrition)) return false;
+
+		return true;
+	}
 
 	for (const scraped of result.products) {
 		try {
@@ -61,15 +109,30 @@ async function saveToDatabase(result: Awaited<ReturnType<typeof scrapeProducts>>
 
 			// Check if product already exists (by flavour)
 			try {
-				await model.getSingleProduct(product.flavour);
-				logger.debug(`Product "${product.flavour}" already exists, skipping...`);
-				skippedCount++;
+				const existingProduct = await model.getSingleProduct(product.flavour);
+				// Product exists - check if it needs updating
+				if (!productsAreEqual(existingProduct, product)) {
+					// Update the product
+					const updated = await model.updateProduct(product.flavour, product);
+					if (updated) {
+						updatedCount++;
+						logger.info(`Updated product in database: ${product.flavour} (${product.type}) - $${product.price}`);
+					} else {
+						logger.warn(`Failed to update product: ${product.flavour}`);
+						skippedCount++;
+					}
+				} else {
+					logger.debug(`Product "${product.flavour}" unchanged, skipping...`);
+					skippedCount++;
+				}
 				continue;
 			} catch (err) {
 				// Product doesn't exist (InvalidInputError) or other error occurred
 				if (!(err instanceof InvalidInputError)) {
 					// Unexpected error, log and continue
 					logger.warn(`Error checking for existing product ${product.flavour}: ${err instanceof Error ? err.message : String(err)}`);
+					skippedCount++;
+					continue;
 				}
 				// If it's InvalidInputError, product doesn't exist, proceed to add it
 			}
@@ -102,7 +165,7 @@ async function saveToDatabase(result: Awaited<ReturnType<typeof scrapeProducts>>
 		}
 	}
 
-	logger.info(`Database save completed: ${savedCount} saved, ${skippedCount} skipped`);
+	logger.info(`Database save completed: ${savedCount} saved, ${updatedCount} updated, ${skippedCount} skipped`);
 	if (errors.length > 0) {
 		logger.warn(`Failed to save ${errors.length} products to database:`);
 		for (const error of errors) {
