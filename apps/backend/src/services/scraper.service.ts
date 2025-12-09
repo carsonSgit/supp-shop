@@ -6,6 +6,7 @@ import type {
 	ScraperResult,
 	ScraperError,
 } from "../types/scraper.types";
+import { sanitizeScrapedProduct, validateScrapedProduct } from "./scraperSanitizer";
 
 const DEFAULT_CONFIG = {
 	delayBetweenRequests: 1000,
@@ -105,11 +106,20 @@ const PRODUCT_SELECTORS = {
 		"h1",
 	],
 	price: [
+		"[data-price]",
+		".price--main",
 		".product__price",
 		".product-price",
 		"[itemprop='price']",
 		".price",
 		".product-single__price",
+		".product-price-wrapper",
+		".price-wrapper",
+		"[data-product-price]",
+		".money",
+		".product__price-wrapper",
+		".price-item",
+		".product__current-price",
 	],
 	description: [
 		".product__description",
@@ -135,7 +145,30 @@ const PRODUCT_SELECTORS = {
 
 function findFirstText($: cheerio.Root, selectors: readonly string[]): string | undefined {
 	for (const selector of selectors) {
-		const text = $(selector).first().text().trim();
+		const $el = $(selector).first();
+		if ($el.length === 0) continue;
+
+		let text = $el.html() || "";
+		if (!text) {
+			text = $el.text().trim();
+		} else {
+			text = text
+				.replace(/<br\s*\/?>/gi, " ")
+				.replace(/<\/p>/gi, " ")
+				.replace(/<\/div>/gi, " ")
+				.replace(/<\/li>/gi, " ")
+				.replace(/<\/h[1-6]>/gi, " ")
+				.replace(/<[^>]*>/g, "")
+				.replace(/&nbsp;/g, " ")
+				.replace(/&amp;/g, "&")
+				.replace(/&lt;/g, "<")
+				.replace(/&gt;/g, ">")
+				.replace(/&quot;/g, '"')
+				.replace(/&#39;/g, "'")
+				.replace(/\s+/g, " ")
+				.trim();
+		}
+
 		if (text) {
 			return text;
 		}
@@ -164,6 +197,21 @@ function parseReviewCount(text: string): number | undefined {
 	return isNaN(count) ? undefined : count;
 }
 
+function extractPriceFromJson(html: string): string | undefined {
+	const jsonMatch = html.match(/"price":\s*(\d+)/);
+	if (jsonMatch) {
+		const priceInCents = parseInt(jsonMatch[1], 10);
+		return (priceInCents / 100).toFixed(2);
+	}
+
+	const priceAmountMatch = html.match(/"price":\s*{\s*"amount":\s*([\d.]+)/);
+	if (priceAmountMatch) {
+		return priceAmountMatch[1];
+	}
+
+	return undefined;
+}
+
 async function scrapeProductPage(
 	productUrl: string,
 	maxRetries?: number,
@@ -174,10 +222,22 @@ async function scrapeProductPage(
 	const html = await fetchWithRetry(productUrl, maxRetries, timeout);
 	const $ = cheerio.load(html);
 
+	let price = findFirstText($, PRODUCT_SELECTORS.price);
+	if (!price) {
+		price = extractPriceFromJson(html);
+	}
+
+	if (price) {
+		const priceMatch = price.match(/\$?\s*([\d.,]+)/);
+		if (priceMatch) {
+			price = priceMatch[1];
+		}
+	}
+
 	const product: ScrapedProduct = {
 		url: productUrl,
 		title: findFirstText($, PRODUCT_SELECTORS.title),
-		price: findFirstText($, PRODUCT_SELECTORS.price),
+		price: price,
 		description: findFirstText($, PRODUCT_SELECTORS.description),
 		availability: findFirstText($, PRODUCT_SELECTORS.availability),
 	};
@@ -239,13 +299,26 @@ export async function scrapeProducts(
 			const link = productLinks[i];
 
 			try {
-				const product = await scrapeProductPage(
+				const scraped = await scrapeProductPage(
 					link,
 					finalConfig.maxRetries,
 					finalConfig.timeout,
 				);
-				products.push(product);
-				logger.debug(`Scraped ${i + 1}/${productLinks.length}: ${product.title || link}`);
+
+				const sanitized = sanitizeScrapedProduct(scraped);
+				const validation = validateScrapedProduct(sanitized);
+				if (!validation.valid) {
+					logger.warn(`Invalid product data for ${link}: ${validation.reason}`);
+					errors.push({
+						url: link,
+						error: validation.reason || "Invalid product data after sanitization",
+						timestamp: new Date().toISOString(),
+					});
+					continue;
+				}
+
+				products.push(sanitized);
+				logger.debug(`Scraped ${i + 1}/${productLinks.length}: ${sanitized.title || link}`);
 
 				const isLastItem = i === productLinks.length - 1;
 				const delayMs = finalConfig.delayBetweenRequests;
