@@ -39,11 +39,20 @@ export async function initialize(
 			//store connected client for use while the app is running
 			// Keep server selection timeout low so tests fail fast if a temp
 			// in-memory Mongo instance is unexpectedly unavailable.
-			client = new MongoClient(url, {
+			// SRV URIs (mongodb+srv://) don't support directConnection
+			const isSrvUri = url.startsWith("mongodb+srv://");
+			const clientOptions: {
+				serverSelectionTimeoutMS: number;
+				socketTimeoutMS: number;
+				directConnection?: boolean;
+			} = {
 				serverSelectionTimeoutMS: 2000,
 				socketTimeoutMS: 2000,
-				directConnection: true,
-			});
+			};
+			if (!isSrvUri) {
+				clientOptions.directConnection = true;
+			}
+			client = new MongoClient(url, clientOptions);
 			await client.connect();
 			logger.info("Connected to MongoDb");
 			db = client.db(dbName);
@@ -738,6 +747,55 @@ export async function updateOneProduct(
 		}
 		const error = err as Error;
 		throw new DatabaseError(error.message);
+	}
+}
+
+/**
+ * Updates a product with all fields (comprehensive update)
+ * @param flavour The flavour identifier of the product to update
+ * @param updatedProduct The updated product data
+ * @returns true if successfully updated, false otherwise
+ */
+export async function updateProduct(
+	flavour: string,
+	updatedProduct: Product,
+): Promise<boolean> {
+	if (!productsCollection) {
+		throw new DatabaseError("Products collection not initialized");
+	}
+
+	try {
+		if (
+			await validateUtils.isValidProduct(
+				updatedProduct.flavour,
+				updatedProduct.type,
+				updatedProduct.price,
+			)
+		) {
+			const updateResult = await productsCollection.updateOne(
+				{ flavour: flavour },
+				{
+					$set: {
+						flavour: updatedProduct.flavour,
+						type: updatedProduct.type,
+						price: updatedProduct.price,
+						description: updatedProduct.description,
+						ingredients: updatedProduct.ingredients,
+						nutrition: updatedProduct.nutrition,
+						benefits: updatedProduct.benefits,
+						rating: updatedProduct.rating,
+					},
+				},
+			);
+			return updateResult.modifiedCount > 0;
+		}
+		return false;
+	} catch (err) {
+		if (err instanceof DatabaseError) {
+			throw err;
+		}
+		const error = err as Error;
+		throw new DatabaseError("Error updating product: " + error.message);
 	}
 }
 
